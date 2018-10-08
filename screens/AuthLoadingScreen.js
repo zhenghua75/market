@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-class AuthLoadingScreen extends React.Component {
+export default class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
     this._bootstrapAsync();
@@ -19,7 +19,7 @@ class AuthLoadingScreen extends React.Component {
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'My' : 'SignIn');
+    this.props.navigation.navigate(userToken ? 'Main' : 'SignIn');
   };
 
   // Render any loading content that you like here
@@ -32,3 +32,11 @@ class AuthLoadingScreen extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 15,
+    backgroundColor: '#fff',
+  },
+});

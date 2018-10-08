@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-class SignInScreen extends React.Component {
+export default class SignInScreen extends React.Component {
   static navigationOptions = {
     title: 'Please sign in',
   };
@@ -26,3 +26,11 @@ class SignInScreen extends React.Component {
     this.props.navigation.navigate('My');
   };
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 15,
+    backgroundColor: '#fff',
+  },
+});

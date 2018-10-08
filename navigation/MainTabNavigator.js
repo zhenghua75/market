@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform,Image } from 'react-native';
+import { Platform,Image,AsyncStorage } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
@@ -78,12 +78,25 @@ AuthLoadingStack.navigationOptions = {
   ),
 };
 
+const SignInStack = createStackNavigator({
+  SignIn: SignInScreen,
+});
+
+SignInStack.navigationOptions = {
+  tabBarLabel: '我的',
+  tabBarIcon: ({ focused }) => (
+    <Image source={ focused  ? require('../assets/images/00四个选项/我的-选中.png') : require('../assets/images/00四个选项/我的.png') }/>
+  ),
+};
+
+const userToken = AsyncStorage.getItem('userToken');
+
 export default createBottomTabNavigator({
   Home:HomeStack,
   BuildingMaterials:BuildingMaterialsStack,
   Find:FindStack,
   ConstructionTeam:ConstructionTeamStack,
-  AuthLoading:AuthLoadingStack,
+  My:userToken ? MyStack : SignInStack,
 },{
   tabBarOptions :{
     activeTintColor:'#ff8f00',
