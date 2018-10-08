@@ -1,60 +1,94 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform,Image } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
+
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import BuildingMaterialsScreen from '../screens/BuildingMaterialsScreen';
+import FindScreen from '../screens/FindScreen';
+import ConstructionTeamScreen from '../screens/ConstructionTeamScreen';
+import MyScreen from '../screens/MyScreen';
+import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+import SignInScreen from '../screens/SignInScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: '首页',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
+    <Image source={ focused  ? require('../assets/images/00四个选项/首页-选中.png') : require('../assets/images/00四个选项/首页.png') }/>
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const BuildingMaterialsStack = createStackNavigator({
+  BuildingMaterials: BuildingMaterialsScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+BuildingMaterialsStack.navigationOptions = {
+  tabBarLabel: '建材',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
-    />
+    <Image source={ focused  ? require('../assets/images/00四个选项/建材-选中.png') : require('../assets/images/00四个选项/建材.png') }/>
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const FindStack = createStackNavigator({
+  Find: FindScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+FindStack.navigationOptions = {
+  tabBarLabel: '发现',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
-    />
+    <Image source={ focused  ? require('../assets/images/00四个选项/发现-选中.png') : require('../assets/images/00四个选项/发现.png') }/>
+  ),
+};
+
+const ConstructionTeamStack = createStackNavigator({
+  ConstructionTeam: ConstructionTeamScreen,
+});
+
+ConstructionTeamStack.navigationOptions = {
+  tabBarLabel: '施工队',
+  tabBarIcon: ({ focused }) => (
+    <Image source={ focused  ? require('../assets/images/00四个选项/施工队-选中.png') : require('../assets/images/00四个选项/施工队.png') }/>
+  ),
+};
+
+const MyStack = createStackNavigator({
+  My: MyScreen,
+});
+
+MyStack.navigationOptions = {
+  tabBarLabel: '我的',
+  tabBarIcon: ({ focused }) => (
+    <Image source={ focused  ? require('../assets/images/00四个选项/我的-选中.png') : require('../assets/images/00四个选项/我的.png') }/>
+  ),
+};
+
+const AuthLoadingStack = createStackNavigator({
+  AuthLoading: AuthLoadingScreen,
+});
+
+AuthLoadingStack.navigationOptions = {
+  tabBarLabel: '我的',
+  tabBarIcon: ({ focused }) => (
+    <Image source={ focused  ? require('../assets/images/00四个选项/我的-选中.png') : require('../assets/images/00四个选项/我的.png') }/>
   ),
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  Home:HomeStack,
+  BuildingMaterials:BuildingMaterialsStack,
+  Find:FindStack,
+  ConstructionTeam:ConstructionTeamStack,
+  AuthLoading:AuthLoadingStack,
+},{
+  tabBarOptions :{
+    activeTintColor:'#ff8f00',
+    labelStyle: {
+      fontSize: 13,
+    },
+  }
 });
