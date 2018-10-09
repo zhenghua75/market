@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet,Button,AsyncStorage } from 'react-native';
 
 export default class MyScreen extends React.Component {
   static navigationOptions = {
@@ -9,9 +9,15 @@ export default class MyScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
+        <Button title="Sign out!" onPress={this._signOutAsync} />
       </ScrollView>
     );
   }
+
+  _signOutAsync = async () => {
+    await AsyncStorage.removeItem('userToken');
+    this.props.navigation.navigate('Main');
+  };
 }
 
 const styles = StyleSheet.create({

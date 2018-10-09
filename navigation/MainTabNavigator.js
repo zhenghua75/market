@@ -89,14 +89,13 @@ SignInStack.navigationOptions = {
   ),
 };
 
-const userToken = AsyncStorage.getItem('userToken');
 
-export default createBottomTabNavigator({
+const MainTabNavigator = createBottomTabNavigator({
   Home:HomeStack,
   BuildingMaterials:BuildingMaterialsStack,
   Find:FindStack,
   ConstructionTeam:ConstructionTeamStack,
-  My:userToken ? MyStack : SignInStack,
+  My:MyStack,
 },{
   tabBarOptions :{
     activeTintColor:'#ff8f00',
@@ -105,3 +104,20 @@ export default createBottomTabNavigator({
     },
   }
 });
+
+const SignInNavigator = createBottomTabNavigator({
+  Home:HomeStack,
+  BuildingMaterials:BuildingMaterialsStack,
+  Find:FindStack,
+  ConstructionTeam:ConstructionTeamStack,
+  My:SignInStack,
+},{
+  tabBarOptions :{
+    activeTintColor:'#ff8f00',
+    labelStyle: {
+      fontSize: 13,
+    },
+  }
+});
+
+export default {MainTabNavigator,SignInNavigator}
