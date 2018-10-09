@@ -16,7 +16,7 @@ export default class MyScreen extends React.Component {
 
   _signOutAsync = async () => {
     await AsyncStorage.removeItem('userToken');
-    this.props.navigation.navigate('Main');
+    this.props.navigation.navigate('SignIn');
   };
 }
 

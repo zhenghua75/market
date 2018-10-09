@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform,Image,AsyncStorage } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator,createSwitchNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 
@@ -120,4 +120,12 @@ const SignInNavigator = createBottomTabNavigator({
   }
 });
 
-export default {MainTabNavigator,SignInNavigator}
+export default createSwitchNavigator({
+  // You could add another route here for authentication.
+  // Read more at https://reactnavigation.org/docs/en/auth-flow.html
+  Main: MainTabNavigator,
+  SignIn: SignInNavigator,
+  AuthLoading:AuthLoadingScreen,
+},{
+  initialRouteName:'AuthLoading',
+});
