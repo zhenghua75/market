@@ -13,6 +13,8 @@ import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import SignUpSuccessScreen from '../screens/SignUpSuccessScreen';
+import ModifyPwdScreen from '../screens/ModifyPwdScreen';
+import CartScreen from '../screens/CartScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -60,6 +62,8 @@ ConstructionTeamStack.navigationOptions = {
 
 const MyStack = createStackNavigator({
   My: MyScreen,
+  ModifyPwd:ModifyPwdScreen,
+  Cart:CartScreen,
 });
 
 MyStack.navigationOptions = {
