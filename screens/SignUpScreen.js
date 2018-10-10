@@ -14,37 +14,45 @@ import {
   ImageBackground,
 } from 'react-native';
 
-export default class SignInScreen extends React.Component {
+export default class SignUpScreen extends React.Component {
   static navigationOptions = {
-    title: '登录',
+    title: '注册',
   };
 
   render() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>账号登录</Text>
+        <Text style={styles.title}>用户注册</Text>
         <View style={styles.box}>
-          <Image source={require('../assets/images/02登录注册部分/用户.png')} />
-          <TextInput placeholder='用户名/手机号/邮箱' style={styles.input}/>
+          <Image source={require('../assets/images/02登录注册部分/注册用户.png')} />
+          <TextInput placeholder='手机号/邮箱' style={styles.input}/>
         </View>
         <View style={styles.box}>
-          <Image source={require('../assets/images/02登录注册部分/密码.png')} />
+          <Image source={require('../assets/images/02登录注册部分/验证码.png')} />
           <TextInput placeholder='密码' style={styles.input}/>
-        </View>
-        <View style={styles.tip}>
-          <Text style={styles.errorTip}>*账号或密码错误，请重新输入</Text>
-          <TouchableOpacity onPress={this._forgetPwd}>
-            <Text style={styles.forgetPwdText}>忘记密码</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={this._signInAsync} style={styles.btn}>
+          <TouchableOpacity onPress={this._signInAsync} style={styles.btn}>
           <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={styles.btnBkg}>
-            <Text>登录</Text>
+            <Text>发送验证码</Text>
           </ImageBackground>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._register} style={styles.btn}>
+        </View>
+        <View style={styles.contract}>
+          <Image source={require('../assets/images/02登录注册部分/不同意.png')} />
+          <Text style={styles.contractText}>我已阅读并同意</Text>
+          <TouchableOpacity onPress={this._forgetPwd}>
+            <Text style={styles.contractBtn}>注册协议</Text>
+          </TouchableOpacity>
+          
+          
+        </View>
+        <TouchableOpacity onPress={this._nextAsync} style={styles.btn}>
+          <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={styles.btnBkg}>
+            <Text>下一步</Text>
+          </ImageBackground>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this._signInAsync} style={styles.btn}>
           <ImageBackground source={require('../assets/images/02登录注册部分/注册新账号.png')} style={styles.btnBkg}>
-            <Text>注册新账号</Text>
+            <Text>已有账号登陆</Text>
           </ImageBackground>
         </TouchableOpacity>
       </ScrollView>
@@ -52,13 +60,12 @@ export default class SignInScreen extends React.Component {
   }
 
   _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('Main');
+    //await AsyncStorage.setItem('userToken', 'abc');
+    this.props.navigation.navigate('SignIn');
   };
 
-  _forgetPwd = ()=>{};
-  _register = ()=>{
-    this.props.navigation.navigate('SignUp');
+  _nextAsync = ()=>{
+    this.props.navigation.navigate('SignUpSuccess');
   };
 }
 
@@ -90,14 +97,14 @@ const styles = StyleSheet.create({
     fontSize:18,
     flex:1,
   },
-  tip:{
+  contract:{
     flexDirection:'row',
   },
-  errorTip:{
+  contractText:{
     fontSize:14,
     color:'#f23e57',
   },
-  forgetPwdText:{
+  contractBtn:{
     fontSize:14,
     color:'#ff8f00',
   },

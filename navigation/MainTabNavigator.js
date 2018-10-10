@@ -11,6 +11,8 @@ import ConstructionTeamScreen from '../screens/ConstructionTeamScreen';
 import MyScreen from '../screens/MyScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import SignInScreen from '../screens/SignInScreen';
+import SignUpScreen from '../screens/SignUpScreen';
+import SignUpSuccessScreen from '../screens/SignUpSuccessScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -80,6 +82,8 @@ AuthLoadingStack.navigationOptions = {
 
 const SignInStack = createStackNavigator({
   SignIn: SignInScreen,
+  SignUp: SignUpScreen,
+  SignUpSuccess: SignUpSuccessScreen,
 });
 
 SignInStack.navigationOptions = {
