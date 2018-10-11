@@ -43,19 +43,19 @@ export default class MyScreen extends React.Component {
               <Text style={styles.text}>购物车</Text>
             </TouchableOpacity>
             <View style={styles.span}/>
-            <View style={styles.box}>
+            <TouchableOpacity style={styles.box} onPress={this._infoList}>
               <Text style={styles.text}>0</Text>
               <Text style={styles.text}>消息</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </ImageBackground>
-        <View style={styles.order}>
+        <TouchableOpacity style={styles.order} onPress={this._allOrder}>
           <View style={styles.orderLeft}>
             <Image source={require('../assets/images/06个人中心/订单(1).png')} style={styles.orderImage}/>
             <Text style={styles.orderText}>订单</Text>
           </View>
           <Text style={styles.allOrderText}>全部订单</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.ship}>
           <View style={styles.shipBox}>
             <View style={styles.shipCircle}>
@@ -130,6 +130,14 @@ export default class MyScreen extends React.Component {
 
   _cart = async () => {
     this.props.navigation.navigate('Cart');
+  };
+
+  _infoList = async () => {
+    this.props.navigation.navigate('InfoList');
+  };
+
+  _allOrder = async () => {
+    this.props.navigation.navigate('AllOrder');
   };
 }
 

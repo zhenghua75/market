@@ -15,6 +15,9 @@ import SignUpScreen from '../screens/SignUpScreen';
 import SignUpSuccessScreen from '../screens/SignUpSuccessScreen';
 import ModifyPwdScreen from '../screens/ModifyPwdScreen';
 import CartScreen from '../screens/CartScreen';
+import InfoListScreen from '../screens/InfoListScreen';
+import InfoScreen from '../screens/InfoScreen';
+import AllOrderScreen from '../screens/AllOrderScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -137,6 +140,9 @@ const MainStack = createStackNavigator({
   Tabs: MainTabNavigator,
   Cart:CartScreen,
   ModifyPwd:ModifyPwdScreen,
+  InfoList:InfoListScreen,
+  Info:InfoScreen,
+  AllOrder:AllOrderScreen,
 });
 
 const AuthStack = createStackNavigator({

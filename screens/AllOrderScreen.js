@@ -1,71 +1,15 @@
 import React from 'react';
-import { 
+import {
   ScrollView, 
   StyleSheet,
-  Button,
-  FlatList,
   TouchableOpacity,
   View,
-  Text,
-  SectionList,
-  Image,
-  Slider,
-  ImageBackground,
    } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
 
-class MyListItem extends React.PureComponent {
-  _onPress = () => {
-    this.props.onPressItem(this.props.id);
+export default class AllOrderScreen extends React.Component {
+  static navigationOptions = {
+    title: '我的订单',
   };
-
-  render() {
-    const textColor = this.props.selected ? "red" : "black";
-    return (
-      <TouchableOpacity onPress={this._onPress}>
-        <View>
-          <Text style={{ color: textColor }}>
-            {this.props.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
-
-
-export default class CartScreen extends React.Component {
-  // static navigationOptions = {
-  //   title: '购物车',
-  // };
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: navigation.getParam('otherParam', '购物车'),
-    };
-  };
-
-  state = {selected: (new Map(): Map<string, boolean>)};
-
-  _keyExtractor = (item, index) => item.id;
-
-  _onPressItem = (id: string) => {
-    // updater functions are preferred for transactional updates
-    this.setState((state) => {
-      // copy the map rather than modifying state.
-      const selected = new Map(state.selected);
-      selected.set(id, !selected.get(id)); // toggle
-      return {selected};
-    });
-  };
-
-  _renderItem1 = ({item}) => (
-    <MyListItem
-      id={item.id}
-      onPressItem={this._onPressItem}
-      selected={!!this.state.selected.get(item.id)}
-      title={item.title}
-    />
-  );
 
   _renderItem = ({item, index, section}) => (
     <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -100,10 +44,27 @@ export default class CartScreen extends React.Component {
       <Image source={require('../assets/images/04订单/右箭头.png')} />
     </View>
   );
-
+  
   render() {
     return (
       <ScrollView style={styles.container}>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity style={{flex:0.2,height:44}}>
+            <Text style={{fontSize:14,color:'#ff8f00'}}>全部</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex:0.2,height:44}}>
+            <Text style={{fontSize:14,color:'#3f3f3f'}}>代付款</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex:0.2,height:44}}>
+            <Text style={{fontSize:14,color:'#3f3f3f'}}>待发货</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex:0.2,height:44}}>
+            <Text style={{fontSize:14,color:'#3f3f3f'}}>待收货</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex:0.2,height:44}}>
+            <Text style={{fontSize:14,color:'#3f3f3f'}}>待评价</Text>
+          </TouchableOpacity>
+        </View>
         <SectionList
           renderItem={this._renderItem}
           renderSectionHeader={this._renderHeader}
@@ -113,25 +74,6 @@ export default class CartScreen extends React.Component {
             {title: '魔都CV大大3', data: [{name:'远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单',attr:'100米硬线 蓝色 100米/卷',price:38,num:3}]},
           ]}
           keyExtractor={(item, index) => item + index}
-        />
-        <View style={{flexDirection:'row'}}>
-          <View style={{flexDirection:'row'}}>
-            <Image source={require('../assets/images/10购物车/购物车未选中.png')} />
-            <Text>全选</Text>
-          </View>
-          <View style={{flexDirection:'row'}}>
-            <Text>合计：</Text>
-            <Text>¥38</Text>
-            <TouchableOpacity onPress={this._nextAsync} style={{alignItems:'center',justifyContent:'center',}}>
-              <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
-                <Text>结算(1)</Text>
-              </ImageBackground>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Button
-          title="Update the title"
-          onPress={() => this.props.navigation.setParams({otherParam: '购物车(0)'})}
         />
       </ScrollView>
     );
