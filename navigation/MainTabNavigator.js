@@ -18,6 +18,10 @@ import CartScreen from '../screens/CartScreen';
 import InfoListScreen from '../screens/InfoListScreen';
 import InfoScreen from '../screens/InfoScreen';
 import AllOrderScreen from '../screens/AllOrderScreen';
+import SearchOrderScreen from '../screens/SearchOrderScreen';
+import CustomServiceScreen from '../screens/CustomServiceScreen';
+import PositionScreen from '../screens/PositionScreen';
+import AddAddressScreen from '../screens/AddAddressScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -143,6 +147,10 @@ const MainStack = createStackNavigator({
   InfoList:InfoListScreen,
   Info:InfoScreen,
   AllOrder:AllOrderScreen,
+  SearchOrder:SearchOrderScreen,
+  CustomService:CustomServiceScreen,
+  Position:PositionScreen,
+  AddAddress:AddAddressScreen,
 });
 
 const AuthStack = createStackNavigator({

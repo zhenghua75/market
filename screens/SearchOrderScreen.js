@@ -10,10 +10,10 @@ import {
   Button,
    } from 'react-native';
 
-export default class AllOrderScreen extends React.Component {
+export default class SearchOrderScreen extends React.Component {
  
   static navigationOptions = ({navigation}) => ({
-    title: '我的订单',
+    title: '搜索订单',
     headerRight: (
       <TouchableOpacity style={{width:44,height:44,alignItems:'center',justifyContent:'center'}} onPress={() => navigation.navigate('SearchOrder')}>
               <Image source={require('../assets/images/09搜索框+头部返回箭头等杂七杂八/搜索.png')} />
@@ -56,21 +56,11 @@ export default class AllOrderScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        <View style={{flexDirection:'row'}}>
-          <TouchableOpacity style={{flex:0.2,height:44}}>
-            <Text style={{fontSize:14,color:'#ff8f00'}}>全部</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{flex:0.2,height:44}}>
-            <Text style={{fontSize:14,color:'#3f3f3f'}}>代付款</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{flex:0.2,height:44}}>
-            <Text style={{fontSize:14,color:'#3f3f3f'}}>待发货</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{flex:0.2,height:44}}>
-            <Text style={{fontSize:14,color:'#3f3f3f'}}>待收货</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{flex:0.2,height:44}}>
-            <Text style={{fontSize:14,color:'#3f3f3f'}}>待评价</Text>
+        <View style={styles.searchBox}>
+          <Image source={require('../assets/images/01首页部分/搜索.png')} style={styles.searchBoxImage}/>
+          <Text style={styles.searchBoxText}>输入商品名</Text>
+          <TouchableOpacity style={styles.searchBoxBtn}>
+            <Text style={styles.searchBoxBtnText}>搜索</Text>
           </TouchableOpacity>
         </View>
         <SectionList
@@ -93,5 +83,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 15,
     backgroundColor: '#fff',
+  },
+  searchBox:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+  },
+  searchBoxText:{
+    flex:1,
   },
 });

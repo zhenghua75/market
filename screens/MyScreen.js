@@ -99,16 +99,16 @@ export default class MyScreen extends React.Component {
             <Image source={require('../assets/images/06个人中心/日记.png')} style={styles.rowImage}/>
             <Text style={styles.rowText}>日记</Text>
           </View>
-          <View style={styles.row}>
+          <TouchableOpacity style={styles.row} onPress={this._position}>
             <Image source={require('../assets/images/06个人中心/定位.png')} style={styles.rowImage}/>
             <Text style={styles.rowText}>定位</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.columnGroup1}>
-          <View style={styles.row}>
+          <TouchableOpacity style={styles.row} onPress={this._customService}>
             <Image source={require('../assets/images/06个人中心/客服.png')} style={styles.rowImage}/>
             <Text style={styles.rowText}>客服</Text>
-          </View>
+          </TouchableOpacity>
           <View style={styles.row}>
             <Image source={require('../assets/images/06个人中心/附近工人.png')} style={styles.rowImage}/>
             <Text style={styles.rowText}>附近工人</Text>
@@ -138,6 +138,14 @@ export default class MyScreen extends React.Component {
 
   _allOrder = async () => {
     this.props.navigation.navigate('AllOrder');
+  };
+
+  _customService = async () => {
+    this.props.navigation.navigate('CustomService');
+  };
+
+  _position = async () => {
+    this.props.navigation.navigate('Position');
   };
 }
 
@@ -250,6 +258,8 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     borderBottomWidth:1,
     borderColor:'rgba(0, 0, 0, 0.22)',
+    height:44,
+    alignItems:'center',
   },
   rowText:{
     fontSize:16,
