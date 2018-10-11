@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
  } from 'react-native';
 
+import { StackActions } from 'react-navigation';
 export default class MyScreen extends React.Component {
   static navigationOptions = {
     title: '个人中心',

@@ -62,8 +62,6 @@ ConstructionTeamStack.navigationOptions = {
 
 const MyStack = createStackNavigator({
   My: MyScreen,
-  ModifyPwd:ModifyPwdScreen,
-  Cart:CartScreen,
 });
 
 MyStack.navigationOptions = {
@@ -86,8 +84,6 @@ AuthLoadingStack.navigationOptions = {
 
 const SignInStack = createStackNavigator({
   SignIn: SignInScreen,
-  SignUp: SignUpScreen,
-  SignUpSuccess: SignUpSuccessScreen,
 });
 
 SignInStack.navigationOptions = {
@@ -110,8 +106,12 @@ const MainTabNavigator = createBottomTabNavigator({
     labelStyle: {
       fontSize: 13,
     },
-  }
+  },
 });
+
+MainTabNavigator.navigationOptions = {
+  header: null,
+};
 
 const SignInNavigator = createBottomTabNavigator({
   Home:HomeStack,
@@ -128,11 +128,28 @@ const SignInNavigator = createBottomTabNavigator({
   }
 });
 
+SignInNavigator.navigationOptions = {
+  // Hide the header from AppNavigator stack
+  header: null,
+};
+
+const MainStack = createStackNavigator({
+  Tabs: MainTabNavigator,
+  Cart:CartScreen,
+  ModifyPwd:ModifyPwdScreen,
+});
+
+const AuthStack = createStackNavigator({
+  Tabs: SignInNavigator,
+  SignUp: SignUpScreen,
+  SignUpSuccess: SignUpSuccessScreen,
+});
+
 export default createSwitchNavigator({
   // You could add another route here for authentication.
   // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-  Main: MainTabNavigator,
-  SignIn: SignInNavigator,
+  Main: MainStack,
+  Auth: AuthStack,
   AuthLoading:AuthLoadingScreen,
 },{
   initialRouteName:'AuthLoading',
