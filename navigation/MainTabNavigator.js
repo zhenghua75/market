@@ -23,6 +23,8 @@ import CustomServiceScreen from '../screens/CustomServiceScreen';
 import PositionScreen from '../screens/PositionScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
 import SearchScreen from '../screens/SearchScreen';
+import SecondKillScreen from '../screens/SecondKillScreen';
+import CatalogScreen from '../screens/CatalogScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -153,6 +155,8 @@ const MainStack = createStackNavigator({
   Position:PositionScreen,
   AddAddress:AddAddressScreen,
   Search:SearchScreen,
+  SecondKill:SecondKillScreen,
+  Catalog:CatalogScreen,
 });
 
 const AuthStack = createStackNavigator({

@@ -29,6 +29,7 @@ export default class HomeScreen extends React.Component {
   };
   state = {
     location: null,
+    city: null,
     errorMessage: null,
   };
   componentWillMount() {
@@ -49,38 +50,31 @@ export default class HomeScreen extends React.Component {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+    let longitude = location.coords.longitude;
+    let latitude = location.coords.latitude;
+    let url = 'https://restapi.amap.com/v3/geocode/regeo?location='+longitude+','+latitude+'&key=f0278b2d0f10f10adbd3e55858f0a2f1';
+    let response = await fetch(url,{method: 'POST',});
+    let responseJson = await response.json();
+    this.setState({ location:location,city:responseJson.regeocode.addressComponent.city });
+
+    //https://restapi.amap.com/v3/config/district?keywords=中国&subdistrict=2&key=f0278b2d0f10f10adbd3e55858f0a2f1
   };
 
-  _getCity = async(url) => {
-    try {
-      let response = await fetch(url);
-      let responseJson = await response.json();
-      return JSON.stringify(responseJson);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+
   render() {
     let text = 'Waiting..';
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-      let longitude = this.state.location.coords.longitude;
-      let latitude = this.state.location.coords.latitude;
-      let url = 'https://restapi.amap.com/v3/geocode/regeo?location='+longitude+','+latitude+'&key=f0278b2d0f10f10adbd3e55858f0a2f1';
-      
-      text = this._getCity(url);
+    } else if (this.state.city) {
+      text = this.state.city
       
     }
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <Text style={styles.headerText}>{text}</Text>
           <View style={styles.searchContainer}>
             <View style={styles.positionBox}>
-              <Text style={styles.SearchText,styles.positionBoxText}>昆明</Text>
+              <Text style={styles.SearchText,styles.positionBoxText}>{text}</Text>
               <Image source={require('../assets/images/01首页部分/下拉.png')} />
             </View>
             <TouchableOpacity style={styles.searchBox} onPress={this._search}>
@@ -93,26 +87,28 @@ export default class HomeScreen extends React.Component {
             </View>
           </View>
           
-          <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'}>
+          <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 458/750)}>
             <View style={styles.slide}>
               <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
             </View>
             <View style={styles.slide}>
-              <Text>Beautiful</Text>
+              <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
             </View>
             <View style={styles.slide}>
-              <Text>And simple</Text>
+              <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
             </View>
           </Swiper>
           <View style={styles.columnView}>
-            <View style={styles.columnViewItem}>
+            <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
               <Image source={require('../assets/images/01首页部分/秒杀.png')} style={styles.columnViewItemImage}/>
               <Text style={styles.columnViewItemText}>秒杀</Text>
-            </View>
-            <View style={styles.columnViewItem}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.columnViewItem} onPress={this._catalog}>
               <Image source={require('../assets/images/01首页部分/百科.png')} style={styles.columnViewItemImage}/>
               <Text style={styles.columnViewItemText}>百科</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.columnViewItem}>
               <Image source={require('../assets/images/01首页部分/方案.png')} style={styles.columnViewItemImage}/>
               <Text style={styles.columnViewItemText}>方案</Text>
@@ -293,6 +289,14 @@ export default class HomeScreen extends React.Component {
   _search = async () => {
     this.props.navigation.navigate('Search');
   };
+
+  _secondKill = async () => {
+    this.props.navigation.navigate('SecondKill');
+  };
+
+  _catalog = async () => {
+    this.props.navigation.navigate('Catalog');
+  };
 }
 
 const styles = StyleSheet.create({
@@ -387,7 +391,8 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection: 'row',
     justifyContent:'space-between',
-    paddingHorizontal:14,
+    paddingHorizontal:12,
+    height:27,
   },
   searchText:{
     fontSize:15,
@@ -397,13 +402,15 @@ const styles = StyleSheet.create({
   },
   searchBox:{
     flex:1,
-    height:44,
+    //height:44,
     borderWidth:1,
-    borderRadius:10,
+    borderRadius:5,
     borderColor:'#888888',
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
+    marginHorizontal:19,
+    backgroundColor:'rgba(0,0,0,0.22)',
   },
   searchBoxText:{
     marginLeft:14,
@@ -414,7 +421,9 @@ const styles = StyleSheet.create({
     alignItems:'center',
   },
   positionBoxText:{
-    marginRight:14,
+    marginRight:8,
+    fontSize:15,
+    color:'#888888',
   },
   userBox:{
     flexDirection: 'row',
@@ -429,11 +438,10 @@ const styles = StyleSheet.create({
     height: Math.floor(Dimensions.get('window').width * 458/750),
   },
   wrapper: {
-    width: Dimensions.get('window').width,
-    height: Math.floor(Dimensions.get('window').width * 458/750),
+    
   },
   slide: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
