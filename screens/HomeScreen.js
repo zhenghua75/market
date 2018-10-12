@@ -10,7 +10,13 @@ import {
   Dimensions,
   FlatList,
 } from 'react-native';
-import { WebBrowser,Icon } from 'expo';
+import { 
+  WebBrowser,
+  Icon,
+  Constants, 
+  Location, 
+  Permissions,
+} from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
@@ -18,23 +24,69 @@ import Swiper from 'react-native-swiper';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    header: null,
+    //header: null,
+    title:'建材商城',
+  };
+  state = {
+    location: null,
+    errorMessage: null,
+  };
+  componentWillMount() {
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      });
+    } else {
+      this._getLocationAsync();
+    }
+  }
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    this.setState({ location });
   };
 
+  _getCity = async(url) => {
+    try {
+      let response = await fetch(url);
+      let responseJson = await response.json();
+      return JSON.stringify(responseJson);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   render() {
+    let text = 'Waiting..';
+    if (this.state.errorMessage) {
+      text = this.state.errorMessage;
+    } else if (this.state.location) {
+      text = JSON.stringify(this.state.location);
+      let longitude = this.state.location.coords.longitude;
+      let latitude = this.state.location.coords.latitude;
+      let url = 'https://restapi.amap.com/v3/geocode/regeo?location='+longitude+','+latitude+'&key=f0278b2d0f10f10adbd3e55858f0a2f1';
+      
+      text = this._getCity(url);
+      
+    }
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <Text style={styles.headerText}>建材商城</Text>
+          <Text style={styles.headerText}>{text}</Text>
           <View style={styles.searchContainer}>
             <View style={styles.positionBox}>
               <Text style={styles.SearchText,styles.positionBoxText}>昆明</Text>
               <Image source={require('../assets/images/01首页部分/下拉.png')} />
             </View>
-            <View style={styles.searchBox}>
+            <TouchableOpacity style={styles.searchBox} onPress={this._search}>
               <Image source={require('../assets/images/01首页部分/搜索.png')} />
               <Text style={styles.searchText,styles.searchBoxText}>搜索</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.userBox}>
               <Image source={require('../assets/images/01首页部分/通知.png')} style={styles.userBoxText}/>
               <Image source={require('../assets/images/01首页部分/用户.png')} />
@@ -237,6 +289,10 @@ export default class HomeScreen extends React.Component {
       'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
     );
   };
+
+  _search = async () => {
+    this.props.navigation.navigate('Search');
+  };
 }
 
 const styles = StyleSheet.create({
@@ -341,7 +397,7 @@ const styles = StyleSheet.create({
   },
   searchBox:{
     flex:1,
-    height:28,
+    height:44,
     borderWidth:1,
     borderRadius:10,
     borderColor:'#888888',
