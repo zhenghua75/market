@@ -52,34 +52,38 @@ export default class CatalogScreen extends React.Component {
           />
         </View>
         <View style={{flex: 1, flexDirection: 'row',justifyContent:'flex-start',flexWrap:'wrap'}}>
-          <View style={styles.box}>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/1.png')} style={styles.img}/>
             <Text style={styles.txt}>电气胶带</Text>
-          </View>
-          <View style={styles.box}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/2.png')} style={styles.img}/>
             <Text style={styles.txt}>塑料软管</Text>
-          </View>
-          <View style={styles.box}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/3.png')} style={styles.img}/>
             <Text style={styles.txt}>装饰开关</Text>
-          </View>
-          <View style={styles.box}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/4.png')} style={styles.img}/>
             <Text style={styles.txt}>尺子</Text>
-          </View>
-          <View style={styles.box}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/5.png')} style={styles.img}/>
             <Text style={styles.txt}>钻头</Text>
-          </View>
-          <View style={styles.box}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.box} onPress={this._goodsList}>
             <Image source={require('../assets/images/03分类/6.png')} style={styles.img}/>
             <Text style={styles.txt}>磨具</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );
   }
+
+  _goodsList = async () => {
+    this.props.navigation.navigate('GoodsList');
+  };
 }
 
 const styles = StyleSheet.create({
