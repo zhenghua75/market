@@ -70,7 +70,6 @@ export default class HomeScreen extends React.Component {
       
     }
     return (
-      <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.searchContainer}>
             <View style={styles.positionBox}>
@@ -82,8 +81,12 @@ export default class HomeScreen extends React.Component {
               <Text style={styles.searchText,styles.searchBoxText}>搜索</Text>
             </TouchableOpacity>
             <View style={styles.userBox}>
-              <Image source={require('../assets/images/01首页部分/通知.png')} style={styles.userBoxText}/>
-              <Image source={require('../assets/images/01首页部分/用户.png')} />
+              <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:28,width:28}} onPress={this._infoList}>
+                <Image source={require('../assets/images/01首页部分/通知.png')} style={styles.userBoxText}/>
+              </TouchableOpacity>
+              <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:28,width:28}} onPress={this._user}>
+                <Image source={require('../assets/images/01首页部分/用户.png')} />
+              </TouchableOpacity>
             </View>
           </View>
           
@@ -144,7 +147,10 @@ export default class HomeScreen extends React.Component {
                 style={styles.recommendShopTitleArrow}
               />
             </View>
-            <Swiper style={styles.recommendShopSwiper}>
+            <Swiper style={styles.recommendShopSwiper}
+            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 390/750)}>
               <View style={styles.recommendShopSlide}>
                 <View style={styles.recommendShopPerson}>
                   <Image source={require('../assets/images/01首页部分/one-piece-anime.png')} style={styles.recommendShopPersonImage}/>
@@ -173,11 +179,15 @@ export default class HomeScreen extends React.Component {
                 style={styles.recommendShopTitleArrow}
               />
             </View>
-            <Swiper style={styles.successCaseSwiper}>
+            <ScrollView style={styles.successCaseSwiper}
+            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 240/750)}
+            horizontal={true}>
               <Image source={require('../assets/images/01首页部分/a01首页_05.png')} style={styles.successCaseSlide}/>
               <Image source={require('../assets/images/01首页部分/a01首页_07.png')} style={styles.successCaseSlide}/>
               <Image source={require('../assets/images/01首页部分/a01首页_05.png')} style={styles.successCaseSlide}/>
-            </Swiper>
+            </ScrollView>
           </View>
           <View style={styles.recommendProduct}>
             <View style={styles.recommendProductTitle}>
@@ -189,7 +199,10 @@ export default class HomeScreen extends React.Component {
                 style={styles.recommendProductTitleArrow}
               />
             </View>
-            <Swiper style={styles.recommendProductSwiper}>
+            <Swiper style={styles.recommendProductSwiper}
+            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 440/750)}>
               <View style={styles.recommendProductSlide}>
                   <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={styles.recommendProductImage}/>
                   <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
@@ -248,8 +261,7 @@ export default class HomeScreen extends React.Component {
                   style={styles.listViewItemArrow}
                 />
               </View>
-          </ScrollView>
-      </View>
+          </ScrollView>      
     );
   }
 
@@ -297,6 +309,12 @@ export default class HomeScreen extends React.Component {
   _catalog = async () => {
     this.props.navigation.navigate('Catalog');
   };
+  _infoList = async () => {
+    this.props.navigation.navigate('InfoList');
+  };
+  _user = async () => {
+    this.props.navigation.navigate('My');
+  };
 }
 
 const styles = StyleSheet.create({
@@ -304,95 +322,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
   contentContainer: {
-    paddingTop: 30,
-  },
-
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-  headerText:{
-    fontSize:18,
-    color:'#3f3f3f',
-    textAlign: 'center',
   },
   searchContainer: {
     flex:1,
     flexDirection: 'row',
     justifyContent:'space-between',
     paddingHorizontal:12,
-    height:27,
+    height:28,
+    marginTop:25,
+    marginBottom:10,
   },
   searchText:{
     fontSize:15,
@@ -402,15 +341,14 @@ const styles = StyleSheet.create({
   },
   searchBox:{
     flex:1,
-    //height:44,
-    borderWidth:1,
+    //borderWidth:1,
     borderRadius:5,
-    borderColor:'#888888',
+    //borderColor:'#888888',
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
     marginHorizontal:19,
-    backgroundColor:'rgba(0,0,0,0.22)',
+    backgroundColor:'rgba(0,0,0,0.05)',
   },
   searchBoxText:{
     marginLeft:14,
@@ -441,7 +379,6 @@ const styles = StyleSheet.create({
     
   },
   slide: {
-    //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -530,6 +467,8 @@ const styles = StyleSheet.create({
   recommendShopSlide:{
     flexDirection:'row',
     justifyContent:'space-around',
+    width:Dimensions.get('window').width,
+    height:Math.floor(Dimensions.get('window').width * 390/750),
   },
   recommendShopPerson:{
     borderWidth:1,
@@ -585,6 +524,8 @@ const styles = StyleSheet.create({
   successCaseSlide:{
     width:133,
     height:75,
+    marginHorizontal:1,
+    marginVertical:22,
   },
   recommendProduct:{
     marginVertical:11,
