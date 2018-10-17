@@ -24,8 +24,12 @@ import Swiper from 'react-native-swiper';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    //header: null,
     title:'建材商城',
+    headerTitleStyle: {
+      alignSelf: 'center',
+      textAlign: 'center',
+      width: '100%',
+    },
   };
   state = {
     location: null,
@@ -70,22 +74,44 @@ export default class HomeScreen extends React.Component {
       
     }
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.searchContainer}>
-            <View style={styles.positionBox}>
-              <Text style={styles.SearchText,styles.positionBoxText}>{text}</Text>
-              <Image source={require('../assets/images/01首页部分/下拉.png')} />
+        <ScrollView style={{flex: 1,backgroundColor: 'rgb(229,229,229)',}} contentContainerStyle={styles.contentContainer}>
+          <View style={{flex:1,
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    paddingVertical:10,
+    height:49,
+    backgroundColor:'#fff',}}>
+            <View style={{
+    justifyContent:'center',
+    alignItems:'center',
+    paddingHorizontal:12,}}>
+              
+              <Image source={require('../assets/images/01首页部分/分类.png')} style={{width:12,height:12,}}/>
+              <Text style={{
+    fontSize:12,
+    color:'#888888',}}>分类</Text>
             </View>
-            <TouchableOpacity style={styles.searchBox} onPress={this._search}>
+            <TouchableOpacity style={{flex:1,
+    borderRadius:5,
+    flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'rgb(242,247,253)',}} onPress={this._search}>
               <Image source={require('../assets/images/01首页部分/搜索.png')} />
-              <Text style={styles.searchText,styles.searchBoxText}>搜索</Text>
+              <Text style={{
+    fontSize:15,
+    color:'#888888',
+    textAlign: 'center',
+    marginLeft:14,}}>搜索</Text>
             </TouchableOpacity>
-            <View style={styles.userBox}>
-              <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:28,width:28}} onPress={this._infoList}>
-                <Image source={require('../assets/images/01首页部分/通知.png')} style={styles.userBoxText}/>
-              </TouchableOpacity>
-              <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:28,width:28}} onPress={this._user}>
-                <Image source={require('../assets/images/01首页部分/用户.png')} />
+            <View style={{flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',}}>
+              <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:28,width:52,paddingHorizontal:12}} onPress={this._infoList}>
+                <Image source={require('../assets/images/01首页部分/通知.png')} style={{height:16,width:16,}}/>
+                <Text style={{
+    fontSize:12,
+    color:'#888888',}}>消息</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -103,6 +129,7 @@ export default class HomeScreen extends React.Component {
               <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
             </View>
           </Swiper>
+          <View style={{backgroundColor:'#fff'}}>
           <View style={styles.columnView}>
             <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
               <Image source={require('../assets/images/01首页部分/秒杀.png')} style={styles.columnViewItemImage}/>
@@ -121,53 +148,161 @@ export default class HomeScreen extends React.Component {
               <Text style={styles.columnViewItemText}>附近</Text>
             </View>
           </View>
-          <View style={styles.column2View}>
-            <View style={styles.column2ViewItem}>
-              <Text style={styles.column2ViewItemText}>地区</Text>
-              <Image source={require('../assets/images/01首页部分/地区下拉.png')} style={styles.column2ViewItemImage}/>
-            </View>
-            <View style={styles.column2ViewItemSpan}></View>
-            <View style={styles.column2ViewItem}>
-              <Text style={styles.column2ViewItemText}>栏目</Text>
-              <Image source={require('../assets/images/01首页部分/地区下拉.png')} style={styles.column2ViewItemImage}/>
-            </View>
-            <View style={styles.column2ViewItemSpan}></View>
-            <View style={styles.column2ViewItem}>
-              <Text style={styles.column2ViewItemText}>价格</Text>
-              <Image source={require('../assets/images/01首页部分/地区下拉.png')} style={styles.column2ViewItemImage}/>
-            </View>
+          <View style={{flexDirection:'row',}}>
+            <TouchableOpacity style={{flex:1,margin:10,}}>
+              <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
+                <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>商家入驻</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={{flex:1,margin:10,}}>
+              <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
+                <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>施工队入驻</Text>
+              </View>
+            </TouchableOpacity>
           </View>
+          </View>
+
           <View style={styles.recommendShop}>
             <View style={styles.recommendShopTitle}>
               <View style={styles.recommendShopTitleColumnBar}/>
-              <Text style={styles.recommendShopTitleText}>推荐商家</Text>
+              <Text style={styles.recommendShopTitleText}>品质好店</Text>
               <Icon.Ionicons
                 name={'ios-arrow-forward'}
                 size={22}
                 style={styles.recommendShopTitleArrow}
               />
             </View>
-            <Swiper style={styles.recommendShopSwiper}
-            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-            width={Dimensions.get('window').width}
-            height={Math.floor(Dimensions.get('window').width * 390/750)}>
-              <View style={styles.recommendShopSlide}>
-                <View style={styles.recommendShopPerson}>
-                  <Image source={require('../assets/images/01首页部分/one-piece-anime.png')} style={styles.recommendShopPersonImage}/>
-                  <Text style={styles.recommendShopPersonName}>黄师傅 HUANG</Text>
-                  <View style={styles.recommendShopPersonTextBlock}><Text style={styles.recommendShopPersonText}>综合评分：</Text><Text style={styles.recommendShopPersonText}>5.0</Text><Text style={styles.recommendShopPersonText}>分</Text></View>
-                  <View style={styles.recommendShopPersonTextBlock}><Text style={styles.recommendShopPersonText}>服务次数：</Text><Text style={styles.recommendShopPersonText}>810</Text><Text style={styles.recommendShopPersonText}>次</Text></View>
+            <View style={{paddingVertical:10,}}>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>王思聪品质好店</Text>
                 </View>
-                <View style={styles.recommendShopPerson}>
-                  <Image source={require('../assets/images/01首页部分/one-piece-anime.png')} style={styles.recommendShopPersonImage}/>
-                  <Text style={styles.recommendShopPersonName}>黄师傅 HUANG</Text>
-                  <View style={styles.recommendShopPersonTextBlock}><Text style={styles.recommendShopPersonText}>综合评分：</Text><Text style={styles.recommendShopPersonText}>5.0</Text><Text style={styles.recommendShopPersonText}>分</Text></View>
-                  <View style={styles.recommendShopPersonTextBlock}><Text style={styles.recommendShopPersonText}>服务次数：</Text><Text style={styles.recommendShopPersonText}>810</Text><Text style={styles.recommendShopPersonText}>次</Text></View>
+
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>王思聪品质好店</Text>
                 </View>
               </View>
-              <View style={styles.recommendShopSlide}>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>王思聪品质好店</Text>
+                </View>
+
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>王思聪品质好店</Text>
+                </View>
               </View>
-            </Swiper>
+            </View>
+          </View>
+          <View style={styles.recommendShop}>
+            <View style={styles.recommendShopTitle}>
+              <View style={styles.recommendShopTitleColumnBar}/>
+              <Text style={styles.recommendShopTitleText}>优秀团队</Text>
+              <Icon.Ionicons
+                name={'ios-arrow-forward'}
+                size={22}
+                style={styles.recommendShopTitleArrow}
+              />
+            </View>
+            <View style={{paddingVertical:10,}}>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>我是施工队名称</Text>
+                </View>
+
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>我是施工队名称</Text>
+                </View>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>我是施工队名称</Text>
+                </View>
+
+                <View style={{margin:15,alignItems:'center',}}>
+                  <Image source={require('../assets/images/13建材首页/banner.png')} style={{
+                    width:Dimensions.get('window').width/2-60,
+                    height:Math.floor((Dimensions.get('window').width/2-60) * 208/302),
+                  }}/>
+                  <Text style={{fontSize:14,color:'#888888',}}>我是施工队名称</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={styles.decorationStrategy}>
+            <View style={styles.decorationStrategyTitle}>
+              <View style={styles.decorationStrategyTitleColumnBar}/>
+              <Text style={styles.decorationStrategyTitleText}>装修攻略</Text>
+              <Icon.Ionicons
+                name={'ios-arrow-forward'}
+                size={22}
+                style={styles.recommendProductTitleArrow}
+              />
+            </View>
+            <View style={styles.decorationStrategyImage}>
+              <Image source={require('../assets/images/01首页部分/a01首页_15.png')} style={styles.decorationStrategyImageImage}/>
+              <Text style={styles.decorationStrategyImageText}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
+            </View>
+          </View>
+          <View style={styles.listView}>
+          <View style={styles.listViewItem}>
+                <View style={styles.listViewItemDot} />
+                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                <Icon.Ionicons
+                  name={'ios-arrow-forward'}
+                  size={22}
+                  style={styles.listViewItemArrow}
+                />
+              </View>
+          <View style={styles.listViewItem}>
+                <View style={styles.listViewItemDot} />
+                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                <Icon.Ionicons
+                  name={'ios-arrow-forward'}
+                  size={22}
+                  style={styles.listViewItemArrow}
+                />
+              </View>
+          <View style={styles.listViewItem}>
+                <View style={styles.listViewItemDot} />
+                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                <Icon.Ionicons
+                  name={'ios-arrow-forward'}
+                  size={22}
+                  style={styles.listViewItemArrow}
+                />
+              </View>
           </View>
           <View style={styles.successCase}>
             <View style={styles.successCaseTitle}>
@@ -215,52 +350,7 @@ export default class HomeScreen extends React.Component {
               </View>
             </Swiper>
           </View>
-          <View style={styles.decorationStrategy}>
-            <View style={styles.decorationStrategyTitle}>
-              <View style={styles.decorationStrategyTitleColumnBar}/>
-              <Text style={styles.decorationStrategyTitleText}>装修攻略</Text>
-              <Icon.Ionicons
-                name={'ios-arrow-forward'}
-                size={22}
-                style={styles.recommendProductTitleArrow}
-              />
-            </View>
-            <View style={styles.decorationStrategyImage}>
-              <Image source={require('../assets/images/01首页部分/a01首页_15.png')} style={styles.decorationStrategyImageImage}/>
-              <Text style={styles.decorationStrategyImageText}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
-            </View>
-          </View>
-          <View style={styles.listView}></View>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
+          
           </ScrollView>      
     );
   }
@@ -318,59 +408,6 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  contentContainer: {
-  },
-  searchContainer: {
-    flex:1,
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    paddingHorizontal:12,
-    height:28,
-    marginTop:25,
-    marginBottom:10,
-  },
-  searchText:{
-    fontSize:15,
-    color:'#888888',
-    textAlign: 'center',
-    marginLeft:14,
-  },
-  searchBox:{
-    flex:1,
-    //borderWidth:1,
-    borderRadius:5,
-    //borderColor:'#888888',
-    flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
-    marginHorizontal:19,
-    backgroundColor:'rgba(0,0,0,0.05)',
-  },
-  searchBoxText:{
-    marginLeft:14,
-  },
-  positionBox:{
-    flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
-  },
-  positionBoxText:{
-    marginRight:8,
-    fontSize:15,
-    color:'#888888',
-  },
-  userBox:{
-    flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
-  },
-  userBoxText:{
-    marginRight:14,
-  },
   swiperImage:{
     width: Dimensions.get('window').width,
     height: Math.floor(Dimensions.get('window').width * 458/750),
@@ -409,35 +446,9 @@ const styles = StyleSheet.create({
     fontSize:13,
     color:'#403f3d'
   },
-  column2View:{
-    width:Dimensions.get('window').width,
-    height:100,
-    alignItems:'center',
-    flexDirection:'row',
-    justifyContent:'space-around',
-  },
-  column2ViewItem:{
-    alignItems:'center',
-    width:64,
-    height:64,
-    flexDirection:'row',
-  },
-  column2ViewItemImage:{
-    width:11,
-    height:11,
-    marginLeft:11,
-  },
-  column2ViewItemText:{
-    fontSize:15,
-    color:'#888888',
-  },
-  column2ViewItemSpan:{
-    height:14,
-    width:1,
-    backgroundColor:'#888888',
-  },
   recommendShop:{
     marginVertical:11,
+    backgroundColor:'#fff',
   },
   recommendShopTitle:{
     borderBottomWidth:1,
@@ -570,7 +581,7 @@ const styles = StyleSheet.create({
     color:'#c7c7c7',
   },
   decorationStrategy:{
-
+    backgroundColor:'#fff',
   },
   decorationStrategyTitle:{
     borderBottomWidth:1,
@@ -595,7 +606,7 @@ const styles = StyleSheet.create({
   decorationStrategyTitleArrow:{
   },
   decorationStrategyImage:{
-
+    backgroundColor:'#fff',
   },
   decorationStrategyImageImage:{
 
@@ -608,6 +619,7 @@ const styles = StyleSheet.create({
   },
   listView:{
     marginTop:64,
+    backgroundColor:'#fff',
   },
   listViewItem:{
     flexDirection:'row',
@@ -616,6 +628,7 @@ const styles = StyleSheet.create({
     marginHorizontal:22,
     borderBottomWidth:1,
     borderColor:'#e5e5e5',
+    backgroundColor:'#fff',
   },
   listViewItemDot:{
     height:5,
