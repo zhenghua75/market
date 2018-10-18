@@ -9,6 +9,7 @@ import {
   View,
   Dimensions,
   FlatList,
+  ImageBackground,
 } from 'react-native';
 import { 
   WebBrowser,
@@ -116,51 +117,59 @@ export default class HomeScreen extends React.Component {
             </View>
           </View>
           
-          <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-            width={Dimensions.get('window').width}
-            height={Math.floor(Dimensions.get('window').width * 458/750)}>
-            <View style={styles.slide}>
-              <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
-            </View>
-            <View style={styles.slide}>
-              <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
-            </View>
-            <View style={styles.slide}>
-              <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
-            </View>
-          </Swiper>
           <View style={{backgroundColor:'#fff'}}>
-          <View style={styles.columnView}>
-            <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
-              <Image source={require('../assets/images/01首页部分/秒杀.png')} style={styles.columnViewItemImage}/>
-              <Text style={styles.columnViewItemText}>秒杀</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.columnViewItem} onPress={this._catalog}>
-              <Image source={require('../assets/images/01首页部分/百科.png')} style={styles.columnViewItemImage}/>
-              <Text style={styles.columnViewItemText}>百科</Text>
-            </TouchableOpacity>
-            <View style={styles.columnViewItem}>
-              <Image source={require('../assets/images/01首页部分/方案.png')} style={styles.columnViewItemImage}/>
-              <Text style={styles.columnViewItemText}>方案</Text>
-            </View>
-            <View style={styles.columnViewItem}>
-              <Image source={require('../assets/images/01首页部分/附近.png')} style={styles.cloumnViewItemImage}/>
-              <Text style={styles.columnViewItemText}>附近</Text>
-            </View>
-          </View>
-          <View style={{flexDirection:'row',}}>
-            <TouchableOpacity style={{flex:1,margin:10,}}>
-              <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
-                <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>商家入驻</Text>
+            <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+              width={Dimensions.get('window').width}
+              height={Math.floor(Dimensions.get('window').width * 458/750)}>
+              <View style={styles.slide}>
+                <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
               </View>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={{flex:1,margin:10,}}>
-              <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
-                <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>施工队入驻</Text>
+              <View style={styles.slide}>
+                <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
               </View>
-            </TouchableOpacity>
-          </View>
+              <View style={styles.slide}>
+                <Image source={require('../assets/images/01首页部分/a01首页_02.png')} style={styles.swiperImage}/>
+              </View>
+            </Swiper>
+            <View style={styles.columnView}>
+              <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
+                <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
+                  <Image source={require('../assets/images/01首页部分/秒杀.png')} style={styles.columnViewItemImage}/>
+                </View>
+                <Text style={styles.columnViewItemText}>秒杀</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.columnViewItem} onPress={this._catalog}>
+                <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
+                  <Image source={require('../assets/images/01首页部分/百科.png')} style={styles.columnViewItemImage}/>
+                </View>
+                <Text style={styles.columnViewItemText}>百科</Text>
+              </TouchableOpacity>
+              <View style={styles.columnViewItem}>
+                <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
+                  <Image source={require('../assets/images/01首页部分/方案.png')} style={styles.columnViewItemImage}/>
+                </View>
+                <Text style={styles.columnViewItemText}>方案</Text>
+              </View>
+              <View style={styles.columnViewItem}>
+                <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
+                  <Image source={require('../assets/images/01首页部分/附近.png')} style={styles.cloumnViewItemImage}/>
+                </View>
+                <Text style={styles.columnViewItemText}>附近</Text>
+              </View>
+            </View>
+            <View style={{flexDirection:'row',}}>
+              <TouchableOpacity style={{flex:1,margin:10,}}>
+                <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
+                  <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>商家入驻</Text>
+                </View>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={{flex:1,margin:10,}}>
+                <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
+                  <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>施工队入驻</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.recommendShop}>
@@ -257,19 +266,23 @@ export default class HomeScreen extends React.Component {
               </View>
             </View>
           </View>
-          <View style={styles.decorationStrategy}>
+          <View style={{backgroundColor:'#fff',}}>
             <View style={styles.decorationStrategyTitle}>
               <View style={styles.decorationStrategyTitleColumnBar}/>
               <Text style={styles.decorationStrategyTitleText}>装修攻略</Text>
               <Icon.Ionicons
                 name={'ios-arrow-forward'}
                 size={22}
-                style={styles.recommendProductTitleArrow}
               />
             </View>
-            <View style={styles.decorationStrategyImage}>
-              <Image source={require('../assets/images/01首页部分/a01首页_15.png')} style={styles.decorationStrategyImageImage}/>
-              <Text style={styles.decorationStrategyImageText}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
+            <View style={{backgroundColor:'#fff',}}>
+              <ImageBackground source={require('../assets/images/01首页部分/a01首页_15.png')} style={{width:Dimensions.get('window').width,
+              height:Math.floor(Dimensions.get('window').width * 190/349)}}>
+                <Text style={{fontSize:14,
+    color:'#ffffff',
+    backgroundColor:'#000'}}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
+              </ImageBackground>
+              
             </View>
           </View>
           <View style={styles.listView}>
@@ -429,14 +442,13 @@ const styles = StyleSheet.create({
     backgroundColor:'#ffffff',
     flexDirection:'row',
     borderWidth:1,
-    borderColor:'#000000',
+    borderColor:'rgb(229,229,229)',
     justifyContent:'space-around',
   },
   columnViewItem:{
     alignItems:'center',
-    width:54,
-    height:54,
-    borderRadius:50,
+    width:64,
+    height:64,
   },
   columnViewItemImage:{
     width:22,
@@ -452,7 +464,7 @@ const styles = StyleSheet.create({
   },
   recommendShopTitle:{
     borderBottomWidth:1,
-    borderColor:'#888888',
+    borderColor:'rgb(229,229,229)',
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'space-between',
@@ -561,8 +573,6 @@ const styles = StyleSheet.create({
     color:'#888888',
     flex:1,
   },
-  recommendProductTitleArrow:{
-  },
   recommendProductSwiper:{
 
   },
@@ -580,12 +590,9 @@ const styles = StyleSheet.create({
     fontSize:12,
     color:'#c7c7c7',
   },
-  decorationStrategy:{
-    backgroundColor:'#fff',
-  },
   decorationStrategyTitle:{
     borderBottomWidth:1,
-    borderColor:'#888888',
+    borderColor:'rgb(229,229,229)',
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'space-between',
@@ -602,20 +609,6 @@ const styles = StyleSheet.create({
     fontSize:14,
     color:'#888888',
     flex:1,
-  },
-  decorationStrategyTitleArrow:{
-  },
-  decorationStrategyImage:{
-    backgroundColor:'#fff',
-  },
-  decorationStrategyImageImage:{
-
-  },
-  decorationStrategyImageText:{
-    fontSize:14,
-    color:'#ffffff',
-    marginTop:-64,
-    backgroundColor:'#000000'
   },
   listView:{
     marginTop:64,
