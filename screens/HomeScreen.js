@@ -82,16 +82,16 @@ export default class HomeScreen extends React.Component {
     paddingVertical:10,
     height:49,
     backgroundColor:'#fff',}}>
-            <View style={{
+            <TouchableOpacity style={{
     justifyContent:'center',
     alignItems:'center',
-    paddingHorizontal:12,}}>
+    paddingHorizontal:12,}} onPress={this._catalog}>
               
               <Image source={require('../assets/images/01首页部分/分类.png')} style={{width:12,height:12,}}/>
               <Text style={{
     fontSize:12,
     color:'#888888',}}>分类</Text>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity style={{flex:1,
     borderRadius:5,
     flexDirection: 'row',
@@ -275,69 +275,60 @@ export default class HomeScreen extends React.Component {
                 size={22}
               />
             </View>
-            <View style={{backgroundColor:'#fff',}}>
-              <ImageBackground source={require('../assets/images/01首页部分/a01首页_15.png')} style={{width:Dimensions.get('window').width,
-              height:Math.floor(Dimensions.get('window').width * 190/349)}}>
-                <Text style={{fontSize:14,
-    color:'#ffffff',
-    backgroundColor:'#000'}}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
-              </ImageBackground>
-              
+            <View style={{padding:12,backgroundColor:'#fff',}}>
+              <View style={{}}>
+                <ImageBackground source={require('../assets/images/01首页部分/a01首页_15.png')} style={{
+                  width:Dimensions.get('window').width-24,
+                  height:Math.floor((Dimensions.get('window').width-24) * 190/349),
+                  justifyContent:'flex-end',
+              }}>
+                  <View style={{height:53,backgroundColor:'rgba(0,0,0,0.5)',}}>
+                    <Text style={{
+                      fontSize:14,
+                      color:'#fff',
+                      opacity:1.0,
+                      padding:12,
+                    }}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
+                  </View>
+                </ImageBackground>
+                
+              </View>
+            </View>
+            <View style={{
+    backgroundColor:'#fff',}}>
+              <View style={styles.listViewItem}>
+                    <View style={styles.listViewItemDot} />
+                    <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                    <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                    <Icon.Ionicons
+                      name={'ios-arrow-forward'}
+                      size={22}
+                      style={styles.listViewItemArrow}
+                    />
+              </View>
+              <View style={styles.listViewItem}>
+                    <View style={styles.listViewItemDot} />
+                    <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                    <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                    <Icon.Ionicons
+                      name={'ios-arrow-forward'}
+                      size={22}
+                      style={styles.listViewItemArrow}
+                    />
+              </View>
+              <View style={styles.listViewItem}>
+                    <View style={styles.listViewItemDot} />
+                    <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
+                    <Text style={styles.listViewItemDate}>2018-06-26</Text>
+                    <Icon.Ionicons
+                      name={'ios-arrow-forward'}
+                      size={22}
+                      style={styles.listViewItemArrow}
+                    />
+              </View>
             </View>
           </View>
-          <View style={styles.listView}>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
-          <View style={styles.listViewItem}>
-                <View style={styles.listViewItemDot} />
-                <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
-                <Text style={styles.listViewItemDate}>2018-06-26</Text>
-                <Icon.Ionicons
-                  name={'ios-arrow-forward'}
-                  size={22}
-                  style={styles.listViewItemArrow}
-                />
-              </View>
-          </View>
-          <View style={styles.successCase}>
-            <View style={styles.successCaseTitle}>
-              <View style={styles.successCaseTitleColumnBar}/>
-              <Text style={styles.successCaseTitleText}>成功案例</Text>
-              <Icon.Ionicons
-                name={'ios-arrow-forward'}
-                size={22}
-                style={styles.recommendShopTitleArrow}
-              />
-            </View>
-            <ScrollView style={styles.successCaseSwiper}
-            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-            width={Dimensions.get('window').width}
-            height={Math.floor(Dimensions.get('window').width * 240/750)}
-            horizontal={true}>
-              <Image source={require('../assets/images/01首页部分/a01首页_05.png')} style={styles.successCaseSlide}/>
-              <Image source={require('../assets/images/01首页部分/a01首页_07.png')} style={styles.successCaseSlide}/>
-              <Image source={require('../assets/images/01首页部分/a01首页_05.png')} style={styles.successCaseSlide}/>
-            </ScrollView>
-          </View>
-          <View style={styles.recommendProduct}>
+          <View style={{marginVertical:11,backgroundColor:'#fff'}}>
             <View style={styles.recommendProductTitle}>
               <View style={styles.recommendProductTitleColumnBar}/>
               <Text style={styles.recommendProductTitleText}>推荐产品</Text>
@@ -351,15 +342,45 @@ export default class HomeScreen extends React.Component {
             dotColor={'#999999'} activeDotColor={'#ff8f00'} 
             width={Dimensions.get('window').width}
             height={Math.floor(Dimensions.get('window').width * 440/750)}>
-              <View style={styles.recommendProductSlide}>
-                  <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={styles.recommendProductImage}/>
-                  <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                  <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+              <View style={{flexDirection:'row',padding:12,}}>
+                <View style={{alignItems:'center',
+    justifyContent:'center',
+    marginRight:12,
+  }}>
+                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
+            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
+                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
+                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+                </View>
+                <View style={{alignItems:'center',
+    justifyContent:'center',
+    marginLeft:12,
+  }}>
+                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
+            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
+                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
+                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+                </View>
               </View>
-              <View style={styles.recommendProductSlide}>
-                  <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={styles.recommendProductImage}/>
-                  <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                  <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+              <View style={{flexDirection:'row',padding:12,}}>
+                <View style={{alignItems:'center',
+    justifyContent:'center',
+    marginRight:12,
+  }}>
+                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
+            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
+                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
+                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+                </View>
+                <View style={{alignItems:'center',
+    justifyContent:'center',
+    marginLeft:12,
+  }}>
+                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
+            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
+                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
+                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+                </View>
               </View>
             </Swiper>
           </View>
@@ -516,46 +537,9 @@ const styles = StyleSheet.create({
     fontSize:12,
     color:'#c7c7c7',
   },
-  successCase:{
-
-  },
-  successCaseTitle:{
-    borderBottomWidth:1,
-    borderColor:'#888888',
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between',
-    marginHorizontal:22,
-    paddingVertical:22,
-  },
-  successCaseTitleColumnBar:{
-    width:4,
-    height:20,
-    backgroundColor:'red',
-    marginRight:22,
-  },
-  successCaseTitleText:{
-    fontSize:14,
-    color:'#888888',
-    flex:1,
-  },
-  successCaseTitleArrow:{
-  },
-  successCaseSwiper:{
-
-  },
-  successCaseSlide:{
-    width:133,
-    height:75,
-    marginHorizontal:1,
-    marginVertical:22,
-  },
-  recommendProduct:{
-    marginVertical:11,
-  },
   recommendProductTitle:{
     borderBottomWidth:1,
-    borderColor:'#888888',
+    borderColor:'rgb(229,229,229)',
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'space-between',
@@ -575,12 +559,6 @@ const styles = StyleSheet.create({
   },
   recommendProductSwiper:{
 
-  },
-  recommendProductSlide:{
-    alignItems:'center',
-    justifyContent:'center',
-  },
-  recommendProductImage:{
   },
   recommendProductName:{
     fontSize:13,
@@ -610,18 +588,15 @@ const styles = StyleSheet.create({
     color:'#888888',
     flex:1,
   },
-  listView:{
-    marginTop:64,
-    backgroundColor:'#fff',
-  },
   listViewItem:{
     flexDirection:'row',
     justifyContent:'space-between',
     alignItems:'center',
     marginHorizontal:22,
     borderBottomWidth:1,
-    borderColor:'#e5e5e5',
+    borderColor:'rgb(229,229,229)',
     backgroundColor:'#fff',
+    height:80,
   },
   listViewItemDot:{
     height:5,
