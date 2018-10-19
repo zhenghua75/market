@@ -28,6 +28,7 @@ import CatalogScreen from '../screens/CatalogScreen';
 import GoodsListScreen from '../screens/GoodsListScreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
 import ImageDetailScreen from '../screens/ImageDetailScreen';
+import ConstructionTeamDetailScreen from '../screens/ConstructionTeamDetailScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -163,6 +164,7 @@ const MainStack = createStackNavigator({
   GoodsList:GoodsListScreen,
   FindDetail:FindDetailScreen,
   ImageDetail:ImageDetailScreen,
+  ConstructionTeamDetail:ConstructionTeamDetailScreen
 });
 
 const AuthStack = createStackNavigator({
