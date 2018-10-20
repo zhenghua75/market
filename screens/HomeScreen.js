@@ -267,21 +267,29 @@ export default class HomeScreen extends React.Component {
             </View>
           </View>
           <View style={{backgroundColor:'#fff',}}>
-            <View style={styles.decorationStrategyTitle}>
-              <View style={styles.decorationStrategyTitleColumnBar}/>
-              <Text style={styles.decorationStrategyTitleText}>装修攻略</Text>
-              <Icon.Ionicons
-                name={'ios-arrow-forward'}
-                size={22}
-              />
-            </View>
+            <TouchableOpacity onPress={this._decorationStrategyList}>
+              <View style={{borderBottomWidth:1,
+                borderColor:'rgb(229,229,229)',
+                flexDirection:'row',
+                alignItems:'center',
+                justifyContent:'space-between',
+                marginHorizontal:22,
+                paddingVertical:22,}}>
+                <View style={styles.decorationStrategyTitleColumnBar}/>
+                <Text style={styles.decorationStrategyTitleText}>装修攻略</Text>
+                <Icon.Ionicons
+                  name={'ios-arrow-forward'}
+                  size={22}
+                />
+              </View>
+            </TouchableOpacity>
             <View style={{padding:12,backgroundColor:'#fff',}}>
               <View style={{}}>
                 <ImageBackground source={require('../assets/images/01首页部分/a01首页_15.png')} style={{
                   width:Dimensions.get('window').width-24,
                   height:Math.floor((Dimensions.get('window').width-24) * 190/349),
                   justifyContent:'flex-end',
-              }}>
+                }}>
                   <View style={{height:53,backgroundColor:'rgba(0,0,0,0.5)',}}>
                     <Text style={{
                       fontSize:14,
@@ -291,11 +299,9 @@ export default class HomeScreen extends React.Component {
                     }}>祝贺现代大师首家水漆产品通过美国LEED的VOC检测美国LEED的VOC检测</Text>
                   </View>
                 </ImageBackground>
-                
               </View>
             </View>
-            <View style={{
-    backgroundColor:'#fff',}}>
+            <View style={{backgroundColor:'#fff',}}>
               <View style={styles.listViewItem}>
                     <View style={styles.listViewItemDot} />
                     <Text style={styles.listViewItemText}>高于生活的艺术从家开始</Text>
@@ -439,6 +445,10 @@ export default class HomeScreen extends React.Component {
   _user = async () => {
     this.props.navigation.navigate('My');
   };
+
+  _decorationStrategyList = async () => {
+    this.props.navigation.navigate('DecorationStrategyList');
+  };
 }
 
 const styles = StyleSheet.create({
@@ -567,15 +577,6 @@ const styles = StyleSheet.create({
   recommendProductAttr:{
     fontSize:12,
     color:'#c7c7c7',
-  },
-  decorationStrategyTitle:{
-    borderBottomWidth:1,
-    borderColor:'rgb(229,229,229)',
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between',
-    marginHorizontal:22,
-    paddingVertical:22,
   },
   decorationStrategyTitleColumnBar:{
     width:4,

@@ -18,24 +18,22 @@ class MyListItem extends React.PureComponent {
     const textColor = this.props.selected ? "red" : "black";
     return (
       <TouchableOpacity onPress={this._onPress}>
-        <View style={{flexDirection:'row',backgroundColor:'#fff',borderBottomWidth:1,borderColor:'rgb(229,229,229)',}}>
-          <Image source={require('../assets/images/06个人中心/ico.png')} style={{height:49,width:49,padding:12,}}/>
-          <View style={{padding:12,flex:1,}}>
-            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-              <Text style={{ color: '#3f3f3f',fontSize:18 }}>{this.props.title}</Text>
-              <Text style={{fontSize:12,color:'#c7c7c7'}}>{this.props.date}</Text>
-            </View>
-            <Text style={{fontSize:12,color:'#c7c7c7'}}>{this.props.info}</Text>
-          </View>
+        <View style={{flexDirection:'row',backgroundColor:'#fff',
+          borderBottomWidth:1,borderColor:'#e5e5e5',justifyContent:'space-between',
+          paddingHorizontal:12,
+          paddingVertical:15,
+          }}>
+          <Text style={{ color: '#3f3f3f',fontSize:14 }}>{this.props.info}</Text>
+          <Text style={{fontSize:14,color:'#888888'}}>{this.props.date}</Text>
         </View>
       </TouchableOpacity>
     );
   }
 }
 
-export default class InfoListScreen extends React.Component {
+export default class DecorationStrategyListScreen extends React.Component {
   static navigationOptions = {
-    title: '消息列表',
+    title: '攻略',
     headerTitleStyle: {
       alignSelf: 'center',
       textAlign: 'center',
@@ -56,11 +54,11 @@ export default class InfoListScreen extends React.Component {
       return {selected};
     });
 
-    this._info();
+    this._detail();
   };
 
-  _info = async () => {
-    this.props.navigation.navigate('Info');
+  _detail = async () => {
+    this.props.navigation.navigate('DecorationStrategyDetail');
   };
 
   _renderItem = ({item}) => (
@@ -77,10 +75,13 @@ export default class InfoListScreen extends React.Component {
   render() {
     return (
       <FlatList
-        data={[{id:1,info: '有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息',title:'内建消息',date:'08:38'}, 
-        {id:2,info: '有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息',title:'内建消息',date:'昨天'}, 
-        {id:3,info: '有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息',title:'内建消息',date:'星期二'}, 
-        {id:4,info: '有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息有消息',title:'内建消息',date:'18/08/28'}, 
+        data={[
+          {id:1,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
+          {id:2,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
+          {id:3,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
+          {id:4,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
+          {id:5,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
+          {id:6,info: '这是2018年10月20日的一篇文章',date:'08:38'}, 
         ]}
         extraData={this.state}
         keyExtractor={this._keyExtractor}

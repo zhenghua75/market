@@ -32,8 +32,8 @@ export default class CatalogScreen extends React.Component {
     //const textColor = this.state.selected[item.id] ? '#ff8f00' : '#3f3f3f';
     return (
     <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}}>
-      <View style={{width:5,height:39,backgroundColor:'#ff8f00'}}/>
-      <Text style={{fontSize:14,color:'#ff8f00'}}>{item.name}</Text>
+      <View style={{width:5,height:44,backgroundColor:'#ff8f00',marginLeft:12,}}/>
+      <Text style={{fontSize:14,color:'#ff8f00',margin:15,}}>{item.name}</Text>
     </TouchableOpacity>
   )};
 

@@ -17,11 +17,15 @@ class MyListItem extends React.PureComponent {
   render() {
     const textColor = this.props.selected ? "red" : "black";
     return (
-      <View>
-        <Text style={{fontSize:12,color:'#c7c7c7',textAlign:'center'}}>{this.props.date}</Text>
-        <View style={{flexDirection:'row'}}>
-          <Image source={require('../assets/images/06个人中心/ico.png')} style={{height:49,width:49,}}/>
-          <Text style={{fontSize:12,color:'#c7c7c7'}}>{this.props.info}</Text>
+      <View style={{backgroundColor:'#e5e5e5',alignItems:'center',margin:27,}}>
+        <View style={{backgroundColor:'rgb(153,153,153)',width:67,height:23,}}>
+          <Text style={{fontSize:12,color:'#fff',textAlign:'center',}}>{this.props.date}</Text>
+        </View>
+        <View style={{flexDirection:'row',alignItems:'center',}}>
+          <Image source={require('../assets/images/06个人中心/ico.png')} style={{height:49,width:49,borderRadius:5}}/>
+          <View style={{backgroundColor:'#fff',padding:15,margin:12,borderRadius:5,}}>
+            <Text style={{fontSize:12,color:'#c7c7c7',}}>{this.props.info}</Text>
+          </View>
         </View>
       </View>
     );
@@ -31,6 +35,11 @@ class MyListItem extends React.PureComponent {
 export default class InfoScreen extends React.Component {
   static navigationOptions = {
     title: '消息内容',
+    headerTitleStyle: {
+      alignSelf: 'center',
+      textAlign: 'center',
+      width: '100%',
+    },
   };
 
   state = {selected: (new Map(): Map<string, boolean>)};
@@ -75,6 +84,7 @@ export default class InfoScreen extends React.Component {
         extraData={this.state}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
+        style={{backgroundColor:'#e5e5e5',padding:12,}}
       />
     );
   }
