@@ -43,12 +43,12 @@ export default class LinksScreen extends React.Component {
           </View>
         </View>
         <View style={{flexWrap:'wrap',flexDirection:'row',}}>
-          <View style={styles.result}>
+          <TouchableOpacity style={styles.result} onPress={this._detail}>
             <Image source={require('../assets/images/05商品/商品.png')} style={styles.resultImage}/>
             <Text style={styles.resultTextName}>远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单</Text>
             <Text style={styles.resultTextPrice}>¥38</Text>
             <Text style={styles.resultTextSale}>销量666</Text>
-          </View>
+          </TouchableOpacity>
           <View style={styles.result}>
             <Image source={require('../assets/images/05商品/商品.png')} style={styles.resultImage}/>
             <Text style={styles.resultTextName}>远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单</Text>
@@ -71,6 +71,10 @@ export default class LinksScreen extends React.Component {
       </ScrollView>
     );
   }
+
+  _detail = async () => {
+    this.props.navigation.navigate('GoodsDetail');
+  };
 }
 
 const styles = StyleSheet.create({

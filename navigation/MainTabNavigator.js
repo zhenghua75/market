@@ -31,6 +31,7 @@ import ImageDetailScreen from '../screens/ImageDetailScreen';
 import ConstructionTeamDetailScreen from '../screens/ConstructionTeamDetailScreen';
 import DecorationStrategyListScreen from '../screens/DecorationStrategyListScreen';
 import DecorationStrategyDetailScreen from '../screens/DecorationStrategyDetailScreen';
+import GoodsDetailScreen from '../screens/GoodsDetailScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -169,6 +170,7 @@ const MainStack = createStackNavigator({
   ConstructionTeamDetail:ConstructionTeamDetailScreen,
   DecorationStrategyList:DecorationStrategyListScreen,
   DecorationStrategyDetail:DecorationStrategyDetailScreen,
+  GoodsDetail:GoodsDetailScreen,
 });
 
 const AuthStack = createStackNavigator({
