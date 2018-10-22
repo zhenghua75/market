@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   Text,
+  TouchableOpacity,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -31,13 +32,13 @@ export default class GoodsDetailScreen extends React.Component {
           width={Dimensions.get('window').width}
           height={Math.floor(Dimensions.get('window').width * 564/750)}>
           <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')} style={styles.swiperImage}/>
+            <Image source={require('../assets/images/05商品/banner.png')}/>
           </View>
           <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')} style={styles.swiperImage}/>
+            <Image source={require('../assets/images/05商品/banner.png')}/>
           </View>
           <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')} style={styles.swiperImage}/>
+            <Image source={require('../assets/images/05商品/banner.png')}/>
           </View>
         </Swiper>
         <View style={{padding:12,}}>
@@ -89,18 +90,60 @@ export default class GoodsDetailScreen extends React.Component {
               <Text style={{fontSize:14,color:'#888888',marginTop:7}}>促销</Text>
             </View>
           </View>
-          <View style={{flexDirection:'row',justifyContent:'space-around',}}>
-            <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',}}>
+          <View style={{flexDirection:'row',justifyContent:'space-around',borderBottomWidth:1,borderColor:'#e5e5e5',
+            marginHorizontal:12,paddingVertical:12,
+          }}>
+            <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
               <Text style={{fontSize:16,color:'#3f3f3f'}}>全部商品</Text>
             </View>
-            <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',}}>
-              <Text style={{fontSize:16,color:'#3f3f3f'}}>进店逛逛</Text>
+            <TouchableOpacity onPress={this._store}>
+              <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
+                <Text style={{fontSize:16,color:'#3f3f3f'}}>进店逛逛</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{flexDirection:'row',justifyContent:'space-around',
+            marginHorizontal:12,paddingVertical:12,
+          }}>
+            <View style={{}}>
+              <Text style={{fontSize:16,color:'#ff8f00'}}>商品描述</Text>
             </View>
+            <View style={{}}>
+              <Text style={{fontSize:16,color:'#3f3f3f'}}>规格参数</Text>
+            </View>
+          </View>
+        </View>
+        <Image source={require('../assets/images/05商品/detail.png')} style={{
+          width:Dimensions.get('window').width,
+          height:Math.floor(Dimensions.get('window').width * 1591/750),
+        }}/>
+        <View style={{marginTop:50,flexDirection:'row',}}>
+          <View style={{alignItems:'center',flex:0.14,}}>
+            <Image source={require('../assets/images/05商品/收藏选中.png')}/>
+            <Text>收藏</Text>
+          </View>
+          <View style={{alignItems:'center',flex:0.14,}}>
+            <Image source={require('../assets/images/05商品/购物车.png')}/>
+            <Text>购物车</Text>
+          </View>
+          <View style={{alignItems:'center',flex:0.14,}}>
+            <Image source={require('../assets/images/05商品/客服.png')}/>
+            <Text>客服</Text>
+          </View>
+          <View style={{backgroundColor:'#e58810',flex:0.3,alignItems:'center',justifyContent:'center'}}>
+            <Text style={{fontSize:19,color:'#fff'}}>加入购物车</Text>
+          </View>
+          <View style={{backgroundColor:'#ff8f00',flex:0.3,alignItems:'center',justifyContent:'center'}}>
+            <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
           </View>
         </View>
       </ScrollView>
     );
   }
+
+  _store = async () => {
+    this.props.navigation.navigate('Store');
+  };
 }
 
 const styles = StyleSheet.create({
