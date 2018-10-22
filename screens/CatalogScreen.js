@@ -12,6 +12,11 @@ import {
 export default class CatalogScreen extends React.Component {
   static navigationOptions = {
     title: '分类',
+    headerTitleStyle: {
+      alignSelf: 'center',
+      textAlign: 'center',
+      width: '100%',
+    },
   };
 
   state = {selected: (new Map(): Map<string, boolean>)};

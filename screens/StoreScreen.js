@@ -21,9 +21,9 @@ export default class LinksScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        <View>
+        <View style={{flexDirection:'row',alignItems:'center',padding:12,}}>
           <Image source={require('../assets/images/14店铺首页/图层1.png')}/>
-          <Text>悄悄家用物品店</Text>
+          <Text style={{fontSize:14,color:'#3F3F3F',marginLeft:10,}}>悄悄家用物品店</Text>
         </View>
         <View style={{height:65,alignItems:'center',backgroundColor:'#fff'}}>
           <View style={{margin:12,height:36,
