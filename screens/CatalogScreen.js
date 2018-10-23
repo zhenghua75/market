@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  SectionList,
    } from 'react-native';
 
 export default class CatalogScreen extends React.Component {
@@ -21,51 +22,65 @@ export default class CatalogScreen extends React.Component {
   };
 
   state = {
-    selected: (new Map(): Map<string, boolean>),
+    selected:'0',
+    list:[],
     list1:[{'cat_id':'0','parent_id':'0','cat_name':'没有',}],
-    list2:[{'cat_id':'00','cat_name':'没有',}],
-    list3:[{'cat_id':'000','cat_name':'没有',}],
+    list2:[{'cat_id':'00','cat_name':'没有','data':[{'cat_name':'没有','data':[]}]}],
   };
 
   _keyExtractor = (item, index) => item.cat_id;
 
   _onPressItem = (id: string) => {
-    // updater functions are preferred for transactional updates
-    this.setState((state) => {
-      // copy the map rather than modifying state.
-      const selected = new Map(state.selected);
-      selected.set(id, !selected.get(id)); // toggle
-      return {selected};
-    });
+    this.setState({selected:id});
+    let list2 = this.state.list.filter((item) => { return item.parent_id == id});
+    for (var i = 0; i < list2.length; i++) {
+      let list3 = this.state.list.filter((item) => { return item.parent_id == list2[i].cat_id});
+      list2[i]['data'] = [{'data':list3}];
+    }
+    this.setState({list2:list2,});
   };
 
   _renderItem = ({item, index, section}) => {
-    //this._onPressItem(item.cat_id);
-    console.log(this.state.selected);
-    let selected= !!this.state.selected.get(item.cat_id);
-    console.log(selected);
-    if(selected)
-      return (
+    let selected= item.cat_id==this.state.selected;
+    const viewColor = selected?'#ff8f00':'#f5f5f5';
+    const textColor = selected?'#ff8f00':'#3f3f3f';
+    return (
         <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}} onPress={() => this._onPressItem(item.cat_id)}>
-          <View style={{width:5,height:44,backgroundColor:'#ff8f00',marginLeft:12,}}/>
-          <Text style={{fontSize:14,color:'#ff8f00',margin:15,}}>{item.cat_name}</Text>
-        </TouchableOpacity>
-      );
-    else
-      return (
-        <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}} onPress={() => this._onPressItem(item.cat_id)}>
-          <Text style={{fontSize:14,color:'#3f3f3f',margin:15,}}>{item.cat_name}</Text>
+          <View style={{width:5,height:44,backgroundColor: viewColor,marginLeft:12,}}/>
+          <Text style={{fontSize:14,color: textColor,margin:15,}}>{item.cat_name}</Text>
         </TouchableOpacity>
       );
   };
 
-  _renderItem2 = ({item, index, section}) => {
+  _renderItem3 = ({item, index, section}) => {
+    if(item.cat_icon){
+      console.log(item.cat_icon);
+    }
     return (
-    <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-      <Image source={require('../assets/images/03分类/1.png')} style={styles.img}/>
-      <Text style={styles.txt}>{item.cat_name}</Text>
-    </TouchableOpacity>
-  )};
+      <TouchableOpacity style={styles.box} onPress={() => this._goodsList(item.cat_id)}>
+        <Image source={require('../assets/images/03分类/1.png')} style={styles.img}/>
+        <Text style={styles.txt}>{item.cat_name}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  _renderItem2 = ({item, index, section}) => {
+    let cols = Math.floor((Dimensions.get('window').width-200)/50);
+    return (
+      <FlatList
+        data={item.data}
+        renderItem={this._renderItem3}
+        numColumns={cols}
+        keyExtractor={this._keyExtractor}
+      />
+    );
+  };
+
+  _renderHeader = ({section: {cat_name}}) => (
+    <View style={{flexDirection:'row',flex:1,justifyContent: 'center',}}>
+      <Text style={{fontWeight: 'bold'}}>{cat_name}</Text>
+    </View>
+  );
 
   _getCatalog=async () =>{
     try {
@@ -76,9 +91,14 @@ export default class CatalogScreen extends React.Component {
       if(responseJson.error != 0){
         throw responseJson;
       }
-      let list1 = responseJson.info.list.filter(this._filter1);
-      let list2 = responseJson.info.list.filter(this._filter2);
-      this.setState({list1:list1,list2:list2,});
+      let list = responseJson.info.list;
+      let list1 = list.filter(this._filter1);
+      let list2 = list.filter(this._filter2);
+      list2.forEach((element) => {
+        let list3 = list.filter((item) => {return element.cat_id == item.parent_id;});
+        element['data'] = [{'data':list3,}];
+      });
+      this.setState({list:list, list1:list1, list2:list2, });
     } catch (error) {
       console.error(error);
     }
@@ -87,29 +107,15 @@ export default class CatalogScreen extends React.Component {
   _filter1=(item) => {
     return item.parent_id == '0';
   };
+
   _filter2=(item) => {
     return item.parent_id != '0';
-  };
-  _filter3 = (list,list1) => {
-    let list2 = [];
-    list.forEach((item,index) => {
-      let found = list1.find(function(element) {
-        return element.cat_id == item.parent_id;
-      });
-      if(found){
-        list2.push(item);
-      }
-    })
-    return list2;
   };
 
   componentWillMount() {
     this._getCatalog();
-    // [
-    //           {id:'1',name:'五金工具'}, 
-    //           {id:'2',name:'建筑耗材'}, 
-    //         ]
   }
+
   render() {
     let cols = Math.floor((Dimensions.get('window').width-200)/50);
     return (
@@ -123,19 +129,19 @@ export default class CatalogScreen extends React.Component {
           />
         </View>
         <View style={{flex: 1, flexDirection: 'row',justifyContent:'flex-start',flexWrap:'wrap'}}>
-          <FlatList horizontal={false} numColumns={cols}
-            data={this.state.list2}
-            extraData={this.state}
-            keyExtractor={this._keyExtractor}
+          <SectionList
             renderItem={this._renderItem2}
+            renderSectionHeader={this._renderHeader}
+            sections={this.state.list2}
+            keyExtractor={(item, index) => item.cat_id}
           />
         </View>
       </ScrollView>
     );
   }
 
-  _goodsList = async () => {
-    this.props.navigation.navigate('GoodsList');
+  _goodsList = async (cat_id) => {
+    this.props.navigation.navigate('GoodsList',{'cat_id':cat_id});
   };
 }
 
@@ -159,6 +165,6 @@ const styles = StyleSheet.create({
   },
   txt:{
     fontSize:12,
-    color:'#88888888',
+    color:'#888888',
   },
 });
