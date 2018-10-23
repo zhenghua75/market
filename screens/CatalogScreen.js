@@ -41,13 +41,23 @@ export default class CatalogScreen extends React.Component {
 
   _renderItem = ({item, index, section}) => {
     //this._onPressItem(item.cat_id);
-    //const textColor = this.state.selected[item.cat_id] ? '#ff8f00' : '#3f3f3f';
-    return (
-    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}}>
-      <View style={{width:5,height:44,backgroundColor:'#ff8f00',marginLeft:12,}}/>
-      <Text style={{fontSize:14,color:'#ff8f00',margin:15,}}>{item.cat_name}</Text>
-    </TouchableOpacity>
-  )};
+    console.log(this.state.selected);
+    let selected= !!this.state.selected.get(item.cat_id);
+    console.log(selected);
+    if(selected)
+      return (
+        <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}} onPress={() => this._onPressItem(item.cat_id)}>
+          <View style={{width:5,height:44,backgroundColor:'#ff8f00',marginLeft:12,}}/>
+          <Text style={{fontSize:14,color:'#ff8f00',margin:15,}}>{item.cat_name}</Text>
+        </TouchableOpacity>
+      );
+    else
+      return (
+        <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}} onPress={() => this._onPressItem(item.cat_id)}>
+          <Text style={{fontSize:14,color:'#3f3f3f',margin:15,}}>{item.cat_name}</Text>
+        </TouchableOpacity>
+      );
+  };
 
   _renderItem2 = ({item, index, section}) => {
     return (
