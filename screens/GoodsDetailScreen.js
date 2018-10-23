@@ -21,7 +21,34 @@ export default class GoodsDetailScreen extends React.Component {
     },
   };
 
+  state={
+    'info':{},
+  };
+
+  _getGoods=async (goods_id) =>{
+    try {
+      let response = await fetch(
+        'http://jc.ynweix.com/api.php?app_key=E6E3D813-4809-4C98-8D34-A14C7C493A7C&method=dsc.goods.info.get&format=json&goods_id='+goods_id
+      );
+      let responseJson = await response.json();
+      if(responseJson.error > 1){
+        throw responseJson;
+      }
+      let info = responseJson.info;
+      this.setState({info:info, });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  componentWillMount() {
+    const { navigation } = this.props;
+    let goods_id = navigation.getParam('goods_id');
+    this._getGoods(goods_id);
+  }
+
   render() {
+    let info = this.state.info;
     return (
       <ScrollView style={styles.container}>
         <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
@@ -32,7 +59,10 @@ export default class GoodsDetailScreen extends React.Component {
           width={Dimensions.get('window').width}
           height={Math.floor(Dimensions.get('window').width * 564/750)}>
           <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')}/>
+            <Image source={{uri:'http://jc.ynweix.com/'+info.goods_img}} style={{
+              width:Dimensions.get('window').width,
+              height:Math.floor(Dimensions.get('window').width * 564/750)
+            }}/>
           </View>
           <View style={styles.slide}>
             <Image source={require('../assets/images/05商品/banner.png')}/>
@@ -42,17 +72,17 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
         </Swiper>
         <View style={{padding:12,}}>
-          <Text style={{fontSize:16,color:'#3f3f3f',}}>三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大三股大</Text>
+          <Text style={{fontSize:16,color:'#3f3f3f',}}>{info.goods_name}</Text>
           <View style={{flexDirection:'row',alignItems:'center',marginTop:26,}}>
-            <Text style={{fontSize:19,color:'#ff8f00',}}>¥38.00</Text>
-            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥49.00</Text>
+            <Text style={{fontSize:19,color:'#ff8f00',}}>¥{info.market_price}</Text>
+            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥{info.shop_price}</Text>
           </View>
           <View style={{flexDirection:'row',}}>
             <View style={{flexDirection:'row',flex:0.5,}}>
-              <Text style={{fontSize:14,color:'#999999',}}>快递：包邮</Text>
-              <Text style={{fontSize:14,color:'#999999',marginLeft:30}}>销量：4527件</Text>
+              <Text style={{fontSize:14,color:'#999999',}}>快递：{info.is_shipping=='1'?'免邮':info.shipping_fee}</Text>
+              <Text style={{fontSize:14,color:'#999999',marginLeft:30}}>销量：{info.sales_volume}件</Text>
             </View>
-            <Text style={{fontSize:14,color:'#999999',flex:0.5,textAlign:'right',}}>重庆市</Text>
+            <Text style={{fontSize:14,color:'#999999',flex:0.5,textAlign:'right',}}>{info.user_id=='0'?'自营':'其他'}</Text>
           </View>
         </View>
         <View style={{flexDirection:'row',alignItems:'center',padding:12,backgroundColor:'#e5e5e5',}}>
