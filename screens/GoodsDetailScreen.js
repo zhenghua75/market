@@ -7,9 +7,12 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
+  Modal,
+  TouchableHighlight,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
+import ImageZoom from 'react-native-image-pan-zoom';
 
 export default class GoodsDetailScreen extends React.Component {
   static navigationOptions = {
@@ -23,6 +26,10 @@ export default class GoodsDetailScreen extends React.Component {
 
   state={
     'info':{},
+    'list':[],
+    'visibleSwiper': false,
+    visibleModal: false,
+    img_url:'',
   };
 
   _getGoods=async (goods_id) =>{
@@ -41,36 +48,73 @@ export default class GoodsDetailScreen extends React.Component {
     }
   };
 
+  _getGoodsGallery=async (goods_id) =>{
+    try {
+      let response = await fetch(
+        'http://jc.ynweix.com/api.php?app_key=E6E3D813-4809-4C98-8D34-A14C7C493A7C&method=dsc.goods.gallery.list.get&format=json&goods_id='+goods_id
+      );
+      let responseJson = await response.json();
+      if(responseJson.error > 1){
+        throw responseJson;
+      }
+      let list = responseJson.info.list;
+      this.setState({list:list, });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   componentWillMount() {
     const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
     this._getGoods(goods_id);
+    this._getGoodsGallery(goods_id);
   }
+
+  componentDidMount() {
+   setTimeout(() => {
+      this.setState({
+        visibleSwiper: true
+      });
+   }, 100);
+  }
+
+  _modal = (img_url) => {
+    this.setState({visibleModal:true, img_url:img_url});
+  };
 
   render() {
     let info = this.state.info;
+    let swiper = null;
+    let modal = null;
+    
+    if (this.state.visibleSwiper) {
+      swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+        width={Dimensions.get('window').width}
+        height={Math.floor(Dimensions.get('window').width * 564/750)}
+        removeClippedSubviews={false}
+        autoplay={true}>
+        {this.state.list.map((item, key) => {
+          return (
+            <TouchableOpacity key={key} onPress={() => this._modal(item.img_url)}>
+              <Image source={{uri:'http://jc.ynweix.com/'+item.img_url}} style={{
+                width:Dimensions.get('window').width,
+                height:Math.floor(Dimensions.get('window').width * 564/750)
+              }}/>
+            </TouchableOpacity>
+          )
+        })}
+      </Swiper>;
+    } else {
+      swiper = <View></View>;
+    }
     return (
       <ScrollView style={styles.container}>
         <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
           <Text style={{fontSize:16,color:'#3f3f3f',}}>商品</Text>
           <Text style={{fontSize:16,color:'#ff8f00',}}>评论</Text>
         </View>
-        <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-          width={Dimensions.get('window').width}
-          height={Math.floor(Dimensions.get('window').width * 564/750)}>
-          <View style={styles.slide}>
-            <Image source={{uri:'http://jc.ynweix.com/'+info.goods_img}} style={{
-              width:Dimensions.get('window').width,
-              height:Math.floor(Dimensions.get('window').width * 564/750)
-            }}/>
-          </View>
-          <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')}/>
-          </View>
-          <View style={styles.slide}>
-            <Image source={require('../assets/images/05商品/banner.png')}/>
-          </View>
-        </Swiper>
+        {swiper}
         <View style={{padding:12,}}>
           <Text style={{fontSize:16,color:'#3f3f3f',}}>{info.goods_name}</Text>
           <View style={{flexDirection:'row',alignItems:'center',marginTop:26,}}>
@@ -167,6 +211,32 @@ export default class GoodsDetailScreen extends React.Component {
             <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
           </View>
         </View>
+        <Modal visible={this.state.visibleModal} transparent={false}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{marginTop: 22}}>
+            <View>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({visibleModal: !this.state.visibleModal});
+                }}>
+                <Text>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+          <ImageZoom 
+            cropWidth={Dimensions.get('window').width}
+            cropHeight= {Dimensions.get('window').height}
+            imageWidth={Dimensions.get('window').width}
+            imageHeight={Math.floor(Dimensions.get('window').width * 564/750)}>
+            <Image style={{
+              width:Dimensions.get('window').width,
+              height:Math.floor(Dimensions.get('window').width * 564/750)
+            }}
+              source={{uri:'http://jc.ynweix.com/'+this.state.img_url}}/>
+          </ImageZoom>
+        </Modal>
       </ScrollView>
     );
   }
