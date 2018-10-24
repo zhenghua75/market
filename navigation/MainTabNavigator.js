@@ -33,6 +33,7 @@ import DecorationStrategyListScreen from '../screens/DecorationStrategyListScree
 import DecorationStrategyDetailScreen from '../screens/DecorationStrategyDetailScreen';
 import GoodsDetailScreen from '../screens/GoodsDetailScreen';
 import StoreScreen from '../screens/StoreScreen';
+import StoreInScreen from '../screens/StoreInScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -173,6 +174,7 @@ const MainStack = createStackNavigator({
   DecorationStrategyDetail:DecorationStrategyDetailScreen,
   GoodsDetail:GoodsDetailScreen,
   Store:StoreScreen,
+  StoreIn:StoreInScreen,
 });
 
 const AuthStack = createStackNavigator({

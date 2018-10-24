@@ -158,7 +158,7 @@ export default class HomeScreen extends React.Component {
               </View>
             </View>
             <View style={{flexDirection:'row',}}>
-              <TouchableOpacity style={{flex:1,margin:10,}}>
+              <TouchableOpacity style={{flex:1,margin:10,}} onPress={this._storeIn}>
                 <View style={{flex:1,height:36,backgroundColor:'#f2f6fd',borderRadius:1.5,justifyContent:'center',}}>
                   <Text style={{fontSize:14,color:'#3f3f3f',textAlign:'center'}}>商家入驻</Text>
                 </View>
@@ -448,6 +448,10 @@ export default class HomeScreen extends React.Component {
 
   _decorationStrategyList = async () => {
     this.props.navigation.navigate('DecorationStrategyList');
+  };
+
+  _storeIn = async () => {
+    this.props.navigation.navigate('StoreIn');
   };
 }
 
