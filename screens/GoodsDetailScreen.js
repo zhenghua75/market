@@ -213,15 +213,14 @@ export default class GoodsDetailScreen extends React.Component {
         </View>
         <Modal visible={this.state.visibleModal} transparent={false}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
           }}>
           <View style={{marginTop: 22}}>
-            <View>
-              <TouchableHighlight
+            <View style={{justifyContent:'flex-end',}}>
+              <TouchableHighlight style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
                 onPress={() => {
                   this.setState({visibleModal: !this.state.visibleModal});
                 }}>
-                <Text>Hide Modal</Text>
+                <Text style={{color:'white'}}>X</Text>
               </TouchableHighlight>
             </View>
           </View>
