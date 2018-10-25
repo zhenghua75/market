@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
+  WebView,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -87,7 +88,7 @@ export default class GoodsDetailScreen extends React.Component {
     let info = this.state.info;
     let swiper = null;
     let modal = null;
-    
+    console.log(info.goods_desc);
     if (this.state.visibleSwiper) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
         width={Dimensions.get('window').width}
@@ -111,8 +112,10 @@ export default class GoodsDetailScreen extends React.Component {
     return (
       <ScrollView style={styles.container}>
         <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
-          <Text style={{fontSize:16,color:'#3f3f3f',}}>商品</Text>
-          <Text style={{fontSize:16,color:'#ff8f00',}}>评论</Text>
+          <Text style={{fontSize:16,color:'#ff8f00',textAlign:'center',flex:1}}>商品</Text>
+          <TouchableOpacity style={{flex:1,}} onPress={this._comment}>
+          	<Text style={{fontSize:16,color:'#3f3f3f',textAlign:'center',}}>评论</Text>
+          </TouchableOpacity>
         </View>
         {swiper}
         <View style={{padding:12,}}>
@@ -187,10 +190,8 @@ export default class GoodsDetailScreen extends React.Component {
             </View>
           </View>
         </View>
-        <Image source={require('../assets/images/05商品/detail.png')} style={{
-          width:Dimensions.get('window').width,
-          height:Math.floor(Dimensions.get('window').width * 1591/750),
-        }}/>
+        
+        <WebView source={{html:info.goods_desc}}/>
         <View style={{marginTop:50,flexDirection:'row',}}>
           <View style={{alignItems:'center',flex:0.14,}}>
             <Image source={require('../assets/images/05商品/收藏选中.png')}/>
@@ -211,11 +212,12 @@ export default class GoodsDetailScreen extends React.Component {
             <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
           </View>
         </View>
-        <Modal visible={this.state.visibleModal} transparent={false}
+        <Modal visible={this.state.visibleModal} 
+        	transparent={false}
+        	style={{backgroundColor:'black',}}
           onRequestClose={() => {
           }}>
-          <View style={{marginTop: 22}}>
-            <View style={{justifyContent:'flex-end',}}>
+          <View style={{alignItems:'flex-end',backgroundColor:'black',}}>
               <TouchableHighlight style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
                 onPress={() => {
                   this.setState({visibleModal: !this.state.visibleModal});
@@ -223,12 +225,12 @@ export default class GoodsDetailScreen extends React.Component {
                 <Text style={{color:'white'}}>X</Text>
               </TouchableHighlight>
             </View>
-          </View>
-          <ImageZoom 
+          <ImageZoom style={{backgroundColor:'black',}}
             cropWidth={Dimensions.get('window').width}
-            cropHeight= {Dimensions.get('window').height}
+            cropHeight= {Dimensions.get('window').height-66}
             imageWidth={Dimensions.get('window').width}
-            imageHeight={Math.floor(Dimensions.get('window').width * 564/750)}>
+            imageHeight={Math.floor(Dimensions.get('window').width * 564/750)}
+            tintColor={'black'}>
             <Image style={{
               width:Dimensions.get('window').width,
               height:Math.floor(Dimensions.get('window').width * 564/750)
@@ -242,6 +244,12 @@ export default class GoodsDetailScreen extends React.Component {
 
   _store = async () => {
     this.props.navigation.navigate('Store');
+  };
+
+  _comment = async () => {
+  	const { navigation } = this.props;
+    let goods_id = navigation.getParam('goods_id');
+    this.props.navigation.navigate('GoodsDetailComment',{'goods_id':goods_id});
   };
 }
 
