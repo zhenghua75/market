@@ -48,17 +48,29 @@ export default class CatalogScreen extends React.Component {
     const viewColor = selected?'#ff8f00':'#f5f5f5';
     const textColor = selected?'#ff8f00':'#3f3f3f';
     const { manifest } = Constants;
+    let img = null;
+    let width = 134;
+    if(item.touch_icon){
+      img = <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:22,height:22,marginLeft:12,}}/>;
+      width = 90;
+    }
     return (
         <TouchableOpacity style={{flexDirection:'row',alignItems:'center',padding:12,}} onPress={() => this._onPressItem(item.cat_id)}>
           <View style={{width:5,height:44,backgroundColor: viewColor,}}/>
-          <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:22,height:22,marginLeft:12,}}/>
-          <Text style={{fontSize:14,color: textColor,marginLeft:12,width:90}}>{item.cat_name}</Text>
+          {img}
+          <Text style={{fontSize:14,color: textColor,marginLeft:12,width:width}}>{item.cat_name}</Text>
         </TouchableOpacity>
       );
   };
 
   _renderItem3 = ({item, index, section}) => {
     const { manifest } = Constants;
+    let img = <Image source={require('../assets/images/list.png')} style={{width:32,
+          height:32,}}/>;
+    if(item.touch_icon){
+      img = <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:49,
+          height:36,}}/>
+    }
     return (
       <TouchableOpacity style={{alignItems:'center',
         justifyContent:'center',
@@ -66,8 +78,7 @@ export default class CatalogScreen extends React.Component {
         width:80,
         padding:12,
       }} onPress={() => this._goodsList(item.cat_id)}>
-        <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:49,
-          height:36,}}/>
+        {img}
         <Text style={{fontSize:12,
           color:'#888888',}}>{item.cat_name}</Text>
       </TouchableOpacity>
@@ -131,7 +142,7 @@ export default class CatalogScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={{flexDirection:'row',}}>
-        <View style={{backgroundColor:'#f5f5f5',width:150,}}>
+        <View style={{backgroundColor:'#f5f5f5',width:180,}}>
           <FlatList
             data={this.state.list1}
             keyExtractor={this._keyExtractor}

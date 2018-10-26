@@ -10,10 +10,30 @@ import {
   Modal,
   TouchableHighlight,
   WebView,
+  Platform,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
 import ImageZoom from 'react-native-image-pan-zoom';
+
+const BaseScript =
+    `
+    (function () {
+        var height = null;
+        function changeHeight() {
+          if (document.body.scrollHeight != height) {
+            height = document.body.scrollHeight;
+            if (window.postMessage) {
+              window.postMessage(JSON.stringify({
+                type: 'setHeight',
+                height: height,
+              }))
+            }
+          }
+        }
+        setInterval(changeHeight, 100);
+    } ())
+    `;
 
 export default class GoodsDetailScreen extends React.Component {
   static navigationOptions = {
@@ -31,6 +51,7 @@ export default class GoodsDetailScreen extends React.Component {
     'visibleSwiper': false,
     visibleModal: false,
     img_url:'',
+    height:0,
   };
 
   _getGoods=async (goods_id) =>{
@@ -43,7 +64,7 @@ export default class GoodsDetailScreen extends React.Component {
         throw responseJson;
       }
       let info = responseJson.info;
-      this.setState({info:info, });
+      this.setState({info:info,html:info.goods_desc });
     } catch (error) {
       console.error(error);
     }
@@ -84,11 +105,21 @@ export default class GoodsDetailScreen extends React.Component {
     this.setState({visibleModal:true, img_url:img_url});
   };
 
+  onMessage (event) {
+    try {
+      const action = JSON.parse(event.nativeEvent.data)
+      if (action.type === 'setHeight' && action.height > 0) {
+        this.setState({ height: action.height })
+      }
+    } catch (error) {
+      // pass
+    }
+  };
+
   render() {
     let info = this.state.info;
     let swiper = null;
     let modal = null;
-    console.log(info.goods_desc);
     if (this.state.visibleSwiper) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
         width={Dimensions.get('window').width}
@@ -191,7 +222,15 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
         </View>
         
-        <WebView source={{html:info.goods_desc}}/>
+        <WebView originWhitelist={['*']} 
+          source={{ html: '<html><head><meta name="viewport" content="width=device-width, initial-scale=1"/></head><body>'
+            +info.goods_desc+'</body></html>'}} 
+          style={{width:Dimensions.get('window').width,
+            height:this.state.height,}}
+          injectedJavaScript={BaseScript}
+          onMessage={this.onMessage.bind(this)}
+          scalesPageToFit={true}
+        />
         <View style={{marginTop:50,flexDirection:'row',}}>
           <View style={{alignItems:'center',flex:0.14,}}>
             <Image source={require('../assets/images/05商品/收藏选中.png')}/>
