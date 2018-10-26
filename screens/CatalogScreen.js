@@ -11,6 +11,9 @@ import {
   SectionList,
    } from 'react-native';
 
+import { Constants } from 'expo';
+import getApiUrl from '../constants/Api';
+
 export default class CatalogScreen extends React.Component {
   static navigationOptions = {
     title: '分类',
@@ -44,28 +47,35 @@ export default class CatalogScreen extends React.Component {
     let selected= item.cat_id==this.state.selected;
     const viewColor = selected?'#ff8f00':'#f5f5f5';
     const textColor = selected?'#ff8f00':'#3f3f3f';
+    const { manifest } = Constants;
     return (
-        <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}} onPress={() => this._onPressItem(item.cat_id)}>
-          <View style={{width:5,height:44,backgroundColor: viewColor,marginLeft:12,}}/>
-          <Text style={{fontSize:14,color: textColor,margin:15,}}>{item.cat_name}</Text>
+        <TouchableOpacity style={{flexDirection:'row',alignItems:'center',padding:12,}} onPress={() => this._onPressItem(item.cat_id)}>
+          <View style={{width:5,height:44,backgroundColor: viewColor,}}/>
+          <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:22,height:22,marginLeft:12,}}/>
+          <Text style={{fontSize:14,color: textColor,marginLeft:12,width:90}}>{item.cat_name}</Text>
         </TouchableOpacity>
       );
   };
 
   _renderItem3 = ({item, index, section}) => {
-    if(item.cat_icon){
-      console.log(item.cat_icon);
-    }
+    const { manifest } = Constants;
     return (
-      <TouchableOpacity style={styles.box} onPress={() => this._goodsList(item.cat_id)}>
-        <Image source={require('../assets/images/03分类/1.png')} style={styles.img}/>
-        <Text style={styles.txt}>{item.cat_name}</Text>
+      <TouchableOpacity style={{alignItems:'center',
+        justifyContent:'center',
+        height:80,
+        width:80,
+        padding:12,
+      }} onPress={() => this._goodsList(item.cat_id)}>
+        <Image source={{uri:manifest.extra.imageServer+item.touch_icon}} style={{width:49,
+          height:36,}}/>
+        <Text style={{fontSize:12,
+          color:'#888888',}}>{item.cat_name}</Text>
       </TouchableOpacity>
     );
   };
 
   _renderItem2 = ({item, index, section}) => {
-    let cols = Math.floor((Dimensions.get('window').width-200)/50);
+    let cols = Math.floor((Dimensions.get('window').width-180)/80);
     return (
       <FlatList
         data={item.data}
@@ -76,17 +86,19 @@ export default class CatalogScreen extends React.Component {
     );
   };
 
-  _renderHeader = ({section: {cat_name}}) => (
-    <View style={{flexDirection:'row',flex:1,justifyContent: 'center',}}>
-      <Text style={{fontWeight: 'bold'}}>{cat_name}</Text>
+  _renderHeader = ({section: {cat_name,touch_icon}}) => (
+    <View style={{flexDirection:'row',flex:1,justifyContent: 'center',alignItems:'center',}}>
+      <Image source={{uri:Constants.manifest.extra.imageServer+touch_icon}} style={{width:22,height:22,}}/>
+      <Text style={{fontWeight: 'bold',marginLeft:12,}}>{cat_name}</Text>
     </View>
   );
 
+  
+
   _getCatalog=async () =>{
     try {
-      let response = await fetch(
-        'http://jc.ynweix.com/api.php?app_key=E6E3D813-4809-4C98-8D34-A14C7C493A7C&method=dsc.category.list.get&format=json&page_size=10000'
-      );
+      let url = getApiUrl({'method':'dsc.category.list.get','page_size':10000});
+      let response = await fetch(url);
       let responseJson = await response.json();
       if(responseJson.error != 0){
         throw responseJson;
@@ -117,25 +129,23 @@ export default class CatalogScreen extends React.Component {
   }
 
   render() {
-    let cols = Math.floor((Dimensions.get('window').width-200)/50);
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <View style={{width:200,backgroundColor:'#f5f5f5'}}>
+      <ScrollView style={styles.container} contentContainerStyle={{flexDirection:'row',}}>
+        <View style={{backgroundColor:'#f5f5f5',width:150,}}>
           <FlatList
             data={this.state.list1}
-            extraData={this.state}
             keyExtractor={this._keyExtractor}
             renderItem={this._renderItem}
+            style={{backgroundColor:'#f5f5f5',flex:1,}}
           />
         </View>
-        <View style={{flex: 1, flexDirection: 'row',justifyContent:'flex-start',flexWrap:'wrap'}}>
-          <SectionList
+        <SectionList
             renderItem={this._renderItem2}
             renderSectionHeader={this._renderHeader}
             sections={this.state.list2}
             keyExtractor={(item, index) => item.cat_id}
+            style={{flex:1,}}
           />
-        </View>
       </ScrollView>
     );
   }
@@ -149,22 +159,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  contentContainer: {
-    flexDirection:'row',
-  },
-  box:{
-    alignItems:'center',
-    justifyContent:'center',
-    height:80,
-    width:80,
-  },
-  img:{
-    width:49,
-    height:36,
-  },
-  txt:{
-    fontSize:12,
-    color:'#888888',
   },
 });
