@@ -19,14 +19,47 @@ export default class MyScreen extends React.Component {
     title: '个人中心',
   };
 
+  state={
+    nick_name:null,
+    user_picture:'http://jc.ynweix.com/data/images_user/19_120.jpg',
+  };
+  _getUserInfo=async () =>{
+    try {
+      var data = {
+        'Action':'GetUserInfo',
+        'token':'bebf4cf9e3227d5aef8760ffde9c7f1c',
+      };
+      //
+      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
+      });
+      let responseJson = await response.json();
+      console.log(responseJson);
+      if(!responseJson.Result){
+        throw responseJson;
+      }
+      this.setState({nick_name:responseJson.Data.nick_name,user_picture:responseJson.Data.user_picture});
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  componentWillMount() {
+    this._getUserInfo();
+  }
   render() {
     return (
       <ScrollView style={styles.container}>
         <ImageBackground source={require('../assets/images/06个人中心/wode.png')} style={styles.bkg}>
           <View style={styles.top}>
             <View style={styles.head}>
-              <Image source={require('../assets/images/06个人中心/头像.png')} style={styles.headImage}/>
-              <Text style={styles.headText}>12345678901</Text>
+              <Image source={{uri:this.state.user_picture}} style={styles.headImage}/>
+              <Text style={styles.headText}>{this.state.nick_name}</Text>
             </View>
             <TouchableOpacity onPress={this._modifyPwd} style={styles.editBtn}>
               <Image source={require('../assets/images/06个人中心/编辑.png')} />

@@ -25,6 +25,32 @@ export default class SignInScreen extends React.Component {
     },
   };
 
+  _userLogin=async (username,passwd) =>{
+    try {
+      var data = {
+        'Action':'UserLogin',
+        'Username': username,
+        'Password': passwd,
+      };
+      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
+      });
+      let responseJson = await response.json();
+      console.log(responseJson);
+      if(!responseJson.Result){
+        throw responseJson;
+      }
+      //token
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   render() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -118,6 +144,7 @@ export default class SignInScreen extends React.Component {
   }
 
   _signInAsync = async () => {
+    this._userLogin('13700000000','123456');
     await AsyncStorage.setItem('userToken', 'abc');
     this.props.navigation.navigate('Main');
   };

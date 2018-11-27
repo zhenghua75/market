@@ -24,6 +24,36 @@ export default class SignUpScreen extends React.Component {
     },
   };
 
+  state = {
+    username:null,
+    passwd: null,
+    success: null,
+  };
+  _userRegister=async (username,passwd) =>{
+    try {
+      var data = {
+        'Action':'UserRegister',
+        'Username': username,
+        'Password': passwd,
+      };
+      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
+      });
+      let responseJson = await response.json();
+      if(!responseJson.Result){
+        throw responseJson;
+      }
+      //this.setState({success: responseJson.Result});
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   render() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -42,10 +72,13 @@ export default class SignUpScreen extends React.Component {
           marginHorizontal:40,
         }}>
           <Image source={require('../assets/images/02登录注册部分/注册用户.png')} style={{width:20,height:20,}}/>
-          <TextInput placeholder='手机号/邮箱' underlineColorAndroid={'white'} style={{
-            marginLeft:16,
-            fontSize:18,
-            flex:1,
+          <TextInput placeholder='手机号/邮箱' underlineColorAndroid={'white'} 
+            onChangeText={(text) => this.setState({username:text})}
+            value={this.state.username}
+            style={{
+              marginLeft:16,
+              fontSize:18,
+              flex:1,
           }}/>
         </View>
         <View style={{
@@ -56,10 +89,13 @@ export default class SignUpScreen extends React.Component {
           marginHorizontal:40,
         }}>
           <Image source={require('../assets/images/02登录注册部分/验证码.png')} style={{width:20,height:20,}}/>
-          <TextInput placeholder='验证码' underlineColorAndroid={'white'} style={{
-            marginLeft:16,
-            fontSize:18,
-            flex:1,
+          <TextInput placeholder='验证码' underlineColorAndroid={'white'} 
+            onChangeText={(text) => this.setState({text})}
+            value={this.state.text}
+            style={{
+              marginLeft:16,
+              fontSize:18,
+              flex:1,
           }}/>
           <TouchableOpacity style={styles.btn}>
           <View style={{
@@ -85,8 +121,6 @@ export default class SignUpScreen extends React.Component {
           <TouchableOpacity onPress={this._forgetPwd}>
             <Text style={{fontSize:14,color:'#ff8f00',textDecorationLine:'underline'}}>注册协议</Text>
           </TouchableOpacity>
-          
-          
         </View>
         <TouchableOpacity onPress={this._nextAsync} style={{
           alignItems:'center',
@@ -131,7 +165,11 @@ export default class SignUpScreen extends React.Component {
   };
 
   _nextAsync = ()=>{
-    this.props.navigation.navigate('SignUpSuccess');
+    this._userRegister('13700000001','123456');
+    if(this.state.Result){
+      this.props.navigation.navigate('SignUpSuccess');
+    }
+    
   };
 }
 
