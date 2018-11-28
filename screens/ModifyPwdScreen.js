@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Text,
+  AsyncStorage,
    } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
@@ -16,19 +17,53 @@ export default class ModifyPwdScreen extends React.Component {
     title: '修改密码',
   };
 
+  state = {
+    oldpasswd:null,
+    passwd: null,
+    passwdConfirm: null,
+  };
+
+  _modPassword=async (token,oldpasswd,passwd,passwdConfirm) =>{
+    try {
+      var data = {
+        'Action':'ModPassword',
+        'OldPassword': oldpasswd,
+        'Password': passwd,
+        'PasswordConfirm': passwdConfirm,
+        'token': token
+      };
+      console.log(data);
+      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
+      });
+      let responseJson = await response.json();
+      console.log(responseJson);
+      if(!responseJson.Result){
+        throw responseJson;
+      }
+      //token
+    } catch (error) {
+      console.error(error);
+    }
+  };
   render() {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.row}>
-          <TextInput placeholder='原密码' style={styles.input}/>
+          <TextInput placeholder='原密码' style={styles.input} onChangeText={(text) => this.setState({oldpasswd:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <View style={styles.row}>
-          <TextInput placeholder='新密码' style={styles.input}/>
+          <TextInput placeholder='新密码' style={styles.input} onChangeText={(text) => this.setState({passwd:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <View style={styles.row}>
-          <TextInput placeholder='确认密码' style={styles.input}/>
+          <TextInput placeholder='确认密码' style={styles.input} onChangeText={(text) => this.setState({passwdConfirm:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <TouchableOpacity onPress={this._modifyPwd} style={styles.btn}>
@@ -40,7 +75,9 @@ export default class ModifyPwdScreen extends React.Component {
     );
   }
 
-  _modifyPwd = () => {
+  _modifyPwd = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    await this._modPassword(userToken,this.state.oldpasswd,this.state.passwd,this.state.passwdConfirm);
   };
 }
 

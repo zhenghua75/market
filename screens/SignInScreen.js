@@ -25,6 +25,11 @@ export default class SignInScreen extends React.Component {
     },
   };
 
+  state = {
+    username:null,
+    passwd: null,
+  };
+
   _userLogin=async (username,passwd) =>{
     try {
       var data = {
@@ -45,7 +50,7 @@ export default class SignInScreen extends React.Component {
       if(!responseJson.Result){
         throw responseJson;
       }
-      //token
+      await AsyncStorage.setItem('userToken', responseJson.Token);
     } catch (error) {
       console.error(error);
     }
@@ -69,10 +74,11 @@ export default class SignInScreen extends React.Component {
           marginHorizontal:40,
         }}>
           <Image source={require('../assets/images/02登录注册部分/用户.png')} style={{width:20,height:20,}}/>
-          <TextInput placeholder='用户名/手机号/邮箱' underlineColorAndroid={'white'} style={{
-            marginLeft:16,
-            fontSize:18,
-            flex:1,
+          <TextInput placeholder='用户名/手机号/邮箱' onChangeText={(text) => this.setState({username:text})}
+            underlineColorAndroid={'white'} style={{
+              marginLeft:16,
+              fontSize:18,
+              flex:1,
           }}/>
         </View>
         <View style={{
@@ -83,10 +89,11 @@ export default class SignInScreen extends React.Component {
           marginHorizontal:40,
         }}>
           <Image source={require('../assets/images/02登录注册部分/密码.png')}  style={{width:20,height:20,}}/>
-          <TextInput placeholder='密码' underlineColorAndroid={'white'} secureTextEntry={true} style={{
-            marginLeft:16,
-            fontSize:18,
-            flex:1,
+          <TextInput placeholder='密码' onChangeText={(text) => this.setState({passwd:text})}
+            underlineColorAndroid={'white'} secureTextEntry={true} style={{
+              marginLeft:16,
+              fontSize:18,
+              flex:1,
           }}/>
         </View>
         <View style={{
@@ -144,8 +151,7 @@ export default class SignInScreen extends React.Component {
   }
 
   _signInAsync = async () => {
-    this._userLogin('13700000000','123456');
-    await AsyncStorage.setItem('userToken', 'abc');
+    this._userLogin( this.state.username, this.state.passwd);
     this.props.navigation.navigate('Main');
   };
 
