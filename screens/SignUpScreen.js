@@ -12,7 +12,12 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  Alert,
 } from 'react-native';
+
+import { Constants } from 'expo';
+
+import ApiPost from '../lib/ApiPost';
 
 export default class SignUpScreen extends React.Component {
   static navigationOptions = {
@@ -28,30 +33,19 @@ export default class SignUpScreen extends React.Component {
     username:null,
     passwd: null,
     success: null,
+    captcha:null,
   };
   _userRegister=async (username,passwd) =>{
-    try {
-      var data = {
+    var data = {
         'Action':'UserRegister',
         'Username': username,
         'Password': passwd,
       };
-      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
-      });
-      let responseJson = await response.json();
-      if(!responseJson.Result){
-        throw responseJson;
-      }
-      //this.setState({success: responseJson.Result});
-    } catch (error) {
-      console.error(error);
+    let responseJson = await ApiPost(data);
+    if(responseJson.Result){
+      this.props.navigation.navigate('SignUpSuccess');
     }
+    this.setState({success: responseJson.Result});
   };
 
   render() {
@@ -90,7 +84,7 @@ export default class SignUpScreen extends React.Component {
         }}>
           <Image source={require('../assets/images/02登录注册部分/验证码.png')} style={{width:20,height:20,}}/>
           <TextInput placeholder='验证码' underlineColorAndroid={'white'} 
-            onChangeText={(text) => this.setState({text})}
+            onChangeText={(text) => this.setState({captcha:text})}
             value={this.state.text}
             style={{
               marginLeft:16,
@@ -109,6 +103,21 @@ export default class SignUpScreen extends React.Component {
             <Text>发送验证码</Text>
           </View>
         </TouchableOpacity>
+        </View>
+        <View style={{
+          flexDirection:'row',
+          borderBottomWidth:1,
+          borderColor:'#e5e5e5',
+          padding:14,
+          marginHorizontal:40,
+        }}>
+          <Image source={require('../assets/images/02登录注册部分/密码.png')}  style={{width:20,height:20,}}/>
+          <TextInput placeholder='密码' onChangeText={(text) => this.setState({passwd:text})}
+            underlineColorAndroid={'white'} secureTextEntry={true} style={{
+              marginLeft:16,
+              fontSize:18,
+              flex:1,
+          }}/>
         </View>
         <View style={{
           flexDirection:'row',
@@ -160,16 +169,11 @@ export default class SignUpScreen extends React.Component {
   }
 
   _signInAsync = async () => {
-    //await AsyncStorage.setItem('userToken', 'abc');
     this.props.navigation.navigate('SignIn');
   };
 
   _nextAsync = ()=>{
-    this._userRegister('13700000001','123456');
-    if(this.state.Result){
-      this.props.navigation.navigate('SignUpSuccess');
-    }
-    
+    this._userRegister(this.state.username, this.state.passwd);
   };
 }
 

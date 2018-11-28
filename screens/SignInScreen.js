@@ -15,6 +15,8 @@ import {
   Dimensions,
 } from 'react-native';
 
+import ApiPost from '../lib/ApiPost';
+
 export default class SignInScreen extends React.Component {
   static navigationOptions = {
     title: '登录',
@@ -31,28 +33,15 @@ export default class SignInScreen extends React.Component {
   };
 
   _userLogin=async (username,passwd) =>{
-    try {
-      var data = {
-        'Action':'UserLogin',
-        'Username': username,
-        'Password': passwd,
-      };
-      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
-      });
-      let responseJson = await response.json();
-      console.log(responseJson);
-      if(!responseJson.Result){
-        throw responseJson;
-      }
+    var data = {
+      'Action':'UserLogin',
+      'Username': username,
+      'Password': passwd,
+    };
+    let responseJson = await ApiPost(data);
+    if(responseJson.Result){
       await AsyncStorage.setItem('userToken', responseJson.Token);
-    } catch (error) {
-      console.error(error);
+      this.props.navigation.navigate('Main');
     }
   };
 
@@ -152,7 +141,6 @@ export default class SignInScreen extends React.Component {
 
   _signInAsync = async () => {
     this._userLogin( this.state.username, this.state.passwd);
-    this.props.navigation.navigate('Main');
   };
 
   _forgetPwd = ()=>{};

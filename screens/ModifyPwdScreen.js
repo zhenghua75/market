@@ -9,8 +9,10 @@ import {
   ImageBackground,
   Text,
   AsyncStorage,
+  Alert,
    } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
+import ApiPost from '../lib/ApiPost';
 
 export default class ModifyPwdScreen extends React.Component {
   static navigationOptions = {
@@ -24,46 +26,44 @@ export default class ModifyPwdScreen extends React.Component {
   };
 
   _modPassword=async (token,oldpasswd,passwd,passwdConfirm) =>{
-    try {
-      var data = {
-        'Action':'ModPassword',
-        'OldPassword': oldpasswd,
-        'Password': passwd,
-        'PasswordConfirm': passwdConfirm,
-        'token': token
-      };
-      console.log(data);
-      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
-      });
-      let responseJson = await response.json();
-      console.log(responseJson);
-      if(!responseJson.Result){
-        throw responseJson;
-      }
-      //token
-    } catch (error) {
-      console.error(error);
+    var data = {
+      'Action':'ModPassword',
+      'OldPassword': oldpasswd,
+      'Password': passwd,
+      'PasswordConfirm': passwdConfirm,
+      'token': token
+    };
+    let responseJson = await ApiPost(data);
+    if(responseJson.Result){
+      Alert.alert(
+        '修改密码',
+        responseJson.MessageString,
+        [
+          {text: '确定', onPress: () => {
+            console.log(responseJson);
+            this.props.navigation.pop();
+          }},
+        ],
+        { cancelable: false }
+      )
     }
   };
   render() {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.row}>
-          <TextInput placeholder='原密码' style={styles.input} onChangeText={(text) => this.setState({oldpasswd:text})}/>
+          <TextInput placeholder='原密码' style={styles.input} secureTextEntry={true}
+            onChangeText={(text) => this.setState({oldpasswd:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <View style={styles.row}>
-          <TextInput placeholder='新密码' style={styles.input} onChangeText={(text) => this.setState({passwd:text})}/>
+          <TextInput placeholder='新密码' style={styles.input} secureTextEntry={true}
+            onChangeText={(text) => this.setState({passwd:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <View style={styles.row}>
-          <TextInput placeholder='确认密码' style={styles.input} onChangeText={(text) => this.setState({passwdConfirm:text})}/>
+          <TextInput placeholder='确认密码' style={styles.input} secureTextEntry={true}
+            onChangeText={(text) => this.setState({passwdConfirm:text})}/>
           <Image source={require('../assets/images/06个人中心/眼睛.png')}/>
         </View>
         <TouchableOpacity onPress={this._modifyPwd} style={styles.btn}>

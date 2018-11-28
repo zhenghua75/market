@@ -14,45 +14,54 @@ import {
  } from 'react-native';
 
 import { StackActions } from 'react-navigation';
+import ApiPost from '../lib/ApiPost';
+
 export default class MyScreen extends React.Component {
   static navigationOptions = {
     title: '个人中心',
   };
+//"unpayed_cnt":"0","payed_cnt":"0","uncomment_cnt":0
+  //"collect_cnt":"0","store_cnt":"0","bonus":"0","coupon_cnt":"0"
+
+
 
   state={
     nick_name:null,
     user_picture:'http://jc.ynweix.com/data/images_user/19_120.jpg',
+    unpayed_cnt:0,//待付款
+    payed_cnt:0,//  待收货
+    uncomment_cnt:0,// 待评价
+    collect_cnt:0,//  收藏
+    store_cnt:0,//  关注
+    bonus:0,//  积分
+    coupon_cnt:0,//  优惠券
   };
   _getUserInfo=async () =>{
-    try {
-      var data = {
-        'Action':'GetUserInfo',
-        'token':'bebf4cf9e3227d5aef8760ffde9c7f1c',
-      };
-      //
-      let response = await fetch('http://jc.ynweix.com/api/appclient/api.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'Json=' + encodeURIComponent(JSON.stringify(data))
-      });
-      let responseJson = await response.json();
-      console.log(responseJson);
-      if(!responseJson.Result){
-        throw responseJson;
-      }
-      this.setState({nick_name:responseJson.Data.nick_name,user_picture:responseJson.Data.user_picture});
-    } catch (error) {
-      console.error(error);
-    }
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetUserInfo',
+      'token':userToken,
+    };
+    let responseJson = await ApiPost(data);
+    this.setState({
+      nick_name:responseJson.Data.nick_name,
+      user_picture:responseJson.Data.user_picture,
+      unpayed_cnt:responseJson.Data.unpayed_cnt,
+      payed_cnt:responseJson.Data.payed_cnt,
+      uncomment_cnt:responseJson.Data.uncomment_cnt,
+      collect_cnt:responseJson.Data.collect_cnt,
+      store_cnt:responseJson.Data.store_cnt,
+      bonus:responseJson.Data.bonus,
+      coupon_cnt:responseJson.Data.coupon_cnt,
+    });
   };
 
   componentWillMount() {
     this._getUserInfo();
   }
   render() {
+    //收藏、关注、足迹、积分
+    //收藏、关注、积分、优惠券
     return (
       <ScrollView style={styles.container}>
         <ImageBackground source={require('../assets/images/06个人中心/wode.png')} style={styles.bkg}>
@@ -67,18 +76,23 @@ export default class MyScreen extends React.Component {
           </View>
           <View style={styles.info}>
             <View style={styles.box}>
-              <Text style={styles.text}>0</Text>
+              <Text style={styles.text}>{this.state.collect_cnt}</Text>
               <Text style={styles.text}>收藏</Text>
             </View>
             <View style={styles.span}/>
             <TouchableOpacity style={styles.box} onPress={this._cart}>
-              <Text style={styles.text}>0</Text>
-              <Text style={styles.text}>购物车</Text>
+              <Text style={styles.text}>{this.state.store_cnt}</Text>
+              <Text style={styles.text}>关注</Text>
             </TouchableOpacity>
             <View style={styles.span}/>
             <TouchableOpacity style={styles.box} onPress={this._infoList}>
-              <Text style={styles.text}>0</Text>
-              <Text style={styles.text}>消息</Text>
+              <Text style={styles.text}>{this.state.bonus}</Text>
+              <Text style={styles.text}>积分</Text>
+            </TouchableOpacity>
+            <View style={styles.span}/>
+            <TouchableOpacity style={styles.box} onPress={this._infoList}>
+              <Text style={styles.text}>{this.state.coupon_cnt}</Text>
+              <Text style={styles.text}>优惠券</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -94,7 +108,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待付款.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>0</Text>
+                <Text style={styles.circleText}>{this.state.unpayed_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待付款</Text>
@@ -103,7 +117,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待收货.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>0</Text>
+                <Text style={styles.circleText}>{this.state.payed_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待收货</Text>
@@ -112,7 +126,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待评价.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>0</Text>
+                <Text style={styles.circleText}>{this.state.uncomment_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待评价</Text>
@@ -121,7 +135,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/退换货.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>0</Text>
+                <Text style={styles.circleText}></Text>
               </View>
             </View>
             <Text style={styles.shipText}>退换货</Text>

@@ -30,6 +30,7 @@
         "format":"json",
         "app_key":"E6E3D813-4809-4C98-8D34-A14C7C493A7C",
       },
+      "apiUrl":"http://jc.ynweix.com/api/appclient/api.php",
     },
   }
 }
