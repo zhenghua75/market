@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   headImage:{
     height:55,
     width:55,
+    borderRadius:30,
   },
   headText:{
     fontSize:20,
