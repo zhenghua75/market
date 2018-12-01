@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   ImageBackground,
+  AsyncStorage,
 } from 'react-native';
 import { 
   WebBrowser,
@@ -22,6 +23,8 @@ import {
 import { MonoText } from '../components/StyledText';
 
 import Swiper from 'react-native-swiper';
+
+import ApiPost from '../lib/ApiPost';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -36,7 +39,34 @@ export default class HomeScreen extends React.Component {
     location: null,
     city: null,
     errorMessage: null,
+    recommendProduct: null,
+    'visibleSwiper': false,
   };
+
+  _getRecommendProduct = async () =>{
+    const userToken = await AsyncStorage.getItem('userToken');
+    const { navigation } = this.props;
+    let cat_id = navigation.getParam('cat_id');
+    var data = {
+      'Action':'GetGoods',
+      'token':userToken,
+      'PageSize':'10',
+      'Page': '0',
+      'Cat_id': '',
+      'Is_Best':'1',
+      'GoodName':'',
+    };
+    let responseJson = await ApiPost(data);
+    let list = responseJson.Data.Data;
+    this.setState({recommendProduct:list, });
+  };
+  componentDidMount() {
+   setTimeout(() => {
+      this.setState({
+        visibleSwiper: true
+      });
+   }, 100);
+  }
   componentWillMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
@@ -45,6 +75,8 @@ export default class HomeScreen extends React.Component {
     } else {
       this._getLocationAsync();
     }
+
+    this._getRecommendProduct();
   }
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -64,8 +96,9 @@ export default class HomeScreen extends React.Component {
 
     //https://restapi.amap.com/v3/config/district?keywords=中国&subdistrict=2&key=f0278b2d0f10f10adbd3e55858f0a2f1
   };
-
-
+  _detail = async (goods_id) => {
+    this.props.navigation.navigate('GoodsDetail',{'goods_id':goods_id});
+  };
   render() {
     let text = 'Waiting..';
     if (this.state.errorMessage) {
@@ -73,6 +106,44 @@ export default class HomeScreen extends React.Component {
     } else if (this.state.city) {
       text = this.state.city
       
+    }
+    let swiper = null;
+    if (this.state.visibleSwiper) {
+    
+      let list = [];
+      if(this.state.recommendProduct && this.state.recommendProduct.length>0){
+        
+        let len = this.state.recommendProduct.length;
+        let n = 2; 
+        let lineNum = len % n === 0 ? len / n : Math.floor( (len / n) + 1 );
+        let list = [];
+        for (let i = 0; i < lineNum; i++) {
+          let temp = this.state.recommendProduct.slice(i*n, i*n+n);
+          list.push(temp);
+        }
+        let obj = [];
+        for (var i = 0; i < list.length; i++) {
+
+          obj.push(<View key={i} style={{flexDirection:'row',padding:12,}}>
+                      {list[i].map((item, key) => {
+                        return (
+                          <TouchableOpacity key={item.goods_id} 
+                            onPress={() => {this._detail(item.goods_id)}}
+                            style={{alignItems:'center',justifyContent:'center',marginLeft:12,}}>
+                          <Image source={{uri: item.goods_thumb.Data}} style={{ width:Dimensions.get('window').width/2-24,
+                            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
+                          <Text style={styles.recommendProductName}>{item.goods_name}</Text>
+                          <Text style={styles.recommendProductAttr}>材质：大理石</Text>
+                      </TouchableOpacity>)})}</View>);
+        }
+
+        swiper = <Swiper style={styles.recommendProductSwiper}
+            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 440/750)}>
+              {obj.map((item, key) => {return item;})}
+            </Swiper>
+      }
     }
     return (
         <ScrollView style={{flex: 1,backgroundColor: 'rgb(229,229,229)',}} contentContainerStyle={styles.contentContainer}>
@@ -344,51 +415,7 @@ export default class HomeScreen extends React.Component {
                 style={styles.recommendProductTitleArrow}
               />
             </View>
-            <Swiper style={styles.recommendProductSwiper}
-            dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-            width={Dimensions.get('window').width}
-            height={Math.floor(Dimensions.get('window').width * 440/750)}>
-              <View style={{flexDirection:'row',padding:12,}}>
-                <View style={{alignItems:'center',
-    justifyContent:'center',
-    marginRight:12,
-  }}>
-                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
-            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
-                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
-                </View>
-                <View style={{alignItems:'center',
-    justifyContent:'center',
-    marginLeft:12,
-  }}>
-                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
-            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
-                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
-                </View>
-              </View>
-              <View style={{flexDirection:'row',padding:12,}}>
-                <View style={{alignItems:'center',
-    justifyContent:'center',
-    marginRight:12,
-  }}>
-                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
-            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
-                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
-                </View>
-                <View style={{alignItems:'center',
-    justifyContent:'center',
-    marginLeft:12,
-  }}>
-                    <Image source={require('../assets/images/01首页部分/a01首页_11.png')} style={{ width:Dimensions.get('window').width/2-24,
-            height:Math.floor((Dimensions.get('window').width/2-24) * 208/306),}}/>
-                    <Text style={styles.recommendProductName}>仿大理石TBC型板</Text>
-                    <Text style={styles.recommendProductAttr}>材质：大理石</Text>
-                </View>
-              </View>
-            </Swiper>
+            {swiper}
           </View>
           
           </ScrollView>      

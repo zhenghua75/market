@@ -9,10 +9,12 @@ import {
   TouchableOpacity,
   Dimensions,
   SectionList,
+  AsyncStorage,
    } from 'react-native';
 
 import { Constants } from 'expo';
 import getApiUrl from '../constants/Api';
+import ApiPost from '../lib/ApiPost';
 
 export default class CatalogScreen extends React.Component {
   static navigationOptions = {
@@ -107,24 +109,21 @@ export default class CatalogScreen extends React.Component {
   
 
   _getCatalog=async () =>{
-    try {
-      let url = getApiUrl({'method':'dsc.category.list.get','page_size':10000});
-      let response = await fetch(url);
-      let responseJson = await response.json();
-      if(responseJson.error != 0){
-        throw responseJson;
-      }
-      let list = responseJson.info.list;
-      let list1 = list.filter(this._filter1);
-      let list2 = list.filter(this._filter2);
-      list2.forEach((element) => {
-        let list3 = list.filter((item) => {return element.cat_id == item.parent_id;});
-        element['data'] = [{'data':list3,}];
-      });
-      this.setState({list:list, list1:list1, list2:list2, });
-    } catch (error) {
-      console.error(error);
-    }
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetCategory',
+      'token':userToken,
+    };
+    let responseJson = await ApiPost(data);
+    let list = responseJson.Data;
+    let list1 = list.filter(this._filter1);
+    let list2 = list.filter(this._filter2);
+    list2.forEach((element) => {
+      let list3 = list.filter((item) => {return element.cat_id == item.parent_id;});
+      element['data'] = [{'data':list3,}];
+    });
+
+    this.setState({list:list, list1:list1, list2:list2, });
   };
 
   _filter1=(item) => {

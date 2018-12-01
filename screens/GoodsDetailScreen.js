@@ -11,10 +11,12 @@ import {
   TouchableHighlight,
   WebView,
   Platform,
+  AsyncStorage,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
 import ImageZoom from 'react-native-image-pan-zoom';
+import ApiPost from '../lib/ApiPost';
 
 const BaseScript =
     `
@@ -54,20 +56,24 @@ export default class GoodsDetailScreen extends React.Component {
     height:0,
   };
 
+  //单个商品：{"Action":"GetGoodInfo","good_id":"1","token":"2e6b88dbbf93a4d6095bdea691f6da87"}
   _getGoods=async (goods_id) =>{
-    try {
-      let response = await fetch(
-        'http://jc.ynweix.com/api.php?app_key=E6E3D813-4809-4C98-8D34-A14C7C493A7C&method=dsc.goods.info.get&format=json&goods_id='+goods_id
-      );
-      let responseJson = await response.json();
-      if(responseJson.error > 1){
-        throw responseJson;
-      }
-      let info = responseJson.info;
-      this.setState({info:info,html:info.goods_desc });
-    } catch (error) {
-      console.error(error);
-    }
+    const userToken = await AsyncStorage.getItem('userToken');
+    const { navigation } = this.props;
+    let cat_id = navigation.getParam('cat_id');
+    var data = {
+      'Action':'GetGoodInfo',
+      'token':userToken,
+      'good_id':goods_id,
+    };
+    let responseJson = await ApiPost(data);
+    console.log(responseJson.Data);
+    this.setState({
+      info:responseJson.Data.good,
+      html:responseJson.Data.good.goods_desc,
+      list: responseJson.Data.pictures
+    });
+    
   };
 
   _getGoodsGallery=async (goods_id) =>{
@@ -90,7 +96,7 @@ export default class GoodsDetailScreen extends React.Component {
     const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
     this._getGoods(goods_id);
-    this._getGoodsGallery(goods_id);
+    //this._getGoodsGallery(goods_id);
   }
 
   componentDidMount() {
@@ -129,7 +135,7 @@ export default class GoodsDetailScreen extends React.Component {
         {this.state.list.map((item, key) => {
           return (
             <TouchableOpacity key={key} onPress={() => this._modal(item.img_url)}>
-              <Image source={{uri:'http://jc.ynweix.com/'+item.img_url}} style={{
+              <Image source={{uri: item.img_url}} style={{
                 width:Dimensions.get('window').width,
                 height:Math.floor(Dimensions.get('window').width * 564/750)
               }}/>
@@ -152,8 +158,8 @@ export default class GoodsDetailScreen extends React.Component {
         <View style={{padding:12,}}>
           <Text style={{fontSize:16,color:'#3f3f3f',}}>{info.goods_name}</Text>
           <View style={{flexDirection:'row',alignItems:'center',marginTop:26,}}>
-            <Text style={{fontSize:19,color:'#ff8f00',}}>¥{info.market_price}</Text>
-            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥{info.shop_price}</Text>
+            <Text style={{fontSize:19,color:'#ff8f00',}}>¥{info.price}</Text>
+            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥{info.marketPrice}</Text>
           </View>
           <View style={{flexDirection:'row',}}>
             <View style={{flexDirection:'row',flex:0.5,}}>
@@ -176,11 +182,11 @@ export default class GoodsDetailScreen extends React.Component {
             <Image source={require('../assets/images/04订单/右箭头.png')} />
           </View>
           <View style={{marginHorizontal:12,paddingVertical:12,borderBottomWidth:1,borderColor:'#e5e5e5',}}>
-            <Text style={{fontSize:14,color:'#999999',}}>评价（0）</Text>
+            <Text style={{fontSize:14,color:'#999999',}}>评价（{info.comments_number}）</Text>
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{backgroundColor:'#ff8f00',width:33,height:33,}}/>
-            <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>王五的五金店</Text>
+            <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{info.shopinfo?info.shopinfo.shop_name:''}</Text>
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{alignItems:'center',flex:0.33}}>

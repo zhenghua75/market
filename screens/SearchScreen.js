@@ -1,103 +1,151 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Image, Text, View, TouchableOpacity  } from 'react-native';
+import { 
+  ScrollView, 
+  StyleSheet, 
+  Image, Text, 
+  View, 
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  AsyncStorage,
+  TextInput
+    } from 'react-native';
+
+import ApiPost from '../lib/ApiPost';
 
 export default class SearchScreen extends React.Component {
   static navigationOptions = {
     title: '发现',
+    headerTitleStyle: {
+      alignSelf: 'center',
+      textAlign: 'center',
+      width: '100%',
+    },
+  };
+
+  state={
+    list:[],
+    GoodName:null,
+  };
+
+  _keyExtractor = (item, index) => item.goods_id;
+
+  _renderItem = ({item, index, section}) => {
+    return (
+        <TouchableOpacity style={styles.result} onPress={() => {this._detail(item.goods_id)}}>
+          <Image source={{uri:item.goods_thumb.Data}} style={styles.resultImage}/>
+          <View style={{padding:12,}}>
+            <Text style={styles.resultTextName}>{item.goods_name}</Text>
+            <Text style={styles.resultTextPrice}>¥{item.market_price}</Text>
+            <Text style={styles.resultTextSale}>销量{item.sales_volume}</Text>
+          </View>
+        </TouchableOpacity>
+      );
   };
 
   render() {
+    let cols = Math.floor((Dimensions.get('window').width-40)*170/375);
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.searchBox}>
-          <Image source={require('../assets/images/01首页部分/搜索.png')} style={styles.searchBoxImage}/>
-          <Text style={styles.searchBoxText}>输入商品名</Text>
-          <TouchableOpacity style={styles.searchBoxBtn}>
-            <Text style={styles.searchBoxBtnText}>搜索</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.searchResult}>
-          <Image source={require('../assets/images/s1.png')} style={styles.searchResultImage}/>
-          <View style={styles.searchResultTextBox}>
-            <Text style={styles.searchResultTextBoxName}>远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单</Text>
-            <Text style={styles.searchResultTextBoxAttr}>100米硬线 蓝色 100米/卷</Text>
-            <View style={styles.searchResultTextBoxPriceArea}>
-              <Text style={styles.searchResultTextBoxPrice}>¥38</Text>
-              <View style={styles.shop}>
-                <Image source={require('../assets/images/04订单/店铺.png')} style={styles.shopImage}/>
-                <Text style={styles.shopName}>魔都CV大大</Text>
-                <Image source={require('../assets/images/04订单/右箭头.png')} style={styles.shopArrow}/>
-              </View>
+        <View style={{height:65,alignItems:'center',backgroundColor:'#fff'}}>
+          <View style={{margin:12,height:36,
+            width:Dimensions.get('window').width-24,
+            flexDirection:'row',borderRadius:5,
+          backgroundColor:'rgb(234,238,237)',
+          alignItems:'center',
+          justifyContent:'space-between',
+        }}>
+            <View style={{flexDirection:'row',padding:10,flex:1}}>
+              <Image source={require('../assets/images/00四个选项/发现.png')} style={{width:20,height:21,}}/>
+              <TextInput 
+                style={{fontSize:12,color:'#999999',flex:1}}
+                onChangeText={(text) => this.setState({GoodName:text})}
+                placeholder={'输入商品名'}
+              ></TextInput>
             </View>
+            <TouchableOpacity 
+              style={{height:36,width:52,borderTopRightRadius:5,borderBottomRightRadius:5,
+                backgroundColor:'rgb(255,142,1)',
+                alignItems:'center',
+                justifyContent:'center',
+              }}
+              onPress={this._search}
+            >
+              <Text style={{color:'#fff'}}>搜索</Text>
+            </TouchableOpacity>
           </View>
         </View>
+        {this.state.list.length>0?
+        <FlatList
+            data={this.state.list}
+            extraData={this.state}
+            keyExtractor={this._keyExtractor}
+            renderItem={this._renderItem}
+            numColumns={cols}
+          />:
+        <View style={{alignItems:'center',marginTop:50,}}>
+          <Image source={require('../assets/images/05商品/暂无匹配.png')} style={{width:44,height:44,}}/>
+          <Text style={{fontSize:14,color:'#999999',marginTop:20}}>暂时没有匹配商品哦~</Text>
+        </View>}
       </ScrollView>
     );
   }
+
+  _detail = async (goods_id) => {
+    this.props.navigation.navigate('GoodsDetail',{'goods_id':goods_id});
+  };
+
+  _search = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const { navigation } = this.props;
+    let cat_id = navigation.getParam('cat_id');
+    var data = {
+      'Action':'GetGoods',
+      'token':userToken,
+      'PageSize':'10',
+      'Page': '0',
+      'Cat_id': '',
+      'Is_Best':'0',
+      'GoodName':this.state.GoodName,
+    };
+    let responseJson = await ApiPost(data);
+    console.log(responseJson.Data);
+    let list = responseJson.Data.Data;
+    this.setState({list:list, });
+  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
     backgroundColor: '#fff',
   },
-  searchBox:{
+  box:{
     flexDirection:'row',
     justifyContent:'space-between',
   },
-  searchBoxText:{
+  boxText:{
     flex:1,
   },
-  searchResult:{
-    flexDirection:'row',
-    borderBottomWidth:1,
-    borderColor:'#000000',
-    marginHorizontal:15,
-    paddingVertical:15,
+  result:{
+    marginHorizontal:10,
+    width:Dimensions.get('window').width*170/375,
   },
-  searchResultImage:{
-    width:90,
-    height:90,
+  resultImage:{
+    width:Dimensions.get('window').width*170/375,
+    height:Dimensions.get('window').width*170/375,
   },
-  searchResultTextBox:{
-    marginLeft:22,
-  },
-  searchResultTextBoxName:{
+  resultTextName:{
     fontSize:14,
     color:'#3F3F3F',
   },
-  searchResultTextBoxAttr:{
-    fontSize:12,
-    color:'#C7C7C7',
-    marginTop:8,
-  },
-  searchResultTextBoxPriceArea:{
-    flexDirection:'row',
-    marginTop:13,
-    justifyContent: 'space-between',
-  },
-  searchResultTextBoxPrice:{
+  resultTextPrice:{
     fontSize:14,
     color:'#FF8F00',
-    flex:0.3,
   },
-  shop:{
-    flexDirection:'row',
-    flex:0.7,
-  },
-  shopImage:{
-    height:15,
-    width:15,
-  }, 
-  shopName:{
+  resultTextSale:{
     fontSize:12,
-    color:'#3F3F3F',
-    marginLeft:5,
-    marginRight:7
-  },
-  shopArrow:{
-    width:6,
-    height:12,
+    color:'#c7c7c7',
+    textAlign:'right',
   },
 });
