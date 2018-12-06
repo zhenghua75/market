@@ -29,11 +29,7 @@ export default class PositionScreen extends React.Component {
     this.setState({list:responseJson.Data.consignee_list})
     console.log(responseJson);
   };
-  _EditAddress = async () => {
-    
-  };
   _DeleteAddress = async (address_id) => {
-    //{"Action":"DeleteAddress","token":"2e6b88dbbf93a4d6095bdea691f6da87","address_id":"13"}
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
       'Action':'DeleteAddress',
@@ -46,6 +42,7 @@ export default class PositionScreen extends React.Component {
   };
 
   _keyExtractor = (item, index) => item.cat_id;
+
   componentWillMount(){
     this._GetAddressList();
   };
@@ -55,7 +52,7 @@ export default class PositionScreen extends React.Component {
       {
         text: '修改',
         type: 'primary',
-        onPress: ()=>this.props.navigation.navigate('AddAddress',{'item':item}),
+        onPress: ()=>{ this._modifyAddress(item.address_id,item.consignee,item.province,item.city,item.district,item.address,item.mobile)},
       },
       {
         text: '删除',
@@ -65,7 +62,7 @@ export default class PositionScreen extends React.Component {
     ]
     return (
       <Swipeout key={item.address_id} right={swipeoutBtns}>
-        <View >
+        <View key={'view-'+item.address_id}>
           <Text>{item.address}</Text>
           <Text>{item.mobile}</Text>
         </View>
@@ -82,7 +79,7 @@ export default class PositionScreen extends React.Component {
             keyExtractor={this._keyExtractor}
             renderItem={this._renderItem}
           />
-        <Button title='新增收货地址' onPress={this._addAddress}/>
+        <Button title='新增收货地址' onPress={this._addAddress} />
       </ScrollView>
     );
   }
@@ -90,6 +87,22 @@ export default class PositionScreen extends React.Component {
   _addAddress = async () => {
     this.props.navigation.navigate('AddAddress');
   };
+
+  _modifyAddress = async (address_id,consignee,province_id,city_id,district_id,address,mobile) => {
+    this.props.navigation.navigate('AddAddress',{
+      'title':'修改收货地址',
+      'item': {
+        address: address,
+        address_id: address_id,
+        city_id: city_id,
+        consignee: consignee,
+        district_id: district_id,
+        mobile: mobile,
+        province_id: province_id,
+      },
+      'modify': true,
+    });
+  }
 }
 
 const styles = StyleSheet.create({

@@ -11,8 +11,10 @@ import {
   Alert,
    } from 'react-native';
 export default class AddAddressScreen extends React.Component {
-  static navigationOptions = {
-    title: '新增收货地址',
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: navigation.getParam('title', '新增收货地址'),
+    };
   };
 
   state={
@@ -37,18 +39,57 @@ export default class AddAddressScreen extends React.Component {
     };
     let responseJson = await ApiPost(data);
     let addressList = responseJson.Data.addressList;
+
     province = addressList;
+
+    province_id = addressList[0].id;
     city = province[0].list;
+    city_id = city[0].id;
     district = city[0].list;
+    district_id = district[0].id;
+
+    const { navigation } = this.props;
+    let item = navigation.getParam('item');
+    let modify = navigation.getParam('modify');
+
+    console.log(item);
+
+    if(modify){
+      province_id = item.province_id;
+      
+
+      province.forEach(function (element, index, array) {
+        if(element.id == province_id){
+          city = element.list;
+          return;
+        }
+
+      });
+      city_id = item.city_id;
+      city.forEach(function (element, index, array) {
+        if(element.id == city_id){
+          district = element.list;
+          return;
+        }
+
+      });
+      district_id = item.district_id;
+
+      this.setState({
+        address: item.address,
+        consignee: item.consignee,
+        mobile: item.mobile,
+      });
+    }
 
     this.setState({
       addressList:addressList,
       province:addressList,
-      province_id:addressList[0].id,
+      province_id:province_id,
       city:city,
-      city_id:city[0].id,
+      city_id:city_id,
       district:district,
-      district_id:district[0].id,
+      district_id:district_id,
     });
     console.log(responseJson.Data.addressList);
   };
@@ -137,11 +178,6 @@ export default class AddAddressScreen extends React.Component {
   }
 
   _addAddress = async () => {
-    //添加收货地址：
-    //{"Action":"AddAddress","token":"2e6b88dbbf93a4d6095bdea691f6da87","consignee":"测试",
-    //"province_id":"4",
-    //"city_id":"55",
-    //"district_id":"540","address":"建设路115号","mobile":"13300000001"}
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
       'Action':'AddAddress',
