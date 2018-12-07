@@ -52,7 +52,7 @@ export default class PositionScreen extends React.Component {
       {
         text: '修改',
         type: 'primary',
-        onPress: ()=>{ this._modifyAddress(item.address_id,item.consignee,item.province,item.city,item.district,item.address,item.mobile)},
+        onPress: ()=>{ this._modifyAddress(item.address_id,item.consignee,item.province,item.city,item.district,item.detail,item.mobile)},
       },
       {
         text: '删除',
@@ -99,6 +99,7 @@ export default class PositionScreen extends React.Component {
         district_id: district_id,
         mobile: mobile,
         province_id: province_id,
+        //detail:detail,
       },
       'modify': true,
     });
