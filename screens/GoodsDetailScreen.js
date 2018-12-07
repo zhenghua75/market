@@ -190,18 +190,18 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>331</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>全部</Text>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
+              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>商品</Text>
             </View>
             <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
             <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>331</Text>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
+              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>服务</Text>
+            </View>
+            <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
+            <View style={{alignItems:'center',flex:0.33}}>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
               <Text style={{fontSize:14,color:'#888888',marginTop:7}}>新品</Text>
-            </View>
-            <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
-            <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>331</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>促销</Text>
             </View>
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-around',borderBottomWidth:1,borderColor:'#e5e5e5',
@@ -250,9 +250,11 @@ export default class GoodsDetailScreen extends React.Component {
             <Image source={require('../assets/images/05商品/客服.png')}/>
             <Text>客服</Text>
           </View>
-          <View style={{backgroundColor:'#e58810',flex:0.3,alignItems:'center',justifyContent:'center'}}>
+          <TouchableOpacity 
+            style={{backgroundColor:'#e58810',flex:0.3,alignItems:'center',justifyContent:'center'}}
+            onPress={this._addToCart}>
             <Text style={{fontSize:19,color:'#fff'}}>加入购物车</Text>
-          </View>
+          </TouchableOpacity>
           <View style={{backgroundColor:'#ff8f00',flex:0.3,alignItems:'center',justifyContent:'center'}}>
             <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
           </View>
@@ -295,6 +297,34 @@ export default class GoodsDetailScreen extends React.Component {
   	const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
     this.props.navigation.navigate('GoodsDetailComment',{'goods_id':goods_id});
+  };
+
+  _addToCart = async () => {
+    //
+    const { navigation } = this.props;
+    let goods_id = navigation.getParam('goods_id');
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'AddToCart',
+      'token':userToken,
+      'good_id': goods_id,
+      'number':'1',
+    };
+    let responseJson = await ApiPost(data);
+    console.log(responseJson);
+    if(responseJson.Result){
+      Alert.alert(
+        '添加购物车',
+        responseJson.MessageString,
+        [
+          {text: '确定', onPress: () => {
+            console.log(responseJson);
+            //this.props.navigation.pop();
+          }},
+        ],
+        { cancelable: false }
+      )
+    }
   };
 }
 

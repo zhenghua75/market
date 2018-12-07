@@ -99,6 +99,12 @@ export default class AddAddressScreen extends React.Component {
   }
 
   render() {
+    let title = '新增地址';
+    const { navigation } = this.props;
+    let modify = navigation.getParam('modify');
+    if(modify){
+      title = '修改地址';
+    }
     return (
       <ScrollView style={styles.container}>
         <View style={styles.box}>
@@ -118,7 +124,7 @@ export default class AddAddressScreen extends React.Component {
           <Picker 
             selectedValue={this.state.province_id}
             onValueChange={(itemValue, itemIndex) => {
-              let city = province[itemIndex].list;
+              let city = this.state.province[itemIndex].list;
               let district = city[0].list;
               this.setState({
                 province_id: itemValue,
@@ -139,7 +145,7 @@ export default class AddAddressScreen extends React.Component {
             selectedValue={this.state.city_id}
             onValueChange={(itemValue, itemIndex) => 
               {
-                let district = city[itemIndex].list;
+                let district = this.state.city[itemIndex].list;
                 this.setState({
                   city_id: itemValue,
                   district: district,
@@ -171,11 +177,21 @@ export default class AddAddressScreen extends React.Component {
             value={this.state.address}/>
         </View>
 
-        <Button title='新增地址' onPress={this._addAddress}/>
+        <Button title={title} onPress={this._handler}/>
         <View style={{height:50}}/>
       </ScrollView>
     );
   }
+
+  _handler = async () => {
+    const { navigation } = this.props;
+    let modify = navigation.getParam('modify');
+    if(modify){
+      this._editAddress();
+    }else{
+      this._addAddress();
+    }
+  };
 
   _addAddress = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
@@ -206,7 +222,7 @@ export default class AddAddressScreen extends React.Component {
     }
   }
 
-  _EditAddress = async () => {
+  _editAddress = async () => {
     //{"Action":"EditAddress","token":"2e6b88dbbf93a4d6095bdea691f6da87",
     //"address_id":"17",
     //"consignee":"顺吵蛤蟆坑",

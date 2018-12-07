@@ -41,7 +41,7 @@ export default class PositionScreen extends React.Component {
     console.log(responseJson);
   };
 
-  _keyExtractor = (item, index) => item.cat_id;
+  _keyExtractor = (item, index) => item.address_id;
 
   componentWillMount(){
     this._GetAddressList();
@@ -61,8 +61,8 @@ export default class PositionScreen extends React.Component {
       }
     ]
     return (
-      <Swipeout key={item.address_id} right={swipeoutBtns}>
-        <View key={'view-'+item.address_id}>
+      <Swipeout right={swipeoutBtns}>
+        <View>
           <Text>{item.address}</Text>
           <Text>{item.mobile}</Text>
         </View>
