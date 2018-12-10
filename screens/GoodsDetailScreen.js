@@ -56,7 +56,6 @@ export default class GoodsDetailScreen extends React.Component {
     height:0,
   };
 
-  //单个商品：{"Action":"GetGoodInfo","good_id":"1","token":"2e6b88dbbf93a4d6095bdea691f6da87"}
   _getGoods=async (goods_id) =>{
     const userToken = await AsyncStorage.getItem('userToken');
     const { navigation } = this.props;
