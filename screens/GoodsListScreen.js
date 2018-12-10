@@ -40,7 +40,6 @@ export default class LinksScreen extends React.Component {
       'GoodName':'',
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson.Data);
     let list = responseJson.Data.Data;
     this.setState({list:list, });
   };
