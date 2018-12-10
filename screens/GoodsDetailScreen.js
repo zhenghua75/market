@@ -51,9 +51,11 @@ export default class GoodsDetailScreen extends React.Component {
     'info':{},
     'list':[],
     'visibleSwiper': false,
+    'shippingFee':{},
     visibleModal: false,
     img_url:'',
     height:0,
+    'store':{},
   };
 
   //单个商品：{"Action":"GetGoodInfo","good_id":"1","token":"2e6b88dbbf93a4d6095bdea691f6da87"}
@@ -67,11 +69,13 @@ export default class GoodsDetailScreen extends React.Component {
       'good_id':goods_id,
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson.Data);
+    console.log(responseJson);
     this.setState({
       info:responseJson.Data.good,
       html:responseJson.Data.good.goods_desc,
-      list: responseJson.Data.pictures
+      list: responseJson.Data.good.pictures,
+      shippingFee: responseJson.Data.shippingFee,
+      store: responseJson.Data.store,
     });
     
   };
@@ -126,6 +130,9 @@ export default class GoodsDetailScreen extends React.Component {
     let info = this.state.info;
     let swiper = null;
     let modal = null;
+    let shippingFee = this.state.shippingFee;
+    let store = this.state.store;
+
     if (this.state.visibleSwiper) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
         width={Dimensions.get('window').width}
@@ -163,10 +170,10 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
           <View style={{flexDirection:'row',}}>
             <View style={{flexDirection:'row',flex:0.5,}}>
-              <Text style={{fontSize:14,color:'#999999',}}>快递：{info.is_shipping=='1'?'免邮':info.shipping_fee}</Text>
-              <Text style={{fontSize:14,color:'#999999',marginLeft:30}}>销量：{info.sales_volume}件</Text>
+              <Text style={{fontSize:14,color:'#999999',}}>快递：{shippingFee.is_shipping=='1'?'免邮':shippingFee.shipping_fee}</Text>
+              <Text style={{fontSize:14,color:'#999999',marginLeft:30}}>销量：{shippingFee.sales_volume}件</Text>
             </View>
-            <Text style={{fontSize:14,color:'#999999',flex:0.5,textAlign:'right',}}>{info.user_id=='0'?'自营':'其他'}</Text>
+            <Text style={{fontSize:14,color:'#999999',flex:0.5,textAlign:'right',}}>{store.self_run==0?'自营':'其他'}</Text>
           </View>
         </View>
         <View style={{flexDirection:'row',alignItems:'center',padding:12,backgroundColor:'#e5e5e5',}}>
@@ -186,7 +193,7 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{backgroundColor:'#ff8f00',width:33,height:33,}}/>
-            <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{info.shopinfo?info.shopinfo.shop_name:''}</Text>
+            <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{store.shop_name}</Text>
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{alignItems:'center',flex:0.33}}>
@@ -229,10 +236,25 @@ export default class GoodsDetailScreen extends React.Component {
         </View>
         
         <WebView originWhitelist={['*']} 
-          source={{ html: '<html><head><meta name="viewport" content="width=device-width, initial-scale=1"/></head><body>'
-            +info.goods_desc+'</body></html>'}} 
+          source={{ html: '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/></head><body>'
+            +info.goods_desc
+            +'<script>'
+            +'  function ResizeImages(){'
+            +'    var myimg;'
+            +'    for(i=0;i <document.images.length;i++){'
+            +'      myimg = document.images[i];'
+            +'      myimg.width = '+Dimensions.get('window').width+' - 20};'
+            +'    }'
+            +'  }'
+            +'  window.onload=function(){ '
+            +'    ResizeImages()'
+            +'  }'
+            +'  </script>'
+            +'</body></html>'}} 
           style={{width:Dimensions.get('window').width,
-            height:this.state.height,}}
+            height:this.state.height,
+            flex: 1,
+          }}
           injectedJavaScript={BaseScript}
           onMessage={this.onMessage.bind(this)}
           scalesPageToFit={true}
