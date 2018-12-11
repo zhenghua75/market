@@ -55,7 +55,12 @@ export default class GoodsDetailScreen extends React.Component {
     visibleModal: false,
     img_url:'',
     height:0,
-    'store':{},
+    'store':{
+      'commentad':{
+        'Rank':{},
+        'Delivery':{},
+        'Server':{},
+      }},
   };
 
   _getGoods=async (goods_id) =>{
@@ -196,18 +201,18 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
             <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Rank.score}分{store.commentad.Rank.commentRank}</Text>
               <Text style={{fontSize:14,color:'#888888',marginTop:7}}>商品</Text>
             </View>
             <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
             <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Server.score}分{store.commentad.Server.commentServer}</Text>
               <Text style={{fontSize:14,color:'#888888',marginTop:7}}>服务</Text>
             </View>
             <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
             <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>5分</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>新品</Text>
+              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Delivery.score}分{store.commentad.Delivery.commentDelivery}</Text>
+              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>时效</Text>
             </View>
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-around',borderBottomWidth:1,borderColor:'#e5e5e5',
@@ -237,18 +242,6 @@ export default class GoodsDetailScreen extends React.Component {
         <WebView originWhitelist={['*']} 
           source={{ html: '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/></head><body>'
             +info.goods_desc
-            +'<script>'
-            +'  function ResizeImages(){'
-            +'    var myimg;'
-            +'    for(i=0;i <document.images.length;i++){'
-            +'      myimg = document.images[i];'
-            +'      myimg.width = '+Dimensions.get('window').width+' - 20};'
-            +'    }'
-            +'  }'
-            +'  window.onload=function(){ '
-            +'    ResizeImages()'
-            +'  }'
-            +'  </script>'
             +'</body></html>'}} 
           style={{width:Dimensions.get('window').width,
             height:this.state.height,
