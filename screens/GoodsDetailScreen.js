@@ -60,7 +60,9 @@ export default class GoodsDetailScreen extends React.Component {
         'Rank':{},
         'Delivery':{},
         'Server':{},
-      }},
+      },},
+    comment_all:{},
+    good_comment:[],
   };
 
   _getGoods=async (goods_id) =>{
@@ -80,6 +82,8 @@ export default class GoodsDetailScreen extends React.Component {
       list: responseJson.Data.good.pictures,
       shippingFee: responseJson.Data.shippingFee,
       store: responseJson.Data.store,
+      comment_all: responseJson.Data.comment_all,
+      good_comment: responseJson.Data.good_comment,
     });
     
   };
@@ -136,6 +140,8 @@ export default class GoodsDetailScreen extends React.Component {
     let modal = null;
     let shippingFee = this.state.shippingFee;
     let store = this.state.store;
+    let comment_all = this.state.comment_all;
+    let good_comment = this.state.good_comment;
 
     if (this.state.visibleSwiper) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
@@ -193,10 +199,10 @@ export default class GoodsDetailScreen extends React.Component {
             <Image source={require('../assets/images/04订单/右箭头.png')} />
           </View>
           <View style={{marginHorizontal:12,paddingVertical:12,borderBottomWidth:1,borderColor:'#e5e5e5',}}>
-            <Text style={{fontSize:14,color:'#999999',}}>评价（{info.comments_number}）</Text>
+            <Text style={{fontSize:14,color:'#999999',}}>评价（{comment_all.allmen}）</Text>
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
-            <View style={{backgroundColor:'#ff8f00',width:33,height:33,}}/>
+            <Image source={{uri:store.logo_thumb}} style={{width:33,height:33,}}/>
             <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{store.shop_name}</Text>
           </View>
           <View style={{flexDirection:'row',padding:12,}}>
@@ -310,7 +316,11 @@ export default class GoodsDetailScreen extends React.Component {
   _comment = async () => {
   	const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
-    this.props.navigation.navigate('GoodsDetailComment',{'goods_id':goods_id});
+    this.props.navigation.navigate('GoodsDetailComment',{
+      'goods_id':goods_id,
+      'good_comment':this.state.good_comment,
+      'comment_all':this.state.comment_all,
+    });
   };
 
   _addToCart = async () => {
