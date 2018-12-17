@@ -12,6 +12,8 @@ import {
   WebView,
   Platform,
   AsyncStorage,
+  Alert,
+  Linking,
    } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -54,7 +56,7 @@ export default class GoodsDetailScreen extends React.Component {
     'shippingFee':{},
     visibleModal: false,
     img_url:'',
-    height:0,
+    height:200,
     'store':{
       'commentad':{
         'Rank':{},
@@ -63,6 +65,10 @@ export default class GoodsDetailScreen extends React.Component {
       },},
     comment_all:{},
     good_comment:[],
+    spe:[],
+    specprice:[],
+    selected:{},
+    number:0,
   };
 
   _getGoods=async (goods_id) =>{
@@ -84,6 +90,8 @@ export default class GoodsDetailScreen extends React.Component {
       store: responseJson.Data.store,
       comment_all: responseJson.Data.comment_all,
       good_comment: responseJson.Data.good_comment,
+      spe: responseJson.Data.properties.spe,
+      specprice: responseJson.Data.properties.specprice,
     });
     
   };
@@ -134,6 +142,32 @@ export default class GoodsDetailScreen extends React.Component {
     }
   };
 
+  _speSelected = (id) => {
+    let specprice = this.state.specprice;
+
+    for (var i = 0; i < specprice.length; i++) {
+      if(specprice[i].combstr == id){
+        this.setState({selected:this.state.specprice[i]});
+        return;
+      }
+    }
+    
+  };
+
+  _plus = () => {
+    let number = this.state.number;
+    this.setState({number:number+1});
+  };
+
+  _minus = () => {
+    let number = this.state.number;
+    if(number-1<0){
+      this.setState({number:0});
+    }else{
+      this.setState({number:number-1});
+    }
+  };
+
   render() {
     let info = this.state.info;
     let swiper = null;
@@ -142,6 +176,27 @@ export default class GoodsDetailScreen extends React.Component {
     let store = this.state.store;
     let comment_all = this.state.comment_all;
     let good_comment = this.state.good_comment;
+    let spe = this.state.spe;
+    let specprice = this.state.specprice;
+
+    let speView = <View>
+      {spe.map((item, key) => {
+        let sub = item.values.map((item2, key2)=>{return (
+          <TouchableOpacity 
+            key={item2.id} 
+            style={{height:44,height:44,margin:11,}} 
+            onPress={() => this._speSelected(item2.id)}>
+              <Text>{item2.label}</Text>
+            </TouchableOpacity>
+          )});
+        return (<View key={item.attr_type}><Text>{item.name}</Text>{sub}</View>)
+      } )}
+    </View>;
+
+    let selected = <View style={{flexDirection:'row',alignItems:'center',marginTop:26,}}>
+            <Text style={{fontSize:19,color:'#ff8f00',}}>¥{this.state.selected.shop_price}</Text>
+            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥{this.state.selected.market_price}</Text>
+          </View>;
 
     if (this.state.visibleSwiper) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
@@ -163,7 +218,51 @@ export default class GoodsDetailScreen extends React.Component {
     } else {
       swiper = <View></View>;
     }
+    let self_run = null;
+    if(store.self_run){
+      self_run = <View>
+        <View style={{flexDirection:'row',padding:12,}}>
+          <Image source={{uri:store.logo_thumb}} style={{width:33,height:33,}}/>
+          <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{store.shop_name}</Text>
+        </View>
+        <View style={{flexDirection:'row',padding:12,}}>
+          <View style={{alignItems:'center',flex:0.33}}>
+            <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Rank.score}分{store.commentad.Rank.commentRank}</Text>
+            <Text style={{fontSize:14,color:'#888888',marginTop:7}}>商品</Text>
+          </View>
+          <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
+          <View style={{alignItems:'center',flex:0.33}}>
+            <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Server.score}分{store.commentad.Server.commentServer}</Text>
+            <Text style={{fontSize:14,color:'#888888',marginTop:7}}>服务</Text>
+          </View>
+          <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
+          <View style={{alignItems:'center',flex:0.33}}>
+            <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Delivery.score}分{store.commentad.Delivery.commentDelivery}</Text>
+            <Text style={{fontSize:14,color:'#888888',marginTop:7}}>时效</Text>
+          </View>
+        </View>
+        <View style={{flexDirection:'row',justifyContent:'space-around',borderBottomWidth:1,borderColor:'#e5e5e5',
+          marginHorizontal:12,paddingVertical:12,
+        }}>
+          <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
+            <Text style={{fontSize:16,color:'#3f3f3f'}}>全部商品</Text>
+          </View>
+          <TouchableOpacity onPress={this._store}>
+            <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
+              <Text style={{fontSize:16,color:'#3f3f3f'}}>进店逛逛</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>;
+    }
+
+    let customerService = <TouchableOpacity style={{alignItems:'center',flex:0.14,}} onPress={this._customerService}>
+            <Image source={require('../assets/images/05商品/客服.png')}/>
+            <Text>客服</Text>
+          </TouchableOpacity>;
+
     return (
+      <View style={styles.container}>
       <ScrollView style={styles.container}>
         <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
           <Text style={{fontSize:16,color:'#ff8f00',textAlign:'center',flex:1}}>商品</Text>
@@ -198,41 +297,23 @@ export default class GoodsDetailScreen extends React.Component {
             <Text style={{fontSize:14,color:'#999999',}}>选择：规格</Text>
             <Image source={require('../assets/images/04订单/右箭头.png')} />
           </View>
+          {selected}
+          {speView}
+          <View style={{flexDirection:'row',justifyContent:'space-between',
+            marginHorizontal:12,paddingVertical:12,
+            borderBottomWidth:1,borderColor:'#e5e5e5',
+          }}>
+            <Text style={{fontSize:14,color:'#999999',}}>数量</Text>
+            <View>
+              <TouchableOpacity onPress={this._minus} style={{width:44,height:44}}><Text>-</Text></TouchableOpacity>
+              <Text>{this.state.number}</Text>
+              <TouchableOpacity onPress={this._plus} style={{width:44,height:44}}><Text>+</Text></TouchableOpacity>
+            </View>
+          </View>
           <View style={{marginHorizontal:12,paddingVertical:12,borderBottomWidth:1,borderColor:'#e5e5e5',}}>
             <Text style={{fontSize:14,color:'#999999',}}>评价（{comment_all.allmen}）</Text>
           </View>
-          <View style={{flexDirection:'row',padding:12,}}>
-            <Image source={{uri:store.logo_thumb}} style={{width:33,height:33,}}/>
-            <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:7,}}>{store.shop_name}</Text>
-          </View>
-          <View style={{flexDirection:'row',padding:12,}}>
-            <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Rank.score}分{store.commentad.Rank.commentRank}</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>商品</Text>
-            </View>
-            <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
-            <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Server.score}分{store.commentad.Server.commentServer}</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>服务</Text>
-            </View>
-            <View style={{width:1,height:50,backgroundColor:'#e5e5e5',}}/>
-            <View style={{alignItems:'center',flex:0.33}}>
-              <Text style={{fontSize:16,color:'#3f3f3f',}}>{store.commentad.Delivery.score}分{store.commentad.Delivery.commentDelivery}</Text>
-              <Text style={{fontSize:14,color:'#888888',marginTop:7}}>时效</Text>
-            </View>
-          </View>
-          <View style={{flexDirection:'row',justifyContent:'space-around',borderBottomWidth:1,borderColor:'#e5e5e5',
-            marginHorizontal:12,paddingVertical:12,
-          }}>
-            <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
-              <Text style={{fontSize:16,color:'#3f3f3f'}}>全部商品</Text>
-            </View>
-            <TouchableOpacity onPress={this._store}>
-              <View style={{width:80,height:30,borderWidth:1,borderColor:'#e5e5e5',alignItems:'center',justifyContent:'center',}}>
-                <Text style={{fontSize:16,color:'#3f3f3f'}}>进店逛逛</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+          {self_run}
           <View style={{flexDirection:'row',justifyContent:'space-around',
             marginHorizontal:12,paddingVertical:12,
           }}>
@@ -245,51 +326,26 @@ export default class GoodsDetailScreen extends React.Component {
           </View>
         </View>
         
-        <WebView originWhitelist={['*']} 
-          source={{ html: '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/></head><body>'
-            +info.goods_desc
-            +'</body></html>'}} 
-          style={{width:Dimensions.get('window').width,
-            height:this.state.height,
-            flex: 1,
-          }}
+        <WebView 
+          source={{ uri: info.goods_desc}} 
+          originWhitelist={['*']} 
           injectedJavaScript={BaseScript}
           onMessage={this.onMessage.bind(this)}
-          scalesPageToFit={true}
+          style={{width:Dimensions.get('window').width,
+            height:400,
+          }}
         />
-        <View style={{marginTop:50,flexDirection:'row',}}>
-          <View style={{alignItems:'center',flex:0.14,}}>
-            <Image source={require('../assets/images/05商品/收藏选中.png')}/>
-            <Text>收藏</Text>
-          </View>
-          <View style={{alignItems:'center',flex:0.14,}}>
-            <Image source={require('../assets/images/05商品/购物车.png')}/>
-            <Text>购物车</Text>
-          </View>
-          <View style={{alignItems:'center',flex:0.14,}}>
-            <Image source={require('../assets/images/05商品/客服.png')}/>
-            <Text>客服</Text>
-          </View>
-          <TouchableOpacity 
-            style={{backgroundColor:'#e58810',flex:0.3,alignItems:'center',justifyContent:'center'}}
-            onPress={this._addToCart}>
-            <Text style={{fontSize:19,color:'#fff'}}>加入购物车</Text>
-          </TouchableOpacity>
-          <View style={{backgroundColor:'#ff8f00',flex:0.3,alignItems:'center',justifyContent:'center'}}>
-            <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
-          </View>
-        </View>
         <Modal visible={this.state.visibleModal} 
-        	transparent={false}
-        	style={{backgroundColor:'black',}}
+          transparent={false}
+          style={{backgroundColor:'black',}}
           onRequestClose={() => {
           }}>
           <View style={{alignItems:'flex-end',backgroundColor:'black',}}>
-              <TouchableHighlight style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
+              <TouchableHighlight style={{marginTop:44,width:44,height:44,alignItems:'center',justifyContent:'center'}}
                 onPress={() => {
-                  this.setState({visibleModal: !this.state.visibleModal});
+                  this.setState({visibleModal: false});
                 }}>
-                <Text style={{color:'white'}}>X</Text>
+                <Text style={{color:'white',fontSize:40,}}>X</Text>
               </TouchableHighlight>
             </View>
           <ImageZoom style={{backgroundColor:'black',}}
@@ -302,15 +358,40 @@ export default class GoodsDetailScreen extends React.Component {
               width:Dimensions.get('window').width,
               height:Math.floor(Dimensions.get('window').width * 564/750)
             }}
-              source={{uri:'http://jc.ynweix.com/'+this.state.img_url}}/>
+              source={{uri:this.state.img_url}}/>
           </ImageZoom>
         </Modal>
       </ScrollView>
+      <View style={{marginTop:50,flexDirection:'row',}}>
+          <View style={{alignItems:'center',flex:0.2,}}>
+            <Image source={require('../assets/images/05商品/收藏选中.png')}/>
+            <Text>收藏</Text>
+          </View>
+          <TouchableOpacity style={{alignItems:'center',flex:0.2,}} onPress={this._cart}>
+            <Image source={require('../assets/images/05商品/购物车.png')}/>
+            <Text>购物车</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={{backgroundColor:'#e58810',flex:0.3,alignItems:'center',justifyContent:'center'}}
+            onPress={this._addToCart}>
+            <Text style={{fontSize:19,color:'#fff'}}>加入购物车</Text>
+          </TouchableOpacity>
+          <View style={{backgroundColor:'#ff8f00',flex:0.3,alignItems:'center',justifyContent:'center'}}>
+            <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
+          </View>
+        </View>
+        
+      </View>
     );
   }
 
   _store = async () => {
     this.props.navigation.navigate('Store');
+  };
+
+  _cart = async () => {
+    this.props.navigation.navigate('Cart');
   };
 
   _comment = async () => {
@@ -323,8 +404,20 @@ export default class GoodsDetailScreen extends React.Component {
     });
   };
 
+  _customerService = async() => {
+      //Linking为RN自带的组件
+     let url = "mqqwpa://im/chat?chat_type=wpa&uin=87023264";//调用QQ
+     //let url = "tel: 电话号码";//调用拨号
+     Linking.canOpenURL(url).then(supported => {
+         if (supported) {
+             Linking.openURL(url);
+         }
+     });
+  };
+
   _addToCart = async () => {
-    //
+    //{"Action":"AddToCart","token":"2e6b88dbbf93a4d6095bdea691f6da87",
+    //"spec":"110","goods_id":"147","store_id":"0","number":"1","parent":"0"}
     const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
     const userToken = await AsyncStorage.getItem('userToken');
@@ -332,10 +425,13 @@ export default class GoodsDetailScreen extends React.Component {
       'Action':'AddToCart',
       'token':userToken,
       'good_id': goods_id,
-      'number':'1',
+      'number':this.state.number,
+      'spec': this.state.selected.combstr,
+      'store_id':0,//this.state.info.seller_id,
     };
+    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
+    //console.log(responseJson);
     if(responseJson.Result){
       Alert.alert(
         '添加购物车',
