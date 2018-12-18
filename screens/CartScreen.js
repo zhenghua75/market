@@ -79,9 +79,16 @@ export default class CartScreen extends React.Component {
     />
   );
 
-  _renderItem = ({item, index, section}) => (
+  _renderItem = ({item, index, section}) => {
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    if(item.is_checked == '1'){
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />
+    }
+   return (
     <View style={{flexDirection:'row',alignItems:'center'}}>
-      <Image source={require('../assets/images/10购物车/购物车未选中.png')} />
+      <TouchableOpacity onPress={() => this._CartSelected(item.is_checked,item.rec_id)}>
+        {img}
+      </TouchableOpacity>
       <Image source={{uri:item.goods_thumb}} style={{width:90,height:90}}/>
       <View style={{}}>
         <Text style={{fontSize:14,color:'#3F3F3F',}} key={index+'name'}>{item.goods_name}</Text>
@@ -105,20 +112,28 @@ export default class CartScreen extends React.Component {
         </View>
       </View>
     </View>
-  );
+  ); 
+  }
+  
 
-  _renderHeader = ({section: {selected,ru_name}}) => (
-    <TouchableOpacity onPress={()=>{this._storeSelected(selected)}}>
+  _renderHeader = ({section: {is_checked,ru_id,ru_name}}) => {
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    let checked = '0';
+    if(is_checked=='1'){
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />;
+      checked = '1';
+    }
+    return (
+    <TouchableOpacity onPress={()=>{this._storeSelected(checked,ru_id)}}>
       <View style={{flexDirection:'row'}}>
-        <Image source={require('../assets/images/10购物车/购物车未选中.png')} />
+        {img}
         <Image source={require('../assets/images/04订单/店铺.png')} />
         <Text style={{fontWeight: 'bold'}}>{ru_name}</Text>
         <Image source={require('../assets/images/04订单/右箭头.png')} />
       </View>
     </TouchableOpacity>
   );
-
-  //购物车{"Action":"GetCart","token":"2e6b88dbbf93a4d6095bdea691f6da87"}
+  };
 
   _getCart = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
@@ -128,9 +143,17 @@ export default class CartScreen extends React.Component {
     };
     let responseJson = await ApiPost(data);
     console.log(responseJson);
+    let j = 0;
     for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
       responseJson.Data.goods_list[i]['index'] = i;
-      responseJson.Data.goods_list[i]['selected'] = false;
+      //responseJson.Data.goods_list[i]['selected'] = false;
+      if(responseJson.Data.goods_list[i]['is_checked'] == '1'){
+        j ++;
+      }
+    }
+    responseJson.Data.total.is_checked='0';
+    if(j == responseJson.Data.goods_list.length){
+      responseJson.Data.total.is_checked='1';
     }
     this.setState({Data:responseJson.Data});
     
@@ -152,24 +175,76 @@ export default class CartScreen extends React.Component {
       this._getCart();
     }
   };
-  _storeSelected = (selected) => {
 
-  };
-
-  //购物车选择和取消选择
-  //{"Action":"CartSelected","token":"2e6b88dbbf93a4d6095bdea691f6da87",
-  //"cart_ids":"18","change_cart_ids":"36","change_status":"0"}
-  _CartSelected = async () => {
+  _allSelected = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
-    let result = parseInt(number)+parseInt(plus);
+    let result = this.state.Data.total.is_checked;
+    let allcart = 'checked';
+    if(result == '1'){
+      allcart = 'uncheck';
+    }
     var data = {
-      'Action':'CartGoodsNumber',
+      'Action':'CartSelected',
       'token':userToken,
-      'cart_id':rec_id,
-      'number': result,
+      'cart_id':'',
+      'ru_id':'',
+      'status':'',
+      'allcart': allcart,
     };
+    console.log(data);
     let responseJson = await ApiPost(data);
     console.log(responseJson);
+    if (responseJson.Result) {
+      this._getCart();
+    }
+  };
+
+  _storeSelected = async (checked,ru_id) => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    let result = '1';
+    if(checked == '1'){
+      result = '0';
+    }
+    var data = {
+      'Action':'CartSelected',
+      'token':userToken,
+      'cart_id':'',
+      'ru_id':ru_id,
+      'status':result,
+      'allcart': '',
+    };
+    console.log(data);
+    let responseJson = await ApiPost(data);
+    console.log(responseJson);
+    if (responseJson.Result) {
+      this._getCart();
+    }
+  };
+
+  _CartSelected = async (checked,cart_id) => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    let result = '1';
+    if(checked == '1'){
+      result = '0';
+    }
+    var data = {
+      'Action':'CartSelected',
+      'token':userToken,
+      'cart_id':cart_id,
+      'ru_id':'',
+      'status':result,
+      'allcart': '',
+    };
+    console.log(data);
+    let responseJson = await ApiPost(data);
+    console.log(responseJson);
+    if (responseJson.Result) {
+      this._getCart();
+    }
+  };
+
+  _Settlement = async () => {
+    this.props.navigation.navigate('Settlement');
   };
 
   componentWillMount() {
@@ -177,6 +252,11 @@ export default class CartScreen extends React.Component {
   };
 
   render() {
+    let is_checked = this.state.Data.total.is_checked;
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    if(is_checked == '1'){
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />;
+    }
     return (
       <ScrollView style={styles.container}>
         <SectionList
@@ -186,14 +266,14 @@ export default class CartScreen extends React.Component {
           keyExtractor={(item, index) => item + index}
         />
         <View style={{flexDirection:'row'}}>
-          <View style={{flexDirection:'row'}}>
-            <Image source={require('../assets/images/10购物车/购物车未选中.png')} />
+          <TouchableOpacity style={{flexDirection:'row'}} onPress={() => this._allSelected()}>
+            {img}
             <Text>全选</Text>
-          </View>
+          </TouchableOpacity>
           <View style={{flexDirection:'row'}}>
             <Text>合计：</Text>
             <Text>¥{this.state.Data.total.goods_amount}</Text>
-            <TouchableOpacity onPress={this._nextAsync} style={{alignItems:'center',justifyContent:'center',}}>
+            <TouchableOpacity onPress={this._Settlement} style={{alignItems:'center',justifyContent:'center',}}>
               <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
                 <Text>结算(1)</Text>
               </ImageBackground>
