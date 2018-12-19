@@ -9,22 +9,23 @@ import {
   SectionList,
   Image,
   View,
+  Picker,
+  Alert
    } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
 
 export default class SettlementScreen extends React.Component {
+
   static navigationOptions = {
-    title: '结算',
+    title: '支付',
   };
+
   state = {
     Data:{
-      consignee:{
-
-      },
-      goods_list:[],
-
-    }
+      consignee:{},
+      goods_list:[{shipping:[{shipping_id:null,shipping_name:null,}],shipping_id:null,shipping_idx:0,data:[]},],
+    },
   };
+
   _CartToSettle = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
@@ -34,19 +35,44 @@ export default class SettlementScreen extends React.Component {
     console.log(data);
     let responseJson = await ApiPost(data);
     console.log(responseJson);
+    for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
+      responseJson.Data.goods_list[i].index = i;
+      let shipping = responseJson.Data.goods_list[i].shipping;
+      for (var j = 0; j < shipping.length; j++) {
+        if(shipping[j].default==1){
+          responseJson.Data.goods_list[i].shipping_idx = j;
+          responseJson.Data.goods_list[i].shipping_id = shipping[j].shipping_id;
+          break;
+        }
+      }
+    }
     this.setState({Data:responseJson.Data});
   };
+
   componentWillMount() {
     this._CartToSettle();
   };
+
   _Settlement = async () => {
+    //{"Action":"SettleToOrder","token":"2e6b88dbbf93a4d6095bdea691f6da87",
+    //"ru_id":[0,2],"postscript":["你好","晨晨"],"shipping":[16,20],
+    //"need_inv":"1","inv_type":"0","inv_payee":"个人","tax_id":"",
+    //"inv_content":"明细","invoice_id":"0","vat_id":"","payment":"15"}
+    let goods_list = this.state.Data.goods_list;
+    let ru_id = [];
+    let shipping = [];
+    for (var i = 0; i < goods_list.length; i++) {
+      ru_id.push(goods_list[i].ru_id);
+      shipping.push(parseInt(goods_list[i].shipping_id));
+    }
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
       'Action':'SettleToOrder',
       'token':userToken,
       'cart_value':'18',
-      'ru_id':[2],
-      'postscript':'',
+      'ru_id':ru_id,
+      'postscript':[],
+      "shipping":shipping,
       "need_inv":"1",
       "inv_type":"0",
       "inv_payee":"个人",
@@ -55,15 +81,13 @@ export default class SettlementScreen extends React.Component {
       "invoice_id":"0",
       "vat_id":"",
       "payment":"15",
-      "shipping":[0],
-      "shipping_type":[0],
-      "shipping_code":["yto"],
     };
     console.log(data);
     let responseJson = await ApiPost(data);
     console.log(responseJson);
   };
-  _renderItem = ({item, index, section}) => {
+
+  _renderItem ({item, index, section}) {
     let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
     if(item.is_checked == '1'){
       img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />
@@ -99,7 +123,7 @@ export default class SettlementScreen extends React.Component {
   ); 
   }
 
-  _renderHeader = ({section: {is_checked,ru_id,ru_name}}) => {
+  _renderHeader ({section: {is_checked,ru_id,ru_name}}) {
     let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
     let checked = '0';
     if(is_checked=='1'){
@@ -107,37 +131,77 @@ export default class SettlementScreen extends React.Component {
       checked = '1';
     }
     return (
-    <TouchableOpacity onPress={()=>{this._storeSelected(checked,ru_id)}}>
-      <View style={{flexDirection:'row'}}>
-        {img}
-        <Image source={require('../assets/images/04订单/店铺.png')} />
-        <Text style={{fontWeight: 'bold'}}>{ru_name}</Text>
-        <Image source={require('../assets/images/04订单/右箭头.png')} />
-      </View>
-    </TouchableOpacity>
-  );
+      <TouchableOpacity onPress={()=>{this._storeSelected(checked,ru_id)}}>
+        <View style={{flexDirection:'row'}}>
+          {img}
+          <Image source={require('../assets/images/04订单/店铺.png')} />
+          <Text style={{fontWeight: 'bold'}}>{ru_name}</Text>
+          <Image source={require('../assets/images/04订单/右箭头.png')} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  _renderSectionFooter ({section: {is_checked,ru_id,ru_name,shipping,index,shipping_idx}}) {
+    let defaultShipping = shipping[shipping_idx];
+    return (
+      <TouchableOpacity onPress={()=>{this._selectShipping(shipping)}}>
+        <View style={{ height: 50, }}>
+          <Text>{defaultShipping.shipping_name}</Text>
+        </View>
+      </TouchableOpacity>
+      );
   };
 
   render() {
     let consignee = this.state.Data.consignee;
     let goods_list = this.state.Data.goods_list;
+    // <Picker
+    //       selectedValue={shipping_id}
+    //       style={{ flex: 1, }}
+    //       onValueChange={(itemValue, itemIndex) => {
+    //         let data = this.state.Data;
+    //         let shipping_id = data.goods_list[index].shipping[itemIndex].shipping_id;
+    //         data.goods_list[index].shipping_id = shipping_id;
+    //         this.setState({Data: data});
+    //       }}>
+    //       { 
+    //         shipping.map((item, key) => {
+    //         return (<Picker.Item key={'shipping-'+item.shipping_id} label={item.shipping_name} value={item.shipping_id} />)
+    //       })}
+    //     </Picker>
+
     return (
       <ScrollView style={styles.container}>
         <Text>{consignee.consignee}{consignee.mobile}{consignee.region}{consignee.address}</Text>
         <SectionList
-          renderItem={this._renderItem}
-          renderSectionHeader={this._renderHeader}
-          sections={this.state.Data.goods_list}
-          keyExtractor={(item, index) => item + index}
+          renderItem = {this._renderItem}
+          renderSectionHeader = {this._renderHeader}
+          renderSectionFooter = {this._renderSectionFooter}
+          sections = {goods_list}
+          keyExtractor = {(item, index) => item + index}
         />
         <TouchableOpacity onPress={this._Settlement} style={{alignItems:'center',justifyContent:'center',}}>
-              <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
-                <Text>结算(1)</Text>
-              </ImageBackground>
-            </TouchableOpacity>
+          <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
+            <Text>结算(1)</Text>
+          </ImageBackground>
+        </TouchableOpacity>
       </ScrollView>
     );
   }
+
+  _selectShipping= (shipping) => {
+    let btns = [];
+    for (var i = 0; i < shipping.length; i++) {
+      btns.push({text:shipping[i].shipping_name,onPress:()=>console.log(shipping[i].shipping_id)});
+    }
+    Alert.alert(
+      '快递',
+      '快递',
+      btns,
+      { cancelable: false }
+    );
+  };
 }
 
 const styles = StyleSheet.create({
