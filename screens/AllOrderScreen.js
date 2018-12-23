@@ -8,10 +8,36 @@ import {
   Text,
   SectionList,
   Button,
+  AsyncStorage,
    } from 'react-native';
 
+import ApiPost from '../lib/ApiPost';
+
+_pay = async (order_sn) => {
+    //获取在线支付信息，传订单sn号，查询订单和可用支付接口配置
+    //{"Action":"GetOnlinePay","token":"90f9f715ee5d1acf4a104dedd4b30727",
+    //"order_sn":"2018122117490106637"}
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetOnlinePay',
+      'token':userToken,
+      'order_sn':order_sn,
+    };
+    console.log(data);
+    let responseJson = await ApiPost(data);
+    console.log(responseJson);
+    if(responseJson.Result){
+      //支付
+      
+    }
+  };
+
 export default class AllOrderScreen extends React.Component {
- 
+  
+  // constructor(props) {
+  //   super(props);
+  //   this._pay = this._pay.bind(this);
+  // }
   static navigationOptions = ({navigation}) => ({
     title: '我的订单',
     headerRight: (
@@ -21,39 +47,85 @@ export default class AllOrderScreen extends React.Component {
     ),
   });
 
+  state={
+    Data:{
+      order_list:[],
+    }
+  }
+
+  //获取已经生成的订单{"Action":"GetOrderList","token":"90f9f715ee5d1acf4a104dedd4b30727",
+//"size":10,"page":1,"status":0}
+//其中status的意思是：0--全部订单，1--待付款，2--待收货
+
+
+  _GetOrderList = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetOrderList',
+      'token':userToken,
+      'size':100,
+      'page':1,
+      'status':0,
+    };
+    console.log(data);
+    let responseJson = await ApiPost(data);
+    console.log(responseJson);
+    this.setState({Data:responseJson.Data});
+  };
+
+  componentWillMount() {
+    this._GetOrderList();
+  }
   _renderItem = ({item, index, section}) => (
-    <View>
-      <View style={{flexDirection:'row',alignItems:'center'}}>
-        <Image source={require('../assets/images/s1.png')} style={{width:90,height:90}}/>
-        <View style={{}}>
-          <Text style={{fontSize:14,color:'#3F3F3F',}} key={index+'name'}>{item.name}</Text>
-          <Text style={{fontSize:12,color:'#C7C7C7',marginTop:8,}} key={index+'attr'}>{item.attr}</Text>
-          <View style={{flexDirection:'row',alignItems:'center',}}>
-            <Text style={{fontSize:14,color:'#FF8F00',}} key={index+'price'}>{item.price}</Text>
-            <Text style={{width:44,textAlign:'center'}}>X{item.num}</Text>
-          </View>
+    <View style={{flexDirection:'row',alignItems:'center'}}>
+      <Image source={{uri:item.goods_thumb}} style={{width:90,height:90}}/>
+      <View style={{}}>
+        <Text style={{fontSize:14,color:'#3F3F3F',}} key={index+'name'}>{item.goods_name}</Text>
+        <Text style={{fontSize:12,color:'#C7C7C7',marginTop:8,}} key={index+'attr'}>{item.goods_attr}</Text>
+        <View style={{flexDirection:'row',alignItems:'center',}}>
+          <Text style={{fontSize:14,color:'#FF8F00',}} key={index+'price'}>{item.goods_price}</Text>
+          <Text style={{width:44,textAlign:'center'}}>X{item.goods_number}</Text>
         </View>
-      </View>
-      <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
-        <Text>共{item.num}件商品 小计：</Text>
-        <Text>{item.sum}</Text>
-      </View>
-      <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
-        <Button title='取消订单' onPress={()=>{}}/>
-        <Button title='付款' onPress={()=>{}}/>
       </View>
     </View>
   );
 
-  _renderHeader = ({section: {title}}) => (
+  //
+
+  _renderHeader = ({section: {user_name}}) => (
     <View style={{flexDirection:'row'}}>
       <Image source={require('../assets/images/04订单/店铺.png')} />
-      <Text style={{fontWeight: 'bold'}}>{title}</Text>
+      <Text style={{fontWeight: 'bold'}}>{user_name}</Text>
       <Image source={require('../assets/images/04订单/右箭头.png')} />
     </View>
   );
   
+  //
+
+  
+
+  _cancel = async (order_sn) => {};
+
+  _renderSectionFooter ({section: {order_goods_num,total_fee,order_sn}}) {
+    //console.log(this);
+    return (
+      <View>
+        <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+          <Text>共{order_goods_num}件商品 小计：</Text>
+          <Text>{total_fee}</Text>
+        </View>
+        <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+          <Button title='取消订单' onPress={()=>{}}/>
+          <Button title='付款' onPress={() => {
+            _pay(order_sn);
+          }}/>
+        </View>
+      </View>
+      );
+  };
+
   render() {
+    //
     return (
       <ScrollView style={styles.container}>
         <View style={{flexDirection:'row'}}>
@@ -76,11 +148,8 @@ export default class AllOrderScreen extends React.Component {
         <SectionList
           renderItem={this._renderItem}
           renderSectionHeader={this._renderHeader}
-          sections={[
-            {title: '魔都CV大大1', data: [{name:'远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单',attr:'100米硬线 蓝色 100米/卷',price:38,num:3,sum:114}]},
-            {title: '魔都CV大大2', data: [{name:'远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单',attr:'100米硬线 蓝色 100米/卷',price:38,num:3,sum:114},{name:'远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单',attr:'100米硬线 蓝色 100米/卷',price:38,num:3,sum:114}]},
-            {title: '魔都CV大大3', data: [{name:'远东电线电缆   BV2.5平方国标家装照明插座用铜芯电线单',attr:'100米硬线 蓝色 100米/卷',price:38,num:3,sum:114}]},
-          ]}
+          renderSectionFooter = {this._renderSectionFooter}
+          sections={this.state.Data.order_list}
           keyExtractor={(item, index) => item + index}
         />
       </ScrollView>
