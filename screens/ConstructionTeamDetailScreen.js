@@ -7,8 +7,12 @@ import {
   Image,
   Text,
   ImageBackground,
+  AsyncStorage,
+  FlatList
    } from 'react-native';
 import Swiper from 'react-native-swiper';
+
+import ApiPost from '../lib/ApiPost';
 
 export default class ConstructionTeamDetailScreen extends React.Component {
   static navigationOptions = {
@@ -20,77 +24,107 @@ export default class ConstructionTeamDetailScreen extends React.Component {
     },
   };
 
+  constructor(props){
+    super(props);
+    this.state = {
+        teaminfo:[]
+    }
+  }
+
+  componentWillMount() {
+    const { navigation } = this.props;
+    let team_id = navigation.getParam('id');
+    this._getConsteamInfo(team_id);
+  }
+
+  _getConsteamInfo=async (team_id) =>{
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetConsteamInfo',
+      'token':userToken,
+      'team_id':team_id
+    };
+    let responseJson = await ApiPost(data);
+    this.setState({
+        teaminfo:responseJson.Data.teaminfo
+    });
+  };
+
+  _keyExtractor = (item, index) => item.member_id;
+
+  _createListItem = ({item}) => {
+    return (
+        <View style={{alignItems:'center',paddingTop:40,}}>
+            <View style={{position:'absolute',top:0,zIndex:1}}>
+                <Image source={{uri:item.member_logo}} style={{width:59,height:59,borderRadius:30,}}/>
+            </View>
+            <View style={{borderWidth:1,borderColor:'rgb(229,229,229)',
+                width: Dimensions.get('window').width/2-20,alignItems:'center',paddingTop:30,
+                }}>
+                <Text style={{fontSize:15,color:'#3f3f3f',}}>{item.member_name}</Text>
+                <Text style={{fontSize:14,color:'#888888',lineHeight:20,}}>{item.member_type_desc}</Text>
+                <Text style={{fontSize:14,color:'#888888',height:180,padding:5,textAlignVertical:'center'}}>{item.member_desc}</Text>
+            </View>
+        </View>
+    );
+  }
+
+  _separator = () => {
+    return <View style={{height:20,}}/>;
+  }
+
+  _createEmptyView(){
+    return (
+        <View style={{alignItems:'center',marginTop:50,}}>
+            <Image source={require('../assets/images/05商品/暂无匹配.png')} style={{width:44,height:44,}}/>
+            <Text style={{fontSize:14,color:'#999999',marginTop:20}}>暂时没有施工队成员哦~</Text>
+        </View>
+    );
+  }
+
   render() {
     return (
       <ScrollView style={styles.container}>
-        <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-          width={Dimensions.get('window').width}
-          height={Math.floor(Dimensions.get('window').width * 445/750)}>
-          <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <Image source={require('../assets/images/08施工团队/施工团队照.png')} style={{
+        <View style={{justifyContent: 'center',alignItems: 'center',}}>
+            <Image source={{uri:this.state.teaminfo.team_logo}} style={{
               width: Dimensions.get('window').width,
-              height: Math.floor(Dimensions.get('window').width * 445/750),
+              height: Math.floor(Dimensions.get('window').width * 240/702),
             }}/>
-          </View>
-          <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <Image source={require('../assets/images/08施工团队/施工团队照.png')} style={{
-              width: Dimensions.get('window').width,
-              height: Math.floor(Dimensions.get('window').width * 445/750),
-            }}/>
-          </View>
-          <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <Image source={require('../assets/images/08施工团队/施工团队照.png')} style={{
-              width: Dimensions.get('window').width,
-              height: Math.floor(Dimensions.get('window').width * 445/750),
-            }}/>
-          </View>
-        </Swiper>
+        </View>
         <View style={{backgroundColor:'#fff',padding:12,paddingBottom:60,marginBottom:12,}}>
           <View style={{borderBottomWidth:1,borderColor:'rgb(229,229,229)',}}>
-            <Text style={{fontSize:18,color:'#3f3f3f',}}>博大装饰公司公司公司公司公司公司</Text>
-            <View style={{flexDirection:'row',}}>
-              <Text style={{fontSize:12,color:'#888888'}}>规模：10人</Text>
-              <Text style={{fontSize:12,color:'#888888',marginLeft:35,}}>信誉评分：</Text>
-              <Text style={{fontSize:12,color:'#ff8f00'}}>7.0</Text>
+            <Text style={{fontSize:18,color:'#3f3f3f',}}>{this.state.teaminfo.team_name}</Text>
+            <View style={{paddingVertical:5,}}>
+              <Text style={{fontSize:14,color:'#888888',lineHeight:20,}}>规模：{this.state.teaminfo.member_count}人</Text>
+              <Text style={{fontSize:14,color:'#888888',lineHeight:20,}}>联系电话：{this.state.teaminfo.mobile}</Text>
             </View>
-            <Text style={{fontSize:19,color:'#ff8f00',marginVertical:11,}}>¥158.00</Text>
           </View>
           <View style={{alignItems:'center',justifyContent:'center',margin:20,}}>
             <View style={{width:83,height:22,backgroundColor:'#ff8f00',alignItems:'center',justifyContent:'center',}}>
               <Text style={{fontSize:14,color:'#fff'}}>团队介绍</Text>
             </View>
+            <View style={{paddingTop:20,}}>
+              <Text style={{fontSize:14,color:'#888888',lineHeight:20,}}>{this.state.teaminfo.team_desc}</Text>
+            </View>
           </View>
-          <Text style={{fontSize:12,color:'#888888'}}>博大装饰公司从创建初期到现在，一直遵循决不外包的经营理念，经过近20年的历练，博大公司已经锻造出一支强大、极具战斗力的施工队伍，这支队伍技术过硬、吃苦耐劳、乐于奉献、勇于亮剑，是全国装饰系统遐迩闻名的优秀施工团队，在业界享有“铁军”美誉。</Text>
-          <View style={{alignItems:'center',justifyContent:'center',margin:20,}}>
-            <View style={{width:83,height:22,backgroundColor:'#ff8f00',alignItems:'center',justifyContent:'center',}}>
+          <View style={{alignItems:'center',justifyContent:'center',}}>
+            <View style={{width:83,height:22,backgroundColor:'#ff8f00',alignItems:'center',justifyContent:'center',margin:20,}}>
               <Text style={{fontSize:14,color:'#fff'}}>成员介绍</Text>
             </View>
-          </View>
-          
-          <View style={{flexDirection:'row',justifyContent:'space-between',paddingTop:50,}}>
-            <View style={{position: 'absolute', top: 0, 
-              left: Dimensions.get('window').width/4-40,width:59,height:59,elevation: 100,zIndex: 100,}}>
-              <Image source={require('../assets/images/01首页部分/one-piece-anime.png')} style={{width:59,height:59,}}/>
-            </View>
-            <View style={{position: 'absolute', top: 0, 
-              left: Dimensions.get('window').width*0.75-40,width:59,height:59,elevation: 100,zIndex: 100,}}>
-              <Image source={require('../assets/images/01首页部分/one-piece-anime.png')} style={{width:59,height:59,}}/>
-            </View>
-            <View style={{borderWidth:1,borderColor:'rgb(229,229,229)',
-                width: Dimensions.get('window').width/2-20,alignItems:'center',paddingTop:30,
-              }}>
-              
-              <Text style={{fontSize:15,color:'#3f3f3f',}}>吴太贵</Text>
-              <Text style={{fontSize:12,color:'#888888',}}>我是瓦匠瓦匠瓦匠</Text>
-              <Text style={{fontSize:12,color:'#888888',}}>这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，</Text>
-            </View>
-
-            <View style={{borderWidth:1,borderColor:'rgb(229,229,229)',
-                width: Dimensions.get('window').width/2-20,alignItems:'center',paddingTop:30,
-              }}>
-              <Text style={{fontSize:15,color:'#3f3f3f',}}>吴太贵</Text>
-              <Text style={{fontSize:12,color:'#888888',}}>我是瓦匠瓦匠瓦匠</Text>
-              <Text style={{fontSize:12,color:'#888888',}}>这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，这个地方介绍吴太贵的经历？哎呀，</Text>
+            <View style={{alignSelf:'stretch',}}>
+              <FlatList
+                data={this.state.teaminfo.member_list}
+                keyExtractor={this._keyExtractor}
+                renderItem={this._createListItem}
+                numColumns={2}
+                columnWrapperStyle={{justifyContent:'space-between'}}
+                ItemSeparatorComponent={this._separator}
+                contentContainerStyle={{marginTop:10,}}
+                ListEmptyComponent={this._createEmptyView}
+                getItemLayout={(data,index)=>(
+                    {length: 100, offset: (100+2) * index, index}
+                )}
+              />
             </View>
           </View>
         </View>
@@ -194,26 +228,6 @@ export default class ConstructionTeamDetailScreen extends React.Component {
                 <Text>点赞</Text>
               </View>
             </View>
-          </View>
-        </View>
-        <View style={{flexDirection:'row',backgroundColor:'#fff',}}>
-          <View style={{alignItems:'center',flex:0.1,}}>
-            <Image source={require('../assets/images/08施工团队/待评价.png')}/>
-            <Text>收藏</Text>
-          </View>
-          <View style={{alignItems:'center',flex:0.1}}>
-            <Image source={require('../assets/images/08施工团队/待评价.png')}/>
-            <Text>购物车</Text>
-          </View>
-          <View style={{alignItems:'center',flex:0.1}}>
-            <Image source={require('../assets/images/08施工团队/待评价.png')}/>
-            <Text>客服</Text>
-          </View>
-          <View style={{backgroundColor:'rgb(229,136,15)',alignItems:'center',justifyContent:'center',flex:0.35,}}>
-            <Text style={{color:'#fff'}}>加入购物车</Text>
-          </View>
-          <View style={{backgroundColor:'rgb(255,142,1)',alignItems:'center',justifyContent:'center',flex:0.35,}}>
-            <Text style={{color:'#fff'}}>立即下单</Text>
           </View>
         </View>
       </ScrollView>
