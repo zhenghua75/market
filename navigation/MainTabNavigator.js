@@ -70,14 +70,14 @@ FindStack.navigationOptions = {
   ),
 };
 
-const ConstructionTeamStack = createStackNavigator({
-  ConstructionTeam: ConstructionTeamScreen,
+const CartStack = createStackNavigator({
+    Cart: CartScreen,
 });
 
-ConstructionTeamStack.navigationOptions = {
-  tabBarLabel: '施工队',
+CartStack.navigationOptions = {
+  tabBarLabel: '购物车',
   tabBarIcon: ({ focused }) => (
-    <Image source={ focused  ? require('../assets/images/00四个选项/施工队-选中.png') : require('../assets/images/00四个选项/施工队.png') }/>
+    <Image source={ focused  ? require('../assets/images/00四个选项/购物车-选中.png') : require('../assets/images/00四个选项/购物车.png') }/>
   ),
 };
 
@@ -119,7 +119,7 @@ const MainTabNavigator = createBottomTabNavigator({
   Home:HomeStack,
   BuildingMaterials:BuildingMaterialsStack,
   Find:FindStack,
-  ConstructionTeam:ConstructionTeamStack,
+  Cart:CartStack,
   My:MyStack,
 },{
   tabBarOptions :{
@@ -138,7 +138,7 @@ const SignInNavigator = createBottomTabNavigator({
   Home:HomeStack,
   BuildingMaterials:BuildingMaterialsStack,
   Find:FindStack,
-  ConstructionTeam:ConstructionTeamStack,
+  Cart:CartStack,
   My:SignInStack,
 },{
   tabBarOptions :{
@@ -171,6 +171,7 @@ const MainStack = createStackNavigator({
   GoodsList:GoodsListScreen,
   FindDetail:FindDetailScreen,
   ImageDetail:ImageDetailScreen,
+  ConstructionTeam:ConstructionTeamScreen,
   ConstructionTeamDetail:ConstructionTeamDetailScreen,
   DecorationStrategyList:DecorationStrategyListScreen,
   DecorationStrategyDetail:DecorationStrategyDetailScreen,
