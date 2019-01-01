@@ -291,18 +291,18 @@ export default class HomeScreen extends React.Component {
                 </View>
                 <Text style={styles.columnViewItemText}>秒杀</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.columnViewItem} onPress={this._catalog}>
+              <TouchableOpacity style={styles.columnViewItem} onPress={this._allSciencesList}>
                 <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
                   <Image source={require('../assets/images/01首页部分/百科.png')} style={styles.columnViewItemImage}/>
                 </View>
                 <Text style={styles.columnViewItemText}>百科</Text>
               </TouchableOpacity>
-              <View style={styles.columnViewItem}>
+              <TouchableOpacity style={styles.columnViewItem} onPress={this._decorationStrategyList}>
                 <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
                   <Image source={require('../assets/images/01首页部分/方案.png')} style={styles.columnViewItemImage}/>
                 </View>
-                <Text style={styles.columnViewItemText}>方案</Text>
-              </View>
+                <Text style={styles.columnViewItemText}>攻略</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.columnViewItem} onPress={this._consteam}>
                 <View style={styles.columnViewItem}>
                     <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
@@ -466,6 +466,10 @@ export default class HomeScreen extends React.Component {
 
   _decorationStrategyList = async () => {
     this.props.navigation.navigate('DecorationStrategyList');
+  };
+
+  _allSciencesList = async () => {
+    this.props.navigation.navigate('AllSciencesList');
   };
 
   _storeIn = async () => {

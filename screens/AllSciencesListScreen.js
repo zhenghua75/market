@@ -15,9 +15,9 @@ import ApiPost from '../lib/ApiPost';
 
 const {width, height} = Dimensions.get('window');
 
-export default class DecorationStrategyListScreen extends React.Component {
+export default class AllSciencesListScreen extends React.Component {
   static navigationOptions = {
-    title: '攻略',
+    title: '百科',
     headerTitleStyle: {
       alignSelf: 'center',
       textAlign: 'center',
@@ -37,13 +37,13 @@ export default class DecorationStrategyListScreen extends React.Component {
   }
 
   componentWillMount() {
-    this._getStrategyList();
+    this._getAllSciencesList();
   }
 
-  _getStrategyList=async () =>{
+  _getAllSciencesList=async () =>{
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
-      'Action':'GetStrategys',
+      'Action':'GetAllSciences',
       'token':userToken,
       'size':'1',
       'page': this.page,
@@ -84,7 +84,7 @@ export default class DecorationStrategyListScreen extends React.Component {
             isLoadMore : true
         });
         this.page = this.page + 1;
-        this._getStrategyList();
+        this._getAllSciencesList();
     }
   }
 
@@ -118,7 +118,7 @@ export default class DecorationStrategyListScreen extends React.Component {
     return (
         <View style={{alignItems:'center',marginTop:50,}}>
             <Image source={require('../assets/images/05商品/暂无匹配.png')} style={{width:44,height:44,}}/>
-            <Text style={{fontSize:14,color:'#999999',marginTop:20}}>暂时没有攻略哦~</Text>
+            <Text style={{fontSize:14,color:'#999999',marginTop:20}}>暂时没有百科哦~</Text>
         </View>
     );
   }
