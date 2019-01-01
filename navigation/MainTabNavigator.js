@@ -36,6 +36,7 @@ import StoreScreen from '../screens/StoreScreen';
 import StoreInScreen from '../screens/StoreInScreen';
 import GoodsDetailCommentScreen from '../screens/GoodsDetailCommentScreen';
 import SettlementScreen from '../screens/SettlementScreen';
+import AlipayScreen from '../screens/AlipayScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -178,7 +179,8 @@ const MainStack = createStackNavigator({
   Store:StoreScreen,
   StoreIn:StoreInScreen,
   GoodsDetailComment:GoodsDetailCommentScreen,
-  Settlement:SettlementScreen
+  Settlement:SettlementScreen,
+  Alipay:AlipayScreen,
 });
 
 const AuthStack = createStackNavigator({

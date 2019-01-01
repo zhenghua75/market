@@ -13,27 +13,25 @@ import {
 
 import ApiPost from '../lib/ApiPost';
 
-_pay = async (order_sn) => {
-    //获取在线支付信息，传订单sn号，查询订单和可用支付接口配置
-    //{"Action":"GetOnlinePay","token":"90f9f715ee5d1acf4a104dedd4b30727",
-    //"order_sn":"2018122117490106637"}
-    const userToken = await AsyncStorage.getItem('userToken');
-    var data = {
-      'Action':'GetOnlinePay',
-      'token':userToken,
-      'order_sn':order_sn,
-    };
-    console.log(data);
-    let responseJson = await ApiPost(data);
-    console.log(responseJson);
-    if(responseJson.Result){
-      //支付
-      
-    }
-  };
+
 
 export default class AllOrderScreen extends React.Component {
-  
+  _pay =  (order_sn) => {
+    // const userToken = await AsyncStorage.getItem('userToken');
+    // var data = {
+    //   'Action':'GetOnlinePay',
+    //   'token':userToken,
+    //   'order_sn':order_sn,
+    // };
+    // console.log(data);
+    // let responseJson = await ApiPost(data);
+    // console.log(responseJson);
+    // if(responseJson.Result){
+    //   //支付
+      
+    // }
+    this.props.navigation.navigate('Alipay',{'order_sn':order_sn});
+  };
   // constructor(props) {
   //   super(props);
   //   this._pay = this._pay.bind(this);
@@ -92,11 +90,15 @@ export default class AllOrderScreen extends React.Component {
 
   //
 
-  _renderHeader = ({section: {user_name}}) => (
+  _renderHeader = ({section: {user_name,order_sn}}) => (
     <View style={{flexDirection:'row'}}>
       <Image source={require('../assets/images/04订单/店铺.png')} />
       <Text style={{fontWeight: 'bold'}}>{user_name}</Text>
       <Image source={require('../assets/images/04订单/右箭头.png')} />
+      <Button title='取消订单' onPress={()=>{}}/>
+          <Button title='付款' onPress={() => {
+            this._pay(order_sn);
+          }}/>
     </View>
   );
   
@@ -108,18 +110,19 @@ export default class AllOrderScreen extends React.Component {
 
   _renderSectionFooter ({section: {order_goods_num,total_fee,order_sn}}) {
     //console.log(this);
+    // <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+    //       <Button title='取消订单' onPress={()=>{}}/>
+    //       <Button title='付款' onPress={() => {
+    //         this._pay(order_sn);
+    //       }}/>
+    //     </View>
     return (
       <View>
         <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
           <Text>共{order_goods_num}件商品 小计：</Text>
           <Text>{total_fee}</Text>
         </View>
-        <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
-          <Button title='取消订单' onPress={()=>{}}/>
-          <Button title='付款' onPress={() => {
-            _pay(order_sn);
-          }}/>
-        </View>
+        
       </View>
       );
   };
