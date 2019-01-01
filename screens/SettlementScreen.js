@@ -54,33 +54,38 @@ export default class SettlementScreen extends React.Component {
   };
 
   _Settlement = async () => {
-    //{"Action":"SettleToOrder","token":"2e6b88dbbf93a4d6095bdea691f6da87",
-    //"ru_id":[0,2],"postscript":["你好","晨晨"],"shipping":[16,20],
-    //"need_inv":"1","inv_type":"0","inv_payee":"个人","tax_id":"",
-    //"inv_content":"明细","invoice_id":"0","vat_id":"","payment":"15"}
     let goods_list = this.state.Data.goods_list;
+    let cart_value = this.state.Data.cart_value;
     let ru_id = [];
     let shipping = [];
     for (var i = 0; i < goods_list.length; i++) {
       ru_id.push(goods_list[i].ru_id);
       shipping.push(parseInt(goods_list[i].shipping_id));
     }
+    let order = this.state.Data.order;
+    need_inv = order.need_inv;
+    inv_payee = order.inv_payee;
+    inv_content = order.inv_content;
+    inv_type = order.inv_type;
+    payment_selected = this.state.Data.payment_selected;
+    pay_id = payment_selected.pay_id;
+
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
       'Action':'SettleToOrder',
       'token':userToken,
-      'cart_value':'18',
+      'cart_value':cart_value,
       'ru_id':ru_id,
       'postscript':[],
       "shipping":shipping,
-      "need_inv":"1",
-      "inv_type":"0",
-      "inv_payee":"个人",
+      "need_inv":need_inv,
+      "inv_type":inv_type,
+      "inv_payee":inv_payee,
       "tax_id":"",
-      "inv_content":"明细",
+      "inv_content":inv_content,
       "invoice_id":"0",
       "vat_id":"",
-      "payment":"15",
+      "payment":pay_id,
     };
     console.log(data);
     let responseJson = await ApiPost(data);
