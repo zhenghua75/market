@@ -32,6 +32,7 @@ import ConstructionTeamDetailScreen from '../screens/ConstructionTeamDetailScree
 import DecorationStrategyListScreen from '../screens/DecorationStrategyListScreen';
 import DecorationStrategyDetailScreen from '../screens/DecorationStrategyDetailScreen';
 import AllSciencesListScreen from '../screens/AllSciencesListScreen';
+import AllSciencesDetailScreen from '../screens/AllSciencesDetailScreen';
 import GoodsDetailScreen from '../screens/GoodsDetailScreen';
 import StoreScreen from '../screens/StoreScreen';
 import StoreInScreen from '../screens/StoreInScreen';
@@ -178,6 +179,7 @@ const MainStack = createStackNavigator({
   DecorationStrategyList:DecorationStrategyListScreen,
   DecorationStrategyDetail:DecorationStrategyDetailScreen,
   AllSciencesList:AllSciencesListScreen,
+  AllSciencesDetail:AllSciencesDetailScreen,
   GoodsDetail:GoodsDetailScreen,
   Store:StoreScreen,
   StoreIn:StoreInScreen,

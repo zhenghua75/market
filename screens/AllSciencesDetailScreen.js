@@ -10,9 +10,9 @@ import {
   FlatList
 } from 'react-native';
 
-export default class DecorationStrategyDetailScreen extends React.Component {
+export default class AllSciencesDetailScreen extends React.Component {
   static navigationOptions = {
-    title: '攻略',
+    title: '百科',
     headerTitleStyle: {
       alignSelf: 'center',
       textAlign: 'center',

@@ -31,7 +31,6 @@ export default class AllSciencesListScreen extends React.Component {
     this.totalpage = 0;
     this.state = {
         data:[],
-        selected: (new Map(): Map<string, boolean>),
         isLoadMore:false
     }
   }
@@ -66,16 +65,8 @@ export default class AllSciencesListScreen extends React.Component {
 
   _keyExtractor = (item, index) => item.article_id;
 
-  _onPressItem = (id: string) => {
-    // updater functions are preferred for transactional updates
-    this.setState((state) => {
-      // copy the map rather than modifying state.
-      const selected = new Map(state.selected);
-      selected.set(id, !selected.get(id)); // toggle
-      return {selected};
-    });
-
-    this._detail();
+  _onPressItem = (id) => {
+    this.props.navigation.navigate('AllSciencesDetail',{'id':id});
   };
 
   _onLoadMore(){
@@ -87,10 +78,6 @@ export default class AllSciencesListScreen extends React.Component {
         this._getAllSciencesList();
     }
   }
-
-  _detail = async () => {
-    this.props.navigation.navigate('DecorationStrategyDetail');
-  };
 
   _createListItem = ({item}) => {
     return (
