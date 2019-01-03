@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
-  WebView,
   Platform,
   AsyncStorage,
   Alert,
@@ -54,7 +53,9 @@ export default class GoodsDetailScreen extends React.Component {
     'list':[],
     'visibleSwiper': false,
     'shippingFee':{},
-    visibleModal: false,
+    visibleModalPic: false,
+    visibleModalSpe: false,
+    visibleModalPro: false,
     img_url:'',
     height:200,
     'store':{
@@ -128,7 +129,7 @@ export default class GoodsDetailScreen extends React.Component {
   }
 
   _modal = (img_url) => {
-    this.setState({visibleModal:true, img_url:img_url});
+    this.setState({visibleModalPic:true, img_url:img_url});
   };
 
   onMessage (event) {
@@ -263,106 +264,118 @@ export default class GoodsDetailScreen extends React.Component {
 
     return (
       <View style={styles.container}>
-      <ScrollView style={styles.container}>
-        <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
-          <Text style={{fontSize:16,color:'#ff8f00',textAlign:'center',flex:1}}>商品</Text>
-          <TouchableOpacity style={{flex:1,}} onPress={this._comment}>
-          	<Text style={{fontSize:16,color:'#3f3f3f',textAlign:'center',}}>评论</Text>
-          </TouchableOpacity>
-        </View>
-        {swiper}
-        <View style={{padding:12,}}>
-          <Text style={{fontSize:16,color:'#3f3f3f',}}>{info.goods_name}</Text>
-          <View style={{flexDirection:'row',alignItems:'center',marginTop:26,}}>
-            <Text style={{fontSize:19,color:'#ff8f00',}}>¥{info.price}</Text>
-            <Text style={{fontSize:14,color:'#999999',marginLeft:12,}}>¥{info.marketPrice}</Text>
-          </View>
-          <View style={{flexDirection:'row',}}>
-            <View style={{flexDirection:'row',flex:0.5,}}>
-              <Text style={{fontSize:14,color:'#999999',}}>快递：{shippingFee.is_shipping=='1'?'免邮':shippingFee.shipping_fee}</Text>
-              <Text style={{fontSize:14,color:'#999999',marginLeft:30}}>销量：{shippingFee.sales_volume}件</Text>
+        <ScrollView style={{flex:1,}}>
+            <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,backgroundColor:'#ffffff'}}>
+                <Text style={{fontSize:16,color:'#ff8f00',textAlign:'center',flex:1}}>商品</Text>
+                <TouchableOpacity style={{flex:1,}} onPress={this._comment}>
+                    <Text style={{fontSize:16,color:'#3f3f3f',textAlign:'center',}}>评论</Text>
+                </TouchableOpacity>
             </View>
-            <Text style={{fontSize:14,color:'#999999',flex:0.5,textAlign:'right',}}>{store.self_run==0?'自营':'其他'}</Text>
-          </View>
-        </View>
-        <View style={{flexDirection:'row',alignItems:'center',padding:12,backgroundColor:'#e5e5e5',}}>
-          <Image source={require('../assets/images/05商品/正品保证.png')} />
-          <Text style={{fontSize:14,color:'#999999',marginLeft:6,}}>正品保证</Text>
-        </View>
-        <View>
-          <View style={{flexDirection:'row',justifyContent:'space-between',
-            marginHorizontal:12,paddingVertical:12,
-            borderBottomWidth:1,borderColor:'#e5e5e5',
-          }}>
-            <Text style={{fontSize:14,color:'#999999',}}>选择：规格</Text>
-            <Image source={require('../assets/images/04订单/右箭头.png')} />
-          </View>
-          {selected}
-          {speView}
-          <View style={{flexDirection:'row',justifyContent:'space-between',
-            marginHorizontal:12,paddingVertical:12,
-            borderBottomWidth:1,borderColor:'#e5e5e5',
-          }}>
-            <Text style={{fontSize:14,color:'#999999',}}>数量</Text>
-            <View>
-              <TouchableOpacity onPress={this._minus} style={{width:44,height:44}}><Text>-</Text></TouchableOpacity>
-              <Text>{this.state.number}</Text>
-              <TouchableOpacity onPress={this._plus} style={{width:44,height:44}}><Text>+</Text></TouchableOpacity>
+            {swiper}
+            <View style={{padding:12,backgroundColor:'#ffffff'}}>
+                <Text style={{fontSize:16,color:'#000000',lineHeight:26}}>{info.goods_name}</Text>
+                <View style={{marginTop:10}}>
+                    <Text style={{fontSize:20,color:'#ff8f00',lineHeight:20}}>¥{info.shop_price}</Text>
+                    <Text style={{fontSize:14,color:'#999999',lineHeight:16}}>市场价 ¥{info.marketPrice}</Text>
+                </View>
+                <View style={{flexDirection:'row',marginTop:10,}}>
+                    <Text style={{flex:1,fontSize:14,color:'#999999',}}>快递：{info.is_shipping=='1'?'免邮':shippingFee.shipping_fee}</Text>
+                    <Text style={{flex:1,fontSize:14,color:'#999999',textAlign:'center',}}>销量：{info.sale_count}</Text>
+                    <Text style={{flex:1,fontSize:14,color:'#999999',textAlign:'right',}}>{store.self_run==0?'自营':'店铺'}</Text>
+                </View>
             </View>
-          </View>
-          <View style={{marginHorizontal:12,paddingVertical:12,borderBottomWidth:1,borderColor:'#e5e5e5',}}>
-            <Text style={{fontSize:14,color:'#999999',}}>评价（{comment_all.allmen}）</Text>
-          </View>
-          {self_run}
-          <View style={{flexDirection:'row',justifyContent:'space-around',
-            marginHorizontal:12,paddingVertical:12,
-          }}>
-            <View style={{}}>
-              <Text style={{fontSize:16,color:'#ff8f00'}}>商品描述</Text>
-            </View>
-            <View style={{}}>
-              <Text style={{fontSize:16,color:'#3f3f3f'}}>规格参数</Text>
-            </View>
-          </View>
-        </View>
-        
-        <WebView 
-          source={{ uri: info.goods_desc}} 
-          originWhitelist={['*']} 
-          injectedJavaScript={BaseScript}
-          onMessage={this.onMessage.bind(this)}
-          style={{width:Dimensions.get('window').width,
-            height:400,
-          }}
-        />
-        <Modal visible={this.state.visibleModal} 
-          transparent={false}
-          style={{backgroundColor:'black',}}
-          onRequestClose={() => {
-          }}>
-          <View style={{alignItems:'flex-end',backgroundColor:'black',}}>
-              <TouchableHighlight style={{marginTop:44,width:44,height:44,alignItems:'center',justifyContent:'center'}}
-                onPress={() => {
-                  this.setState({visibleModal: false});
+            <View style={{marginTop:14,backgroundColor:'#ffffff'}}>
+                <View style={{flexDirection:'row',justifyContent:'flex-start',
+                    marginHorizontal:12,paddingVertical:12,
+                    borderBottomWidth:1,borderColor:'#e5e5e5',
                 }}>
-                <Text style={{color:'white',fontSize:40,}}>X</Text>
-              </TouchableHighlight>
+                    <Text style={{fontSize:14,color:'#999999',}}>规格</Text>
+                    <Text style={{fontSize:14,color:'#616161',paddingLeft:20,flex:1}}>{info.default_spe}</Text>
+                    <Image source={require('../assets/images/04订单/右箭头.png')} />
+                </View>
+                <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',
+                    marginHorizontal:12,paddingVertical:12,
+                    borderBottomWidth:1,borderColor:'#e5e5e5',
+                }} onPress={()=>{this.setState({visibleModalPro:true})}}>
+                    <Text style={{fontSize:14,color:'#999999',}}>参数</Text>
+                    <Text style={{fontSize:14,color:'#616161',paddingLeft:20,flex:1}}>{info.default_pro}</Text>
+                    <Image source={require('../assets/images/04订单/右箭头.png')} />
+                </TouchableOpacity>
+                {selected}
+                {speView}
+                <View style={{flexDirection:'row',justifyContent:'space-between',
+                    marginHorizontal:12,paddingVertical:12,
+                    borderBottomWidth:1,borderColor:'#e5e5e5',
+                }}>
+                    <Text style={{fontSize:14,color:'#999999',}}>数量</Text>
+                    <View>
+                    <TouchableOpacity onPress={this._minus} style={{width:44,height:44}}><Text>-</Text></TouchableOpacity>
+                    <Text>{this.state.number}</Text>
+                    <TouchableOpacity onPress={this._plus} style={{width:44,height:44}}><Text>+</Text></TouchableOpacity>
+                    </View>
+                </View>
             </View>
-          <ImageZoom style={{backgroundColor:'black',}}
-            cropWidth={Dimensions.get('window').width}
-            cropHeight= {Dimensions.get('window').height-66}
-            imageWidth={Dimensions.get('window').width}
-            imageHeight={Math.floor(Dimensions.get('window').width * 564/750)}
-            tintColor={'black'}>
-            <Image style={{
-              width:Dimensions.get('window').width,
-              height:Math.floor(Dimensions.get('window').width * 564/750)
-            }}
-              source={{uri:this.state.img_url}}/>
-          </ImageZoom>
-        </Modal>
-      </ScrollView>
-      <View style={{marginTop:50,flexDirection:'row',}}>
+            <View>
+                <View style={{marginHorizontal:12,paddingVertical:12,borderBottomWidth:1,borderColor:'#e5e5e5',}}>
+                    <Text style={{fontSize:14,color:'#999999',}}>评价（{comment_all.allmen}）</Text>
+                </View>
+                {self_run}
+                <View style={{flexDirection:'row',justifyContent:'space-around',
+                    marginHorizontal:12,paddingVertical:12,
+                }}>
+                    <View style={{}}>
+                        <Text style={{fontSize:16,color:'#ff8f00'}}>商品描述</Text>
+                    </View>
+                    <View style={{}}>
+                        <Text style={{fontSize:16,color:'#3f3f3f'}}>规格参数</Text>
+                    </View>
+                </View>
+            </View>
+
+            <Modal visible={this.state.visibleModalPro} 
+                transparent={false}
+                style={{backgroundColor:'black',}}
+                onRequestClose={() => {
+            }}>
+              <View style={{height}}>
+                <View><Text>商品参数</Text></View>
+                <View>
+                    <View style={{flexDirection:'row'}}>
+                        <Text>111</Text>
+                        <Text>222</Text>
+                    </View>
+                </View>
+              </View>
+            </Modal>
+
+            <Modal visible={this.state.visibleModalPic} 
+            transparent={false}
+            style={{backgroundColor:'black',}}
+            onRequestClose={() => {
+            }}>
+            <View style={{alignItems:'flex-end',backgroundColor:'black',}}>
+                <TouchableHighlight style={{marginTop:44,width:44,height:44,alignItems:'center',justifyContent:'center'}}
+                    onPress={() => {
+                    this.setState({visibleModalPic: false});
+                    }}>
+                    <Text style={{color:'white',fontSize:40,}}>X</Text>
+                </TouchableHighlight>
+                </View>
+            <ImageZoom style={{backgroundColor:'black',}}
+                cropWidth={Dimensions.get('window').width}
+                cropHeight= {Dimensions.get('window').height-66}
+                imageWidth={Dimensions.get('window').width}
+                imageHeight={Math.floor(Dimensions.get('window').width * 564/750)}
+                tintColor={'black'}>
+                <Image style={{
+                width:Dimensions.get('window').width,
+                height:Math.floor(Dimensions.get('window').width * 564/750)
+                }}
+                source={{uri:this.state.img_url}}/>
+            </ImageZoom>
+            </Modal>
+        </ScrollView>
+        <View style={{marginTop:50,flexDirection:'row',}}>
           <View style={{alignItems:'center',flex:0.2,}}>
             <Image source={require('../assets/images/05商品/收藏选中.png')}/>
             <Text>收藏</Text>
@@ -381,7 +394,6 @@ export default class GoodsDetailScreen extends React.Component {
             <Text style={{fontSize:19,color:'#fff'}}>立即购买</Text>
           </View>
         </View>
-        
       </View>
     );
   }
@@ -451,6 +463,6 @@ export default class GoodsDetailScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#eeeeee',
   },
 });
