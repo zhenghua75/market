@@ -220,7 +220,6 @@ export default class GoodsDetailScreen extends React.Component {
   }
 
   render() {
-    console.log(this.state.selectedPrice);
     let info = this.state.info;
     let swiper = null;
     let shippingFee = this.state.shippingFee;
