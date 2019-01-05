@@ -33,8 +33,5 @@
       "apiUrl":"http://jc.ynweix.com/api/appclient/api.php"
     },
     "scheme":"market",
-    "infoPlist": {
-      "LSApplicationQueriesSchemes":["alipay","alipayshare"]
-    }
   }
 }

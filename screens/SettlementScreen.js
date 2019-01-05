@@ -27,10 +27,13 @@ export default class SettlementScreen extends React.Component {
   };
 
   _CartToSettle = async () => {
+    const { navigation } = this.props;
+    let carttype = navigation.getParam('carttype');
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
       'Action':'CartToSettle',
       'token':userToken,
+      'cart_type':carttype
     };
     console.log(data);
     let responseJson = await ApiPost(data);

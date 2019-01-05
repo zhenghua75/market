@@ -10,14 +10,18 @@ import {
    } from 'react-native';
 
 export default class GoodsDetailCommentScreen extends React.Component {
-  static navigationOptions = {
-    title: '商品详情',
-    headerTitleStyle: {
-      alignSelf: 'center',
-      textAlign: 'center',
-      width: '100%',
-    },
-  };
+  static navigationOptions = ({navigation}) => ({
+    headerTitle:<View style={{flexDirection:'row',justifyContent:'center',alignItems:'stretch',
+        flex:1,alignSelf:'stretch',}}>
+        <TouchableOpacity style={{justifyContent:'center'}} 
+            onPress={()=>navigation.goBack()}>
+            <Text style={{color:'#444444',fontSize:18}}>商品</Text>
+        </TouchableOpacity>
+        <View style={{marginLeft:30,borderBottomColor:'#FF8928',borderBottomWidth:3,justifyContent:'center'}}>
+            <Text style={{color:'#FF8928',fontSize:18,paddingTop:3}}>评论</Text>
+        </View>
+        </View>,
+  });
 
   _keyExtractor = (item, index) => item.id;
 
@@ -69,13 +73,6 @@ export default class GoodsDetailCommentScreen extends React.Component {
 
     return (
       <ScrollView style={styles.container}>
-        <View style={{flexDirection:'row',justifyContent:'space-around',padding:12,}}>
-          <TouchableOpacity style={{flex:1,}} onPress={this._goodsDetail}>
-            <Text style={{fontSize:16,color:'#3f3f3f',textAlign:'center',}}>商品</Text>
-          </TouchableOpacity>
-          <Text style={{fontSize:16,color:'#ff8f00',textAlign:'center',flex:1,}}>评论</Text>
-          
-        </View>
         <View style={{flexDirection:'row',justifyContent:'space-around',
           borderBottomWidth:1,borderColor:'#e5e5e5',
           paddingVertical:15,
@@ -103,10 +100,6 @@ export default class GoodsDetailCommentScreen extends React.Component {
       </ScrollView>
     );
   }
-
-  _goodsDetail = async () => {
-    this.props.navigation.goBack();
-  };
 }
 
 const styles = StyleSheet.create({
