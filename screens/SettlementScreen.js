@@ -47,7 +47,6 @@ export default class SettlementScreen extends React.Component {
       'token':userToken,
       'cart_type':carttype
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
     console.log(responseJson);
     for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
