@@ -80,31 +80,32 @@ export default class CartScreen extends React.Component {
   );
 
   _renderItem = ({item, index, section}) => {
-    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} style={{width:16,height:16}}/>;
     if(item.is_checked == '1'){
-      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} style={{width:16,height:16}}/>
     }
+    //
    return (
     <View style={{flexDirection:'row',alignItems:'center'}}>
       <TouchableOpacity onPress={() => this._CartSelected(item.is_checked,item.rec_id)}>
         {img}
       </TouchableOpacity>
-      <Image source={{uri:item.goods_thumb}} style={{width:90,height:90}}/>
-      <View style={{}}>
-        <Text style={{fontSize:14,color:'#3F3F3F',}} key={index+'name'}>{item.goods_name}</Text>
+      <Image source={{uri:item.goods_thumb}} style={{width:90,height:90,marginLeft:11}}/>
+      <View style={{height:90,justifyContent:'center',flex:1,marginLeft:11,}}>
+        <Text style={{fontSize:14,color:'#3F3F3F',marginTop:11,}} key={index+'name'}>{item.goods_name}</Text>
         <Text style={{fontSize:12,color:'#C7C7C7',marginTop:8,}} key={index+'attr'}>{item.goods_attr}</Text>
-        <View style={{flexDirection:'row',alignItems:'center'}}>
-          <Text style={{fontSize:14,color:'#FF8F00',}} key={index+'price'}>{item.goods_price}</Text>
-          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'rgba(0,0,0,0.22)',borderRadius:10,}}>
-            <TouchableOpacity style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flex:1}}>
+          <Text style={{fontSize:14,color:'#FF8F00'}} key={index+'price'}>{item.goods_price}</Text>
+          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'rgba(0,0,0,0.22)',borderRadius:5,}}>
+            <TouchableOpacity style={{width:22,height:22,alignItems:'center',justifyContent:'center'}}
               onPress={()=>this._CartGoodsNumber(item.rec_id,item.goods_number,1,index,section)}>
               <Image source={require('../assets/images/10购物车/加号.png')} />
             </TouchableOpacity>
-            <View style={{width:1,height:44,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
-            <Text style={{width:44,textAlign:'center'}}>{item.goods_number}</Text>
-            <View style={{width:1,height:44,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
+            <View style={{width:1,height:22,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
+            <Text style={{width:22,textAlign:'center'}}>{item.goods_number}</Text>
+            <View style={{width:1,height:22,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
             <TouchableOpacity 
-              style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
+              style={{width:22,height:22,alignItems:'center',justifyContent:'center'}}
               onPress={()=>this._CartGoodsNumber(item.rec_id,item.goods_number,-1,index, section)}>
               <Image source={require('../assets/images/10购物车/减号.png')} />
             </TouchableOpacity>
@@ -117,18 +118,19 @@ export default class CartScreen extends React.Component {
   
 
   _renderHeader = ({section: {is_checked,ru_id,ru_name}}) => {
-    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} style={{width:16,height:16}}/>;
     let checked = '0';
     if(is_checked=='1'){
-      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />;
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} style={{width:16,height:16}}/>;
       checked = '1';
     }
+    //
     return (
     <TouchableOpacity onPress={()=>{this._storeSelected(checked,ru_id)}}>
       <View style={{flexDirection:'row'}}>
         {img}
-        <Image source={require('../assets/images/04订单/店铺.png')} />
-        <Text style={{fontWeight: 'bold'}}>{ru_name}</Text>
+        <Image source={require('../assets/images/04订单/店铺.png')} style={{width:16,height:16,marginLeft:11}}/>
+        <Text style={{fontWeight: 'bold',marginHorizontal:11}}>{ru_name}</Text>
         <Image source={require('../assets/images/04订单/右箭头.png')} />
       </View>
     </TouchableOpacity>
@@ -156,7 +158,8 @@ export default class CartScreen extends React.Component {
       responseJson.Data.total.is_checked='1';
     }
     this.setState({Data:responseJson.Data});
-    
+    let count = responseJson.Data.total.real_goods_count;
+    this.props.navigation.setParams({otherParam: '购物车('+count+')'});
   };
 
   //{"Action":"CartGoodsNumber","token":"2e6b88dbbf93a4d6095bdea691f6da87","cart_id":"36","number":"2"}
@@ -253,38 +256,35 @@ export default class CartScreen extends React.Component {
 
   render() {
     let is_checked = this.state.Data.total.is_checked;
-    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
+    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} style={{width:16,height:16}}/>;
     if(is_checked == '1'){
-      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />;
+      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} style={{width:16,height:16}}/>;
     }
+    let count = this.state.Data.total.real_goods_count;
+
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <SectionList
           renderItem={this._renderItem}
           renderSectionHeader={this._renderHeader}
           sections={this.state.Data.goods_list}
           keyExtractor={(item, index) => item + index}
+          style={{flex:1}}
         />
-        <View style={{flexDirection:'row'}}>
-          <TouchableOpacity style={{flexDirection:'row'}} onPress={() => this._allSelected()}>
+        <View style={{flexDirection:'row',alignItems:'center', justifyContent:'space-between'}}>
+          <TouchableOpacity style={{flexDirection:'row',}} onPress={() => this._allSelected()}>
             {img}
-            <Text>全选</Text>
+            <Text style={{fontSize:14,color:'#3F3F3F',marginLeft:11}} >全选</Text>
           </TouchableOpacity>
-          <View style={{flexDirection:'row'}}>
-            <Text>合计：</Text>
-            <Text>¥{this.state.Data.total.goods_amount}</Text>
-            <TouchableOpacity onPress={this._Settlement} style={{alignItems:'center',justifyContent:'center',}}>
-              <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
-                <Text>结算(1)</Text>
-              </ImageBackground>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+            <Text style={{fontSize:14,color:'#3F3F3F',}} >合计：</Text>
+            <Text style={{fontSize:14,color:'#FF8F00',marginLeft:11}} >¥{this.state.Data.total.goods_amount}</Text>
+            <TouchableOpacity onPress={this._Settlement} style={{marginLeft:11,width: 120, height: 40,borderRadius:15,alignItems:'center',justifyContent:'center',backgroundColor:'#ff8f00'}}>
+              <Text style={{fontSize:14,color:'#ffffff',}} >结算({count})</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <Button
-          title="Update the title"
-          onPress={() => this.props.navigation.setParams({otherParam: '购物车(0)'})}
-        />
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -293,5 +293,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding:11,
   },
 });

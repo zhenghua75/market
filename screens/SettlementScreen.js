@@ -16,13 +16,25 @@ import {
 export default class SettlementScreen extends React.Component {
 
   static navigationOptions = {
-    title: '支付',
+    title: '确认订单',
   };
 
   state = {
     Data:{
       consignee:{},
       goods_list:[{shipping:[{shipping_id:null,shipping_name:null,}],shipping_id:null,shipping_idx:0,data:[]},],
+      total:{
+        amount:null,
+      },
+      payment_selected:{
+        pay_name:null,
+      },
+      order:{
+        inv_type:null,
+        inv_payee:null,
+      },
+      payment_list:[],
+      inv_content_list:[],
     },
   };
 
@@ -90,74 +102,78 @@ export default class SettlementScreen extends React.Component {
     console.log(data);
     let responseJson = await ApiPost(data);
     console.log(responseJson);
+    if(responseJson.Result){
+      alert(responseJson.MessageString);
+      this.props.navigation.pop();
+    }
   };
 
   _renderItem ({item, index, section}) {
-    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
-    if(item.is_checked == '1'){
-      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />
-    }
    return (
     <View style={{flexDirection:'row',alignItems:'center'}}>
-      <TouchableOpacity onPress={() => this._CartSelected(item.is_checked,item.rec_id)}>
-        {img}
-      </TouchableOpacity>
       <Image source={{uri:item.goods_thumb}} style={{width:90,height:90}}/>
-      <View style={{}}>
+      <View style={{flex:1,height:90,marginLeft:11}}>
         <Text style={{fontSize:14,color:'#3F3F3F',}} key={index+'name'}>{item.goods_name}</Text>
         <Text style={{fontSize:12,color:'#C7C7C7',marginTop:8,}} key={index+'attr'}>{item.goods_attr}</Text>
-        <View style={{flexDirection:'row',alignItems:'center'}}>
-          <Text style={{fontSize:14,color:'#FF8F00',}} key={index+'price'}>{item.goods_price}</Text>
-          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'rgba(0,0,0,0.22)',borderRadius:10,}}>
-            <TouchableOpacity style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
-              onPress={()=>this._CartGoodsNumber(item.rec_id,item.goods_number,1,index,section)}>
-              <Image source={require('../assets/images/10购物车/加号.png')} />
-            </TouchableOpacity>
-            <View style={{width:1,height:44,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
-            <Text style={{width:44,textAlign:'center'}}>{item.goods_number}</Text>
-            <View style={{width:1,height:44,backgroundColor:'rgba(0, 0, 0, 0.22)',}}/>
-            <TouchableOpacity 
-              style={{width:44,height:44,alignItems:'center',justifyContent:'center'}}
-              onPress={()=>this._CartGoodsNumber(item.rec_id,item.goods_number,-1,index, section)}>
-              <Image source={require('../assets/images/10购物车/减号.png')} />
-            </TouchableOpacity>
-          </View>
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+          <Text style={{fontSize:14,color:'#FF8F00',}} key={index+'price'}>¥{item.goods_price}</Text>
+          <Text style={{fontSize:14,color:'#3F3F3F',}}>X{item.goods_number}</Text>
         </View>
       </View>
     </View>
   ); 
   }
-
+  //
   _renderHeader ({section: {is_checked,ru_id,ru_name}}) {
-    let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} />;
-    let checked = '0';
-    if(is_checked=='1'){
-      img = <Image source={require('../assets/images/10购物车/购物车选中.png')} />;
-      checked = '1';
-    }
     return (
-      <TouchableOpacity onPress={()=>{this._storeSelected(checked,ru_id)}}>
-        <View style={{flexDirection:'row'}}>
-          {img}
+      <View style={{flexDirection:'row',marginBottom:11}}>
           <Image source={require('../assets/images/04订单/店铺.png')} />
-          <Text style={{fontWeight: 'bold'}}>{ru_name}</Text>
-          <Image source={require('../assets/images/04订单/右箭头.png')} />
+          <Text style={{fontWeight: 'bold',marginLeft:11}}>{ru_name}</Text>
+          <Image source={require('../assets/images/04订单/右箭头.png')} style={{marginLeft:11}}/>
         </View>
-      </TouchableOpacity>
     );
   };
-
-  _renderSectionFooter ({section: {is_checked,ru_id,ru_name,shipping,index,shipping_idx}}) {
+  //
+  _renderSectionFooter ({section: {is_checked,ru_id,ru_name,shipping,index,shipping_idx,goods_amount}}) {
     let defaultShipping = shipping[shipping_idx];
     return (
-      <TouchableOpacity onPress={()=>{this._selectShipping(shipping)}}>
-        <View style={{ height: 50, }}>
-          <Text>{defaultShipping.shipping_name}</Text>
+      <View>
+        <View style={{flexDirection:'row',justifyContent:'space-between',padding:11,borderBottomWidth:1,borderTopWidth:1,borderColor:'#e5e5e5'}}>
+          <Text style={{fontSize:14,color:'#3F3F3F'}}>配送方式</Text>
+          <TouchableOpacity onPress={()=>{
+            let btns = [];
+            for (var i = 0; i < shipping.length; i++) {
+              let shipping_id = shipping[i].shipping_id;
+              btns.push({text:shipping[i].shipping_name,onPress:()=>{
+                console.log(shipping_id);
+              }});
+            }
+            btns.push({
+              text: '取消', style: 'cancel', onPress: () => {}
+            });
+            Alert.alert(
+              '快递',
+              null,
+              btns,
+            );
+          }}>
+            <View style={{ height: 50, flexDirection:'row'}}>
+              <Text style={{fontSize:14,color:'#3F3F3F'}}>{defaultShipping.shipping_name}</Text>
+              <Text style={{fontSize:14,color:'#ff8f00'}}>¥{defaultShipping.shipping_fee}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+        <View style={{flexDirection:'row',justifyContent:'space-between',padding:11}}>
+          <View/>
+          <View style={{flexDirection:'row'}}>
+            <Text style={{fontSize:12,color:'#3F3F3F'}}>共{}件商品 小计：</Text>
+            <Text style={{fontSize:12,color:'#ff8f00',marginLeft:11}}>¥{goods_amount}</Text>
+          </View>
+        </View>
+      </View>
       );
   };
-
+  //
   render() {
     let consignee = this.state.Data.consignee;
     let goods_list = this.state.Data.goods_list;
@@ -175,26 +191,62 @@ export default class SettlementScreen extends React.Component {
     //         return (<Picker.Item key={'shipping-'+item.shipping_id} label={item.shipping_name} value={item.shipping_id} />)
     //       })}
     //     </Picker>
-
+    let payment_selected = this.state.Data.payment_selected;
+    let order = this.state.Data.order;
     return (
-      <ScrollView style={styles.container}>
-        <Text>{consignee.consignee}{consignee.mobile}{consignee.region}{consignee.address}</Text>
+      <View style={styles.container}>
+        <View style={{padding:11,marginBottom:11,flexDirection:'row',backgroundColor:'#fff'}}>
+          <Image source={require('../assets/images/04订单/地址.png')} />
+          <View style={{marginLeft:11}}>
+            <View style={{flexDirection:'row',justifyContent:'space-between',}}>
+              <Text style={{fontSize:12,color:'#3F3F3F'}}>收货人：{consignee.consignee}</Text>
+              <Text style={{fontSize:12,color:'#888888'}}>{consignee.mobile}</Text>
+            </View>
+            <Text style={{fontSize:12,color:'#3F3F3F'}}>收货地址：{consignee.region}{consignee.address}</Text>
+          </View>
+          
+        </View>
         <SectionList
           renderItem = {this._renderItem}
           renderSectionHeader = {this._renderHeader}
           renderSectionFooter = {this._renderSectionFooter}
           sections = {goods_list}
           keyExtractor = {(item, index) => item + index}
+          style={{flex:1,backgroundColor:'#fff',padding:11}}
         />
-        <TouchableOpacity onPress={this._Settlement} style={{alignItems:'center',justifyContent:'center',}}>
-          <ImageBackground source={require('../assets/images/02登录注册部分/按钮未填入.png')} style={{width: 60, height: 20,alignItems:'center',justifyContent:'center',}}>
-            <Text>结算(1)</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      </ScrollView>
+        <View style={{marginTop:11,backgroundColor:'#fff',padding:11}}>
+          <TouchableOpacity onPress = {this._selectPayType}
+            style={{flexDirection:'row',justifyContent:'space-between',height:44,borderBottomWidth:1,borderColor:'#e5e5e5',alignItems:'center'}}>
+            <Text>支付方式</Text>
+            <View style={{flexDirection:'row'}}>
+              <Text>{payment_selected.pay_name}</Text>
+              <Image source={require('../assets/images/04订单/右箭头.png')} style={{marginLeft:11}}/>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress = {this._selectInv}
+            style={{flexDirection:'row',justifyContent:'space-between',height:44,marginTop:11,alignItems:'center'}}>
+            <Text>发票信息</Text>
+            <View style={{flexDirection:'row'}}>
+              <Text>{order.inv_payee}</Text>
+              <Text style={{marginLeft:11}}>{order.inv_content}</Text>
+              <Image source={require('../assets/images/04订单/右箭头.png')} style={{marginLeft:11}}/>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{flexDirection:'row',alignItems:'center', justifyContent:'space-between',backgroundColor:'#fff',padding:11}}>
+          <View/>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+            <Text style={{fontSize:14,color:'#3F3F3F',}} >合计金额：</Text>
+            <Text style={{fontSize:14,color:'#FF8F00',marginLeft:11}} >¥{this.state.Data.total.amount}</Text>
+            <TouchableOpacity onPress={this._Settlement} style={{marginLeft:11,width: 120, height: 40,borderRadius:15,alignItems:'center',justifyContent:'center',backgroundColor:'#ff8f00'}}>
+              <Text style={{fontSize:14,color:'#ffffff',}} >提交订单</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     );
   }
-
+  //
   _selectShipping= (shipping) => {
     let btns = [];
     for (var i = 0; i < shipping.length; i++) {
@@ -207,11 +259,53 @@ export default class SettlementScreen extends React.Component {
       { cancelable: false }
     );
   };
+
+  _selectPayType = () => {
+    let payment_list = this.state.Data.payment_list;
+    let btns = [];
+    for (var i = 0; i < payment_list.length; i++) {
+      let cur = payment_list[i];
+      btns.push({text:payment_list[i].pay_name,onPress:()=>{
+        let data  = this.state.Data;
+        data.payment_selected = cur;
+        this.setState({Data:data});
+      }});
+    }
+    btns.push({
+      text: '取消', style: 'cancel', onPress: () => {}
+    });
+    Alert.alert(
+      '支付方式',
+      null,
+      btns,
+    );
+  };
+
+  _selectInv = () => {
+    let inv_content_list = this.state.Data.inv_content_list;
+    let btns = [];
+    for (var i = 0; i < inv_content_list.length; i++) {
+      let cur = inv_content_list[i];
+      btns.push({text:inv_content_list[i],onPress:()=>{
+        let data  = this.state.Data;
+        data.order.inv_content = cur;
+        this.setState({Data:data});
+      }});
+    }
+    btns.push({
+      text: '取消', style: 'cancel', onPress: () => {}
+    });
+    Alert.alert(
+      '发票信息',
+      null,
+      btns,
+    );
+  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#C7C7C7',
   },
 });
