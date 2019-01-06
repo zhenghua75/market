@@ -35,6 +35,7 @@ import AllSciencesListScreen from '../screens/AllSciencesListScreen';
 import AllSciencesDetailScreen from '../screens/AllSciencesDetailScreen';
 import GoodsDetailScreen from '../screens/GoodsDetailScreen';
 import StoreScreen from '../screens/StoreScreen';
+import StoreListScreen from '../screens/StoreListScreen';
 import StoreInScreen from '../screens/StoreInScreen';
 import GoodsDetailCommentScreen from '../screens/GoodsDetailCommentScreen';
 import SettlementScreen from '../screens/SettlementScreen';
@@ -182,6 +183,7 @@ const MainStack = createStackNavigator({
   AllSciencesDetail:AllSciencesDetailScreen,
   GoodsDetail:GoodsDetailScreen,
   Store:StoreScreen,
+  StoreList:StoreListScreen,
   StoreIn:StoreInScreen,
   GoodsDetailComment:GoodsDetailCommentScreen,
   Settlement:SettlementScreen,

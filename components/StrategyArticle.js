@@ -18,7 +18,8 @@ export default class StrategyArticle extends React.Component {
 
   _renderItem = ({item, index, section}) => {
     return (
-        <TouchableOpacity style={styles.listViewItem}>
+        <TouchableOpacity style={styles.listViewItem}
+            onPress={() => {this._onPressItem(item.article_id)}}>
             <View style={styles.listViewItemDot} />
             <Text style={styles.listViewItemText}>{item.title}</Text>
             <Text style={styles.listViewItemDate}>{item.add_time_date}</Text>
@@ -31,10 +32,15 @@ export default class StrategyArticle extends React.Component {
     );
   };
 
+  _onPressItem = (id) => {
+    this.props.navi.navigate('DecorationStrategyDetail',{'id':id});
+  };
+
   _createListHeader(itemfirst){
     if(itemfirst){
         return (
-            <TouchableOpacity style={{padding:12,backgroundColor:'#fff',}}>
+            <TouchableOpacity style={{padding:12,backgroundColor:'#fff',}}
+                onPress={() => {this._onPressItem(itemfirst.article_id)}}>
               <ImageBackground source={{uri:itemfirst.file_url}} style={{
                 width:width-24,
                 height:Math.floor((width-24) * 190/349),
@@ -54,7 +60,6 @@ export default class StrategyArticle extends React.Component {
     }else{
         return <View></View>;
     }
-
   }
 
   render() {

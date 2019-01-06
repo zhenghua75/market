@@ -328,7 +328,7 @@ export default class HomeScreen extends React.Component {
           </View>
 
           <View style={styles.recommendShop}>
-            <View style={styles.recommendShopTitle}>
+            <TouchableOpacity style={styles.recommendShopTitle} onPress={this._stores}>
               <View style={styles.recommendShopTitleColumnBar}/>
               <Text style={styles.recommendShopTitleText}>品质好店</Text>
               <Icon.Ionicons
@@ -336,7 +336,7 @@ export default class HomeScreen extends React.Component {
                 size={22}
                 style={styles.recommendShopTitleArrow}
               />
-            </View>
+            </TouchableOpacity>
             <View style={{margin:10,}}>
               <FlatList
                 data={this.state.recommendStore}
@@ -352,7 +352,7 @@ export default class HomeScreen extends React.Component {
             </View>
           </View>
           <View style={styles.recommendShop}>
-            <View style={styles.recommendShopTitle}>
+            <TouchableOpacity style={styles.recommendShopTitle} onPress={this._consteam}>
               <View style={styles.recommendShopTitleColumnBar}/>
               <Text style={styles.recommendShopTitleText}>优秀团队</Text>
               <Icon.Ionicons
@@ -360,7 +360,7 @@ export default class HomeScreen extends React.Component {
                 size={22}
                 style={styles.recommendShopTitleArrow}
               />
-            </View>
+            </TouchableOpacity>
             <View style={{margin:10,}}>
               <FlatList
                 data={this.state.recommendTeam}
@@ -392,7 +392,7 @@ export default class HomeScreen extends React.Component {
                 />
               </View>
             </TouchableOpacity>
-            <StrategyArticle dataSource={this.state.homeinfo.strategy}/>
+            <StrategyArticle dataSource={this.state.homeinfo.strategy} navi={this.props.navigation}/>
           </View>
           <View style={{marginVertical:11,backgroundColor:'#fff'}}>
             <View style={styles.recommendProductTitle}>
@@ -456,6 +456,9 @@ export default class HomeScreen extends React.Component {
   };
   _consteam = async () => {
     this.props.navigation.navigate('ConstructionTeam');
+  };
+  _stores = async () => {
+    this.props.navigation.navigate('StoreList');
   };
   _infoList = async () => {
     this.props.navigation.navigate('InfoList');

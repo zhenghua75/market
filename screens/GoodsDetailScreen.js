@@ -55,7 +55,6 @@ export default class GoodsDetailScreen extends React.Component {
 
   state={
     'info':{},
-    'list':[],
     'visibleSwiper': false,
     'shippingFee':{},
     visibleModalPic: false,
@@ -75,18 +74,16 @@ export default class GoodsDetailScreen extends React.Component {
     good_comment:[],
     spe:[],
     pro:[],
-    specprice:[],
     selectedSpe:'',
     selectedPrice:{product_id:0,combstr:'',attr_number:'',shop_price:0,market_price:0},
     number:1,
     goodCollect:0,
     cartNumber:0,
+    default_spe:'',
   };
 
   _getGoods=async (goods_id) =>{
     const userToken = await AsyncStorage.getItem('userToken');
-    const { navigation } = this.props;
-    let cat_id = navigation.getParam('cat_id');
     var data = {
       'Action':'GetGoodInfo',
       'token':userToken,
@@ -121,23 +118,8 @@ export default class GoodsDetailScreen extends React.Component {
       selectedPrice: defselected,
       goodCollect:responseJson.Data.goods_collect,
       cartNumber:responseJson.Data.cart_num,
+      default_spe:responseJson.Data.good.default_spe,
     });
-  };
-
-  _getGoodsGallery=async (goods_id) =>{
-    try {
-      let response = await fetch(
-        'http://jc.ynweix.com/api.php?app_key=E6E3D813-4809-4C98-8D34-A14C7C493A7C&method=dsc.goods.gallery.list.get&format=json&goods_id='+goods_id
-      );
-      let responseJson = await response.json();
-      if(responseJson.error > 1){
-        throw responseJson;
-      }
-      let list = responseJson.info.list;
-      this.setState({list:list, });
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   componentWillMount() {
@@ -172,16 +154,47 @@ export default class GoodsDetailScreen extends React.Component {
     }
   };
 
-  _speSelected = (id) => {
-    let specprice = this.state.specprice;
+  _speSelected = (attr_id,id) => {
+    let spetmp=this.state.spe;
+    let strcomb='';
+    let strdefaultspe='';
+    for (var j = 0; j < spetmp.length; j++) {
+        if(spetmp[j].attr_id == attr_id){
+            var attrvalues=spetmp[j].values;
+            for (var k = 0; k < attrvalues.length; k++) {
+                if(attrvalues[k].id == id){
+                    attrvalues[k].checked='1';
+                }else if(attrvalues[k].checked=='1'){
+                    attrvalues[k].checked='0';
+                }
+            }
+            spetmp[j].values=attrvalues;
+        }
+    }
 
+    for (var j = 0; j < spetmp.length; j++) {
+        for (var k = 0; k < spetmp[j].values.length; k++) {
+            if(spetmp[j].values[k].checked == '1'){
+                strcomb=strcomb+spetmp[j].values[k].id+',';
+                strdefaultspe=strdefaultspe+spetmp[j].values[k].label+'、';
+            }
+        }
+    }
+    if(strcomb.endsWith(',')){
+        strcomb=strcomb.substring(0,strcomb.length-1);
+    }
+
+    let specprice = this.state.specprice;
     for (var i = 0; i < specprice.length; i++) {
-      if(specprice[i].combstr == id){
-        this.setState({curprice:this.state.specprice[i]});
+      if(specprice[i].combstr == strcomb){
+        this.setState({
+            selectedSpe:strcomb,
+            selectedPrice:this.state.specprice[i],
+            default_spe:strdefaultspe,
+        });
         return;
       }
     }
-    
   };
 
   _plus = () => {
@@ -227,8 +240,8 @@ export default class GoodsDetailScreen extends React.Component {
     let comment_all = this.state.comment_all;
     let good_comment = this.state.good_comment;
     let spe = this.state.spe;
-    let specprice = this.state.specprice;
     let pro = this.state.pro;
+    let pictures = info.pictures;
 
     let speView = <View style={styles.specialWapper}>
       {spe.map((item, key) => {
@@ -239,7 +252,7 @@ export default class GoodsDetailScreen extends React.Component {
             <TouchableOpacity 
                 key={item2.id}
                 style={{borderWidth:1,borderColor:'#eeeeee',padding:5,marginLeft:10,backgroundColor:bgcolor}} 
-                onPress={() => this._speSelected(item2.id)}>
+                onPress={() => this._speSelected(item.attr_id,item2.id)}>
                 <Text style={{color:ftcolor}}>{item2.label}</Text>
             </TouchableOpacity>
           )});
@@ -266,13 +279,13 @@ export default class GoodsDetailScreen extends React.Component {
         pro=[{'name':'','value':'暂无任何参数'}];
     }
 
-    if (this.state.visibleSwiper) {
+    if (this.state.visibleSwiper && pictures) {
       swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
         width={Dimensions.get('window').width}
         height={Math.floor(Dimensions.get('window').width * 564/750)}
         removeClippedSubviews={false}
         autoplay={true}>
-        {this.state.list.map((item, key) => {
+        {pictures.map((item, key) => {
           return (
             <TouchableOpacity key={key} onPress={() => this._modal(item.img_url)}>
               <Image source={{uri: item.img_url}} style={{
@@ -284,15 +297,17 @@ export default class GoodsDetailScreen extends React.Component {
         })}
       </Swiper>;
     } else {
-      swiper = <View></View>;
+      swiper = <View style={styles.wrapper} width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 564/750)}></View>;
     }
+
     let self_run = null;
     if(store.self_run){
       self_run = <View>
         <View style={{flexDirection:'row',padding:12,alignItems:'center'}}>
           <Image source={{uri:store.logo_thumb}} style={{width:60,height:50,}}/>
           <Text style={{fontSize:18,color:'#3f3f3f',marginLeft:10,flex:1}}>{store.shop_name}</Text>
-          <TouchableOpacity onPress={this._store} style={{padding:5,borderWidth:1,borderColor:'#ff8f00'}}>
+          <TouchableOpacity onPress={()=>{this._store(info.seller_id)}} style={{padding:5,borderWidth:1,borderColor:'#ff8f00'}}>
             <Text style={{fontSize:14,color:'#999999'}}>进店逛逛</Text>
           </TouchableOpacity>
         </View>
@@ -368,7 +383,7 @@ export default class GoodsDetailScreen extends React.Component {
                     borderBottomWidth:1,borderColor:'#e5e5e5',
                 }} onPress={()=>{this.setState({visibleModalSpe:true})}}>
                     <Text style={{fontSize:14,color:'#999999',}}>规格</Text>
-                    <Text style={{fontSize:14,color:'#616161',paddingLeft:20,flex:1}}>{info.default_spe}</Text>
+                    <Text style={{fontSize:14,color:'#616161',paddingLeft:20,flex:1}}>{this.state.default_spe}</Text>
                     <Image source={require('../assets/images/04订单/右箭头.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',
@@ -626,8 +641,8 @@ export default class GoodsDetailScreen extends React.Component {
     );
   }
 
-  _store = async () => {
-    this.props.navigation.navigate('Store');
+  _store = async (shop_id) => {
+    this.props.navigation.navigate('Store',{shop_id:shop_id});
   };
 
   _cart = async () => {
@@ -641,11 +656,7 @@ export default class GoodsDetailScreen extends React.Component {
   _comment = async () => {
   	const { navigation } = this.props;
     let goods_id = navigation.getParam('goods_id');
-    this.props.navigation.navigate('GoodsDetailComment',{
-      'goods_id':goods_id,
-      'good_comment':this.state.good_comment,
-      'comment_all':this.state.comment_all,
-    });
+    this.props.navigation.navigate('GoodsDetailComment',{'good_id':goods_id});
   };
 
   _customerService = async() => {
