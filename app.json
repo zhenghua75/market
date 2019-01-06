@@ -21,7 +21,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist":{
+        "LSApplicationQueriesSchemes":["alipay","alipayshare"],
+      },
+      "bundleIdentifier": "com.ynweix.jc"
+    },
+    "android": {
+      "package": "com.ynweix.jc"
     },
     "extra": {
       "imageServer": "http://jc.ynweix.com/",      
@@ -33,10 +40,5 @@
       "apiUrl":"http://jc.ynweix.com/api/appclient/api.php"
     },
     "scheme":"market",
-    "ios":{
-      "infoPlist":{
-        "LSApplicationQueriesSchemes":["alipay","alipayshare"],
-      }
-    }
   }
 }
