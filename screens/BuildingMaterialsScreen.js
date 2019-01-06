@@ -4,12 +4,15 @@ import {
   StyleSheet,
   View,
   Text,
-  FlatList,
+  SectionList,
   Image,
   TouchableOpacity,
   Dimensions,
-   } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
+  FlatList,
+  AsyncStorage
+} from 'react-native';
+
+const {width, height} = Dimensions.get('window');
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
@@ -21,80 +24,84 @@ export default class LinksScreen extends React.Component {
     },
   };
 
-  state = {selected: (new Map(): Map<string, boolean>)};
-
-  _keyExtractor = (item, index) => item+index;
-
-  _onPressItem = (id: string) => {
-    // updater functions are preferred for transactional updates
-    this.setState((state) => {
-      // copy the map rather than modifying state.
-      const selected = new Map(state.selected);
-      selected.set(id, !selected.get(id)); // toggle
-      return {selected};
-    });
+  state = {
+    list:[],
   };
 
-  _renderItem = ({item, index, section}) => {
-    //const textColor = this.state.selected[item.id] ? '#ff8f00' : '#3f3f3f';
+  _keyExtractor = (item, index) => item.cat_id+item.goods_id;
+
+  _onPressItem = (goods_id) => {
+    this.props.navigation.navigate('GoodsDetail',{'goods_id':goods_id});
+  };
+
+  _renderHeader = ({section: {cat_id,cat_name}}) => (
+    <View style={{flexDirection:'row',flex:1,justifyContent: 'center',
+        alignItems:'center',marginVertical:20,backgroundColor:'#F0A653',padding:20}}>
+      <Text style={{fontWeight: 'bold',fontSize:16,color:'#fff'}}>{cat_name}</Text>
+    </View>
+  );
+
+  _renderItem2 = ({item, index, section}) => {
     return (
-    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',}}>
-      <View style={{width:5,height:39,backgroundColor:'#ff8f00'}}/>
-      <Text style={{fontSize:14,color:'#ff8f00'}}>{item.name}</Text>
-    </TouchableOpacity>
-  )};
+      <FlatList
+        data={item.data}
+        renderItem={this._renderItem3}
+        numColumns={2}
+        getItemLayout={(data,index)=>(
+            {length: 100, offset: (100+2) * index, index}
+        )}
+        keyExtractor={this._keyExtractor}
+      />
+    );
+  };
+
+  _renderItem3 = ({item, index, section}) => {
+    return (
+      <TouchableOpacity style={styles.result} onPress={() => {this._onPressItem(item.goods_id)}}>
+        <Image source={{uri:item.goods_thumb.Data}} style={styles.resultImage}/>
+        <View style={{padding:12,}}>
+          <Text style={styles.resultTextName}>{item.goods_name}</Text>
+          <Text style={styles.resultTextPrice}>¥{item.market_price}</Text>
+          <Text style={styles.resultTextSale}>销量{item.sales_volume}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  componentWillMount() {
+    this._getMaterialList();
+  }
 
   render() {
+    let listnew=this.state.list;
+    for (var i = 0; i < listnew.length; i++) {
+        listnew[i]['data'] = [{'data':listnew[i].data}];
+    }
     return (
-
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <Image source={require('../assets/images/13建材首页/banner.png')} style={{width:Dimensions.get('window').width,
-                    height:Math.floor(Dimensions.get('window').width * 404/750),}}/>
-        <View style={{flexDirection:'row',}}>
-          <View style={{width:94,backgroundColor:'#f5f5f5'}}>
-            <FlatList
-              data={[
-                {id:'1',name:'五金工具'}, 
-                {id:'2',name:'建筑耗材'}, 
-              ]}
-              extraData={this.state}
-              keyExtractor={this._keyExtractor}
-              renderItem={this._renderItem}
-            />
-          </View>
-          <View style={{flex: 1, flexDirection: 'row',justifyContent:'flex-start',flexWrap:'wrap'}}>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/1.png')} style={styles.img}/>
-              <Text style={styles.txt}>电气胶带</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/2.png')} style={styles.img}/>
-              <Text style={styles.txt}>塑料软管</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/3.png')} style={styles.img}/>
-              <Text style={styles.txt}>装饰开关</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/4.png')} style={styles.img}/>
-              <Text style={styles.txt}>尺子</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/5.png')} style={styles.img}/>
-              <Text style={styles.txt}>钻头</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={this._goodsList}>
-              <Image source={require('../assets/images/03分类/6.png')} style={styles.img}/>
-              <Text style={styles.txt}>磨具</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Image source={require('../assets/images/13建材首页/banner.png')} style={{width:width,
+            height:Math.floor(width * 404/750),}}/>
+        <SectionList
+            renderItem={this._renderItem2}
+            renderSectionHeader={this._renderHeader}
+            sections={listnew}
+            keyExtractor={(item, index) => item.cat_id+index}
+            style={{flex:1,marginBottom:20,}}
+        />
       </ScrollView>
     );
   }
 
-  _goodsList = async () => {
-    this.props.navigation.navigate('GoodsList');
+  _getMaterialList=async () =>{
+    const userToken = await AsyncStorage.getItem('userToken');
+    var data = {
+      'Action':'GetCatGoodslist',
+      'token':userToken,
+    };
+    let responseJson = await ApiPost(data);
+    this.setState({
+        list:responseJson.Data
+    });
   };
 }
 
@@ -119,5 +126,26 @@ const styles = StyleSheet.create({
   txt:{
     fontSize:12,
     color:'#88888888',
+  },
+  result:{
+    marginHorizontal:10,
+    width:width*170/375,
+  },
+  resultImage:{
+    width:width*170/375,
+    height:width*170/375,
+  },
+  resultTextName:{
+    fontSize:14,
+    color:'#3F3F3F',
+  },
+  resultTextPrice:{
+    fontSize:14,
+    color:'#FF8F00',
+  },
+  resultTextSale:{
+    fontSize:12,
+    color:'#c7c7c7',
+    textAlign:'right',
   },
 });
