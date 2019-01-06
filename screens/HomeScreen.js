@@ -42,7 +42,10 @@ export default class HomeScreen extends React.Component {
     recommendProduct: null,
     'visibleSwiper': false,
     recommendStore:[],
-    homeinfo:{'slide':[],'strategy':[]},
+    homeinfo:{
+        slide:[],
+        strategy:[],
+    },
   };
 
   _getRecommendProduct = async () =>{

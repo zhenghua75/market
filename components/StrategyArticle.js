@@ -66,7 +66,7 @@ export default class StrategyArticle extends React.Component {
     var dataSource = this.props.dataSource;
     let list = [];
     let datafirst=null;
-    if(dataSource && dataSource.length>0){
+    if(dataSource && dataSource.length > 0){
         datafirst=dataSource[0];
     }
     for (let i = 1; i < dataSource.length; i++) {
