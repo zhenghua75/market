@@ -68,10 +68,11 @@ export default class StrategyArticle extends React.Component {
     let datafirst=null;
     if(dataSource && dataSource.length > 0){
         datafirst=dataSource[0];
+        for (let i = 1; i < dataSource.length; i++) {
+          list.push(dataSource[i]);
+        }
     }
-    for (let i = 1; i < dataSource.length; i++) {
-      list.push(dataSource[i]);
-    }
+    
     return (
         <FlatList
             data={list}
