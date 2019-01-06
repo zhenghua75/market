@@ -33,5 +33,10 @@
       "apiUrl":"http://jc.ynweix.com/api/appclient/api.php"
     },
     "scheme":"market",
+    "ios":{
+      "infoPlist":{
+        "LSApplicationQueriesSchemes":["alipay","alipayshare"],
+      }
+    }
   }
 }
