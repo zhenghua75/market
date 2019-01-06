@@ -200,7 +200,9 @@ export default class HomeScreen extends React.Component {
       text = this.state.city
       
     }
+    let slides=this.state.homeinfo.slide;
     let swiper = null;
+    let swiperslide = null;
     if (this.state.visibleSwiper) {
     
       let list = [];
@@ -238,6 +240,29 @@ export default class HomeScreen extends React.Component {
             </Swiper>
       }
     }
+
+    if (slides) {
+        swiperslide=<Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 458/750)}>
+            {slides.map((item, key) => {
+              return (
+                <View key={key} style={styles.slide}>
+                    <Image source={{uri:item}} style={styles.swiperImage}/>
+                </View>
+              )
+            })}
+        </Swiper>;
+    } else {
+        swiperslide = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+            width={Dimensions.get('window').width}
+            height={Math.floor(Dimensions.get('window').width * 458/750)}>
+            <View style={styles.slide}>
+                <Image source={require('../assets/images/01首页部分/banner1_02.jpg')} style={styles.swiperImage}/>
+            </View>
+        </Swiper>;
+    }
+
     return (
         <ScrollView style={{flex: 1,backgroundColor: 'rgb(229,229,229)',}} contentContainerStyle={styles.contentContainer}>
           <View style={{flex:1,
@@ -271,19 +296,7 @@ export default class HomeScreen extends React.Component {
           </View>
           
           <View style={{backgroundColor:'#fff'}}>
-            <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
-              width={Dimensions.get('window').width}
-              height={Math.floor(Dimensions.get('window').width * 458/750)}>
-              <View style={styles.slide}>
-                <Image source={{uri:this.state.homeinfo.slide[0]}} style={styles.swiperImage}/>
-              </View>
-              <View style={styles.slide}>
-                <Image source={{uri:this.state.homeinfo.slide[1]}} style={styles.swiperImage}/>
-              </View>
-              <View style={styles.slide}>
-                <Image source={{uri:this.state.homeinfo.slide[2]}} style={styles.swiperImage}/>
-              </View>
-            </Swiper>
+            {swiperslide}
             <View style={styles.columnView}>
               <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
                 <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
