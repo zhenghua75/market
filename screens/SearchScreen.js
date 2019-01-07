@@ -15,7 +15,7 @@ import ApiPost from '../lib/ApiPost';
 
 export default class SearchScreen extends React.Component {
   static navigationOptions = {
-    title: '发现',
+    title: '搜索',
     headerTitleStyle: {
       alignSelf: 'center',
       textAlign: 'center',
@@ -58,7 +58,8 @@ export default class SearchScreen extends React.Component {
             <View style={{flexDirection:'row',padding:10,flex:1}}>
               <Image source={require('../assets/images/00四个选项/发现.png')} style={{width:20,height:21,}}/>
               <TextInput 
-                style={{fontSize:12,color:'#999999',flex:1}}
+                style={{fontSize:14,color:'#999999',flex:1,padding:0,paddingLeft:10,height:20,}}
+                underlineColorAndroid="transparent"
                 onChangeText={(text) => this.setState({GoodName:text})}
                 placeholder={'输入商品名'}
               ></TextInput>
