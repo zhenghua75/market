@@ -103,7 +103,7 @@ export default class LinksScreen extends React.Component {
           <Image source={{uri:item.goods_thumb.Data}} style={styles.resultImage}/>
           <View style={{padding:12,}}>
             <Text style={styles.resultTextName}>{item.goods_name}</Text>
-            <Text style={styles.resultTextPrice}>¥{item.market_price}</Text>
+            <Text style={styles.resultTextPrice}>¥{item.shop_price}</Text>
             <Text style={styles.resultTextSale}>销量{item.sales_volume}</Text>
           </View>
         </TouchableOpacity>

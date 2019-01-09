@@ -55,7 +55,7 @@ export default class CartScreen extends React.Component {
       ],
       total:{}
     },
-
+    isRefresh:false,
   };
 
   _keyExtractor = (item, index) => item.id;
@@ -116,7 +116,6 @@ export default class CartScreen extends React.Component {
   ); 
   }
   
-
   _renderHeader = ({section: {is_checked,ru_id,ru_name}}) => {
     let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} style={{width:16,height:16}}/>;
     let checked = '0';
@@ -144,7 +143,6 @@ export default class CartScreen extends React.Component {
       'token':userToken,
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     let j = 0;
     for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
       responseJson.Data.goods_list[i]['index'] = i;
@@ -173,7 +171,6 @@ export default class CartScreen extends React.Component {
       'number': result,
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -194,9 +191,7 @@ export default class CartScreen extends React.Component {
       'status':'',
       'allcart': allcart,
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -216,9 +211,7 @@ export default class CartScreen extends React.Component {
       'status':result,
       'allcart': '',
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -238,20 +231,31 @@ export default class CartScreen extends React.Component {
       'status':result,
       'allcart': '',
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
   };
 
   _Settlement = async () => {
-    this.props.navigation.navigate('Settlement');
+    this.props.navigation.navigate('Settlement',{'carttype':0});
   };
 
   componentWillMount() {
     this._getCart();
+  };
+
+  componentDidMount() {
+    this.props.navigation.addListener('willFocus', this._getCart);
+  };
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+        isRefresh:nextProps.navigation.getParam('fresh',false),
+    });
+    if(this.state.isRefresh){
+        this._getCart();
+    }
   };
 
   render() {
