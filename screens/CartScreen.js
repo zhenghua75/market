@@ -244,6 +244,21 @@ export default class CartScreen extends React.Component {
   componentWillMount() {
     this._getCart();
   };
+  _didFocusSubscription = {};
+  
+  componentDidMount() {
+      // 通过addListener开启监听，可以使用上面的四个属性
+      this._didFocusSubscription = this.props.navigation.addListener(
+          'didFocus',
+          payload => {
+              this._getCart();
+          }
+      );
+  }
+  componentWillUnmount() {
+      // 在页面消失的时候，取消监听
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+  }
 
   componentDidMount() {
     this.props.navigation.addListener('willFocus', this._getCart);
