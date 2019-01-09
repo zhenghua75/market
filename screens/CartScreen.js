@@ -55,7 +55,7 @@ export default class CartScreen extends React.Component {
       ],
       total:{}
     },
-
+    isRefresh:false,
   };
 
   _keyExtractor = (item, index) => item.id;
@@ -116,7 +116,6 @@ export default class CartScreen extends React.Component {
   ); 
   }
   
-
   _renderHeader = ({section: {is_checked,ru_id,ru_name}}) => {
     let img = <Image source={require('../assets/images/10购物车/购物车未选中.png')} style={{width:16,height:16}}/>;
     let checked = '0';
@@ -144,7 +143,6 @@ export default class CartScreen extends React.Component {
       'token':userToken,
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     let j = 0;
     if(responseJson.Result){
       for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
@@ -176,7 +174,6 @@ export default class CartScreen extends React.Component {
       'number': result,
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -197,9 +194,7 @@ export default class CartScreen extends React.Component {
       'status':'',
       'allcart': allcart,
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -219,9 +214,7 @@ export default class CartScreen extends React.Component {
       'status':result,
       'allcart': '',
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
@@ -241,20 +234,42 @@ export default class CartScreen extends React.Component {
       'status':result,
       'allcart': '',
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if (responseJson.Result) {
       this._getCart();
     }
   };
 
   _Settlement = async () => {
-    this.props.navigation.navigate('Settlement');
+    this.props.navigation.navigate('Settlement',{'carttype':0});
   };
 
   componentWillMount() {
     this._getCart();
+  };
+  _didFocusSubscription = {};
+  
+  componentDidMount() {
+      // 通过addListener开启监听，可以使用上面的四个属性
+      this._didFocusSubscription = this.props.navigation.addListener(
+          'didFocus',
+          payload => {
+              this._getCart();
+          }
+      );
+  }
+  componentWillUnmount() {
+      // 在页面消失的时候，取消监听
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+        isRefresh:nextProps.navigation.getParam('fresh',false),
+    });
+    if(this.state.isRefresh){
+        this._getCart();
+    }
   };
 
   render() {

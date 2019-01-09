@@ -301,11 +301,11 @@ export default class HomeScreen extends React.Component {
           <View style={{backgroundColor:'#fff'}}>
             {swiperslide}
             <View style={styles.columnView}>
-              <TouchableOpacity style={styles.columnViewItem} onPress={this._secondKill}>
+              <TouchableOpacity style={styles.columnViewItem} onPress={this._brand}>
                 <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
                   <Image source={require('../assets/images/01首页部分/秒杀.png')} style={styles.columnViewItemImage}/>
                 </View>
-                <Text style={styles.columnViewItemText}>秒杀</Text>
+                <Text style={styles.columnViewItemText}>品牌</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.columnViewItem} onPress={this._allSciencesList}>
                 <View style={{alignItems:'center',justifyContent:'center',borderRadius:22,width:44,height:44,backgroundColor:'rgb(229,229,229)',}}>
@@ -463,8 +463,8 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('Search');
   };
 
-  _secondKill = async () => {
-    this.props.navigation.navigate('SecondKill');
+  _brand = async () => {
+    this.props.navigation.navigate('Brand');
   };
 
   _catalog = async () => {

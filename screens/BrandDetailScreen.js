@@ -8,7 +8,8 @@ import {
   Dimensions,
   FlatList,
   AsyncStorage,
-  TextInput
+  TextInput,
+  ImageBackground
 } from 'react-native';
 
 import ApiPost from '../lib/ApiPost';
@@ -17,7 +18,7 @@ const {width, height} = Dimensions.get('window');
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
-    title: '商品列表',
+    title: '品牌商品',
     headerTitleStyle: {
       alignSelf: 'center',
       textAlign: 'center',
@@ -30,38 +31,37 @@ export default class LinksScreen extends React.Component {
     this.page = 1;
     this.totalpage = 0;
     this.state = {
+        brandinfo:{},
         list:[],
-        GoodName:'',
         isRefresh:false,
         isLoadMore:false,
-        cat_id:0,
+        brandid:0,
     }
   }
 
-  _getGoodsList=async () =>{
+  _getBrandGoods=async () =>{
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
-      'Action':'GetGoods',
+      'Action':'GetBrandGoods',
       'token':userToken,
-      'PageSize':'10',
-      'Page': this.page,
-      'Cat_id': this.state.cat_id,
-      'Is_Best':'0',
-      'GoodName':this.state.GoodName,
+      'size':'10',
+      'page': this.page,
+      'brand_id': this.state.brandid,
     };
     let responseJson = await ApiPost(data);
-    let list = responseJson.Data.Data;
     this.totalpage=responseJson.Data.totalPage;
     if(this.page===1){
         this.setState({
-            list:list,
+            brandinfo:responseJson.Data.brandinfo,
+            list:responseJson.Data.goods,
             isRefresh:false,
             isLoadMore:false
         });
     }else{
         this.setState({
+            brandinfo:responseJson.Data.brandinfo,
             isLoadMore : false,
-            list: this.state.list.concat(list),
+            list: this.state.list.concat(responseJson.Data.goods),
             isRefresh:false
         });
     }
@@ -73,17 +73,17 @@ export default class LinksScreen extends React.Component {
             isLoadMore : true
         });
         this.page = this.page + 1;
-        this._getGoodsList();
+        this._getBrandGoods();
     }
   }
 
   componentWillMount() {
     const { navigation } = this.props;
-    let cat_id = navigation.getParam('cat_id');
+    let brand_id = navigation.getParam('brand_id');
     this.setState({
-        cat_id : cat_id
+        brandid : brand_id
     });
-    this._getGoodsList();
+    this._getBrandGoods();
   }
 
   _keyExtractor = (item, index) => item.goods_id;
@@ -91,7 +91,7 @@ export default class LinksScreen extends React.Component {
   _renderItem = ({item, index, section}) => {
     return (
         <TouchableOpacity style={styles.result} onPress={() => {this._detail(item.goods_id)}}>
-          <Image source={{uri:item.goods_thumb.Data}} style={styles.resultImage}/>
+          <Image source={{uri:item.goods_thumb}} style={styles.resultImage}/>
           <View style={{padding:12,}}>
             <Text style={styles.resultTextName}>{item.goods_name}</Text>
             <Text style={styles.resultTextPrice}>¥{item.shop_price}</Text>
@@ -130,44 +130,42 @@ export default class LinksScreen extends React.Component {
     );
   }
 
+  _createListHeader=(info)=>{
+    if(info){
+        return (
+            <View style={{backgroundColor:'#fff',marginBottom:20}}>
+                <ImageBackground source={{uri:info.brand_bg}} resizeMode='stretch' style={{
+                    width:width,height:Math.floor(width * 120/350),
+                    justifyContent:'center'
+                }}>
+                    <TouchableOpacity style={{flexDirection:'row',marginLeft:20}}
+                        onPress={() => {this._brandDetail(info.brand_id)}}>
+                        <View>
+                            <Image source={{uri:info.brand_logo}} style={{width:60,height:60}}/>
+                        </View>
+                        <View style={{paddingTop:14,paddingLeft:20,}}>
+                            <Text style={{color:'#fff',fontSize:18}}>{info.brand_name}</Text>
+                            <Text style={{color:'#bbb',fontSize:14}}>共有{info.goods_num}件商品</Text>
+                        </View>
+                    </TouchableOpacity>
+                </ImageBackground>
+            </View>
+        )
+    }else{
+        return(
+            <View></View>
+        )
+    }
+  }
+
   render() {
-    //let cols = Math.floor((Dimensions.get('window').width-40)*170/375);
     return (
       <ScrollView style={styles.container}>
-        <View style={{height:65,alignItems:'center',backgroundColor:'#fff'}}>
-          <View style={{margin:12,height:36,
-            width:width-24,
-            flexDirection:'row',borderRadius:5,
-          backgroundColor:'rgb(234,238,237)',
-          alignItems:'center',
-          justifyContent:'space-between',
-        }}>
-            <View style={{flexDirection:'row',padding:10,flex:1}}>
-              <Image source={require('../assets/images/00四个选项/发现.png')} style={{width:20,height:20,}}/>
-              <TextInput 
-                style={{fontSize:14,color:'#999999',flex:1,padding:0,paddingLeft:10,height:20,}}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => this.setState({GoodName:text})}
-                placeholder={'输入商品名'}
-              ></TextInput>
-            </View>
-            <TouchableOpacity 
-              style={{height:36,width:52,borderTopRightRadius:5,borderBottomRightRadius:5,
-                backgroundColor:'rgb(255,142,1)',
-                alignItems:'center',
-                justifyContent:'center',
-              }}
-              onPress={this._search}
-            >
-              <Text style={{color:'#fff'}}>搜索</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
         <FlatList
             data={this.state.list}
-            extraData={this.state}
             keyExtractor={this._keyExtractor}
             renderItem={this._renderItem}
+            ListHeaderComponent={()=>this._createListHeader(this.state.brandinfo)}
             ListFooterComponent={this._createListFooter}
             ListEmptyComponent={this._createEmptyView}
             numColumns={2}

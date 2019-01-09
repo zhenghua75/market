@@ -23,7 +23,8 @@ import CustomServiceScreen from '../screens/CustomServiceScreen';
 import PositionScreen from '../screens/PositionScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
 import SearchScreen from '../screens/SearchScreen';
-import SecondKillScreen from '../screens/SecondKillScreen';
+import BrandScreen from '../screens/BrandScreen';
+import BrandDetailScreen from '../screens/BrandDetailScreen';
 import CatalogScreen from '../screens/CatalogScreen';
 import GoodsListScreen from '../screens/GoodsListScreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
@@ -40,6 +41,7 @@ import StoreInScreen from '../screens/StoreInScreen';
 import GoodsDetailCommentScreen from '../screens/GoodsDetailCommentScreen';
 import SettlementScreen from '../screens/SettlementScreen';
 import AlipayScreen from '../screens/AlipayScreen';
+import UserSettingScreen from '../screens/UserSettingScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -170,7 +172,8 @@ const MainStack = createStackNavigator({
   Position:PositionScreen,
   AddAddress:AddAddressScreen,
   Search:SearchScreen,
-  SecondKill:SecondKillScreen,
+  Brand:BrandScreen,
+  BrandDetail:BrandDetailScreen,
   Catalog:CatalogScreen,
   GoodsList:GoodsListScreen,
   FindDetail:FindDetailScreen,
@@ -188,6 +191,7 @@ const MainStack = createStackNavigator({
   GoodsDetailComment:GoodsDetailCommentScreen,
   Settlement:SettlementScreen,
   Alipay:AlipayScreen,
+  UserSetting:UserSettingScreen,
 });
 
 const AuthStack = createStackNavigator({

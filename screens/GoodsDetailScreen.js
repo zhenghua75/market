@@ -53,41 +53,44 @@ export default class GoodsDetailScreen extends React.Component {
         </View>,
   });
 
-  state={
-    'info':{},
-    'visibleSwiper': false,
-    'shippingFee':{},
-    visibleModalPic: false,
-    visibleModalSpe: false,
-    visibleModalPro: false,
-    visibleModalCart: false,
-    visibleModalBuy: false,
-    img_url:'',
-    height:200,
-    'store':{
-      'commentad':{
-        'Rank':{},
-        'Delivery':{},
-        'Server':{},
-      },},
-    comment_all:{},
-    good_comment:[],
-    spe:[],
-    pro:[],
-    selectedSpe:'',
-    selectedPrice:{product_id:0,combstr:'',attr_number:'',shop_price:0,market_price:0},
-    number:1,
-    goodCollect:0,
-    cartNumber:0,
-    default_spe:'',
-  };
+  constructor(props){
+    super(props);
+    this.state={
+        'info':{},
+        'visibleSwiper': false,
+        'shippingFee':{},
+        visibleModalPic: false,
+        visibleModalSpe: false,
+        visibleModalPro: false,
+        visibleModalCart: false,
+        visibleModalBuy: false,
+        img_url:'',
+        height:200,
+        'store':{
+          'commentad':{
+            'Rank':{},
+            'Delivery':{},
+            'Server':{},
+          },},
+        comment_all:{},
+        good_comment:[],
+        spe:[],
+        pro:[],
+        selectedSpe:'',
+        selectedPrice:{product_id:0,combstr:'',attr_number:'',shop_price:0,market_price:0},
+        number:1,
+        goodCollect:0,
+        cartNumber:0,
+        default_spe:'',
+      };
+  }
 
   _getGoods=async (goods_id) =>{
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
-      'Action':'GetGoodInfo',
-      'token':userToken,
-      'good_id':goods_id,
+        'Action':'GetGoodInfo',
+        'token':userToken,
+        'good_id':goods_id,
     };
     let responseJson = await ApiPost(data);
     let proplist=responseJson.Data.properties;
@@ -104,21 +107,21 @@ export default class GoodsDetailScreen extends React.Component {
         }
     }
     this.setState({
-      info:responseJson.Data.good,
-      html:responseJson.Data.good.goods_desc,
-      list: responseJson.Data.good.pictures,
-      shippingFee: responseJson.Data.shippingFee,
-      store: responseJson.Data.store,
-      comment_all: responseJson.Data.comment_all,
-      good_comment: responseJson.Data.good_comment,
-      spe: responseJson.Data.properties.spe,
-      pro: responseJson.Data.properties.pro,
-      specprice: responseJson.Data.properties.specprice,
-      selectedSpe: responseJson.Data.properties.default_spe_comstr,
-      selectedPrice: defselected,
-      goodCollect:responseJson.Data.goods_collect,
-      cartNumber:responseJson.Data.cart_num,
-      default_spe:responseJson.Data.good.default_spe,
+        info:responseJson.Data.good,
+        html:responseJson.Data.good.goods_desc,
+        list: responseJson.Data.good.pictures,
+        shippingFee: responseJson.Data.shippingFee,
+        store: responseJson.Data.store,
+        comment_all: responseJson.Data.comment_all,
+        good_comment: responseJson.Data.good_comment,
+        spe: responseJson.Data.properties.spe,
+        pro: responseJson.Data.properties.pro,
+        specprice: responseJson.Data.properties.specprice,
+        selectedSpe: responseJson.Data.properties.default_spe_comstr,
+        selectedPrice: defselected,
+        goodCollect:responseJson.Data.goods_collect,
+        cartNumber:responseJson.Data.cart_num,
+        default_spe:responseJson.Data.good.default_spe,
     });
   };
 
@@ -137,6 +140,12 @@ export default class GoodsDetailScreen extends React.Component {
         visibleSwiper: true
       });
     }, 100);
+  }
+
+  componentWillUnmount(){
+    this.setState = (state,callback)=>{
+        return;
+    };
   }
 
   _modal = (img_url) => {
@@ -280,7 +289,7 @@ export default class GoodsDetailScreen extends React.Component {
     }
 
     if (this.state.visibleSwiper && pictures) {
-      swiper = <Swiper style={styles.wrapper} dotColor={'#999999'} activeDotColor={'#ff8f00'} 
+      swiper = <Swiper dotColor={'#999999'} activeDotColor={'#ff8f00'} 
         width={Dimensions.get('window').width}
         height={Math.floor(Dimensions.get('window').width * 564/750)}
         removeClippedSubviews={false}
@@ -297,7 +306,7 @@ export default class GoodsDetailScreen extends React.Component {
         })}
       </Swiper>;
     } else {
-      swiper = <View style={styles.wrapper} width={Dimensions.get('window').width}
+      swiper = <View width={Dimensions.get('window').width}
             height={Math.floor(Dimensions.get('window').width * 564/750)}></View>;
     }
 
@@ -642,7 +651,7 @@ export default class GoodsDetailScreen extends React.Component {
   }
 
   _store = async (shop_id) => {
-    this.props.navigation.navigate('Store',{shop_id:shop_id});
+    this.props.navigation.navigate('Store',{'shop_id':shop_id});
   };
 
   _cart = async () => {

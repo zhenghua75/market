@@ -163,7 +163,7 @@ export default class ConstructionTeamScreen extends React.Component {
     var data = {
       'Action':'GetConsteamList',
       'token':userToken,
-      'size':'1',
+      'size':'10',
       'page': this.page,
     };
     let responseJson = await ApiPost(data);

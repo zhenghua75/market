@@ -34,7 +34,7 @@ export default class SettlementScreen extends React.Component {
         inv_payee:null,
       },
       payment_list:[],
-      inv_content_list:[],
+      inv_content_list:[]
     },
   };
 
@@ -48,7 +48,6 @@ export default class SettlementScreen extends React.Component {
       'cart_type':carttype
     };
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
       responseJson.Data.goods_list[i].index = i;
       let shipping = responseJson.Data.goods_list[i].shipping;
@@ -68,6 +67,8 @@ export default class SettlementScreen extends React.Component {
   };
 
   _Settlement = async () => {
+    const { navigation } = this.props;
+    let carttype = navigation.getParam('carttype');
     let goods_list = this.state.Data.goods_list;
     let cart_value = this.state.Data.cart_value;
     let ru_id = [];
@@ -100,13 +101,12 @@ export default class SettlementScreen extends React.Component {
       "invoice_id":"0",
       "vat_id":"",
       "payment":pay_id,
+      "cart_type":carttype
     };
-    console.log(data);
     let responseJson = await ApiPost(data);
-    console.log(responseJson);
     if(responseJson.Result){
       alert(responseJson.MessageString);
-      this.props.navigation.pop();
+      this.props.navigation.navigate('Alipay',{'order_sn':responseJson.Data.order_sn});
     }
   };
 
@@ -147,7 +147,7 @@ export default class SettlementScreen extends React.Component {
             for (var i = 0; i < shipping.length; i++) {
               let shipping_id = shipping[i].shipping_id;
               btns.push({text:shipping[i].shipping_name,onPress:()=>{
-                console.log(shipping_id);
+                //console.log(shipping_id);
               }});
             }
             btns.push({
