@@ -42,13 +42,13 @@ export default class UserSettingScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.row}>
+        <TouchableOpacity style={styles.row} onPress = { () => this.props.navigation.navigate('UserPicture',{user_picture:this.state.userinfo.user_picture})}>
           <Text style={styles.label}>头像</Text>
           <View style={styles.content}>
             <Image source={{uri:this.state.userinfo.user_picture}} style={styles.userpic}/>
           </View>
           <Image source={require('../assets/images/06个人中心/向右箭头.png')}/>
-        </View>
+        </TouchableOpacity>
         <View style={styles.row}>
           <Text style={styles.label}>昵称</Text>
           <View style={styles.content}>
