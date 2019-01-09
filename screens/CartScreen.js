@@ -260,10 +260,6 @@ export default class CartScreen extends React.Component {
       this._didFocusSubscription && this._didFocusSubscription.remove();
   }
 
-  componentDidMount() {
-    this.props.navigation.addListener('willFocus', this._getCart);
-  };
-
   componentWillReceiveProps(nextProps){
     this.setState({
         isRefresh:nextProps.navigation.getParam('fresh',false),
