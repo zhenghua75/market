@@ -23,19 +23,10 @@ export default class MyScreen extends React.Component {
 //"unpayed_cnt":"0","payed_cnt":"0","uncomment_cnt":0
   //"collect_cnt":"0","store_cnt":"0","bonus":"0","coupon_cnt":"0"
 
-
-
   state={
-    nick_name:null,
-    user_picture:'http://jc.ynweix.com/data/images_user/19_120.jpg',
-    unpayed_cnt:0,//待付款
-    payed_cnt:0,//  待收货
-    uncomment_cnt:0,// 待评价
-    collect_cnt:0,//  收藏
-    store_cnt:0,//  关注
-    bonus:0,//  积分
-    coupon_cnt:0,//  优惠券
+    userinfo:{}
   };
+
   _getUserInfo=async () =>{
     const userToken = await AsyncStorage.getItem('userToken');
     var data = {
@@ -44,55 +35,37 @@ export default class MyScreen extends React.Component {
     };
     let responseJson = await ApiPost(data);
     this.setState({
-      nick_name:responseJson.Data.nick_name,
-      user_picture:responseJson.Data.user_picture,
-      unpayed_cnt:responseJson.Data.unpayed_cnt,
-      payed_cnt:responseJson.Data.payed_cnt,
-      uncomment_cnt:responseJson.Data.uncomment_cnt,
-      collect_cnt:responseJson.Data.collect_cnt,
-      store_cnt:responseJson.Data.store_cnt,
-      bonus:responseJson.Data.bonus,
-      coupon_cnt:responseJson.Data.coupon_cnt,
+        userinfo:responseJson.Data
     });
   };
 
   componentWillMount() {
     this._getUserInfo();
   }
+
+  _didFocusSubscription = {};
+  
+  componentDidMount() {
+      this._didFocusSubscription = this.props.navigation.addListener(
+          'didFocus',
+          payload => {
+              this._getUserInfo();
+          }
+      );
+  }
+  componentWillUnmount() {
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+  }
+
   render() {
-    //收藏、关注、足迹、积分
-    //收藏、关注、积分、优惠券
     return (
       <ScrollView style={styles.container}>
-        <ImageBackground source={require('../assets/images/06个人中心/wode.png')} style={styles.bkg}>
+        <ImageBackground source={require('../assets/images/06个人中心/uer_header_bg.png')} style={styles.bkg}>
           <View style={styles.top}>
-            <View style={styles.head}>
-              <Image source={{uri:this.state.user_picture}} style={styles.headImage}/>
-              <Text style={styles.headText}>{this.state.nick_name}</Text>
-            </View>
-            <TouchableOpacity onPress={this._modifyPwd} style={styles.editBtn}>
-              <Image source={require('../assets/images/06个人中心/编辑.png')} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.info}>
-            <View style={styles.box}>
-              <Text style={styles.text}>{this.state.collect_cnt}</Text>
-              <Text style={styles.text}>收藏</Text>
-            </View>
-            <View style={styles.span}/>
-            <TouchableOpacity style={styles.box} onPress={this._cart}>
-              <Text style={styles.text}>{this.state.store_cnt}</Text>
-              <Text style={styles.text}>关注</Text>
-            </TouchableOpacity>
-            <View style={styles.span}/>
-            <TouchableOpacity style={styles.box} onPress={this._infoList}>
-              <Text style={styles.text}>{this.state.bonus}</Text>
-              <Text style={styles.text}>积分</Text>
-            </TouchableOpacity>
-            <View style={styles.span}/>
-            <TouchableOpacity style={styles.box} onPress={this._infoList}>
-              <Text style={styles.text}>{this.state.coupon_cnt}</Text>
-              <Text style={styles.text}>优惠券</Text>
+            <TouchableOpacity style={styles.head} onPress={this._modUserInfo}>
+              <Image source={{uri:this.state.userinfo.user_picture}} style={styles.headImage}/>
+              <Text style={{fontSize:16,color:'#ffffff',paddingTop:10,}}>{this.state.userinfo.nick_name}</Text>
+              <Text style={{fontSize:14,color:'#ffffff',paddingTop:6,}}>{this.state.userinfo.rank_name}</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -108,7 +81,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待付款.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>{this.state.unpayed_cnt}</Text>
+                <Text style={styles.circleText}>{this.state.userinfo.unpayed_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待付款</Text>
@@ -117,7 +90,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待收货.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>{this.state.payed_cnt}</Text>
+                <Text style={styles.circleText}>{this.state.userinfo.payed_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待收货</Text>
@@ -126,7 +99,7 @@ export default class MyScreen extends React.Component {
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/待评价.png')} style={styles.shipImage}/>
               <View style={styles.circle}>
-                <Text style={styles.circleText}>{this.state.uncomment_cnt}</Text>
+                <Text style={styles.circleText}>{this.state.userinfo.uncomment_cnt}</Text>
               </View>
             </View>
             <Text style={styles.shipText}>待评价</Text>
@@ -134,45 +107,48 @@ export default class MyScreen extends React.Component {
           <View style={styles.shipBox}>
             <View style={styles.shipCircle}>
               <Image source={require('../assets/images/06个人中心/退换货.png')} style={styles.shipImage}/>
-              <View style={styles.circle}>
-                <Text style={styles.circleText}></Text>
-              </View>
             </View>
             <Text style={styles.shipText}>退换货</Text>
           </View>
         </View>
-        <View style={styles.columnGroup1}>
-          <View style={styles.row}>
-            <Image source={require('../assets/images/06个人中心/日记.png')} style={styles.rowImage}/>
-            <Text style={styles.rowText}>日记</Text>
-          </View>
-          <TouchableOpacity style={styles.row} onPress={this._position}>
-            <Image source={require('../assets/images/06个人中心/定位.png')} style={styles.rowImage}/>
-            <Text style={styles.rowText}>定位</Text>
-          </TouchableOpacity>
+        <View style={styles.cardrow}>
+            <View style={styles.cardhead}>
+                <Text>我的余额</Text>
+            </View>
+            <View style={styles.cardpic}>
+                <View style={styles.box2} onPress={this._infoList}>
+                    <Text style={{fontSize:16,color:'#E86A4A',lineHeight:20}}>
+                    {this.state.userinfo.user_money}</Text>
+                    <Text style={{fontSize:14,color:'#ccc'}}>余额</Text>
+                </View>
+                <View style={styles.box2} onPress={this._infoList}>
+                    <Text style={{fontSize:16,color:'#E86A4A',lineHeight:20}}>
+                    {this.state.userinfo.pay_points}</Text>
+                    <Text style={{fontSize:14,color:'#ccc'}}>积分</Text>
+                </View>
+            </View>
         </View>
-        <View style={styles.columnGroup1}>
-          <TouchableOpacity style={styles.row} onPress={this._customService}>
-            <Image source={require('../assets/images/06个人中心/客服.png')} style={styles.rowImage}/>
-            <Text style={styles.rowText}>客服</Text>
-          </TouchableOpacity>
-          <View style={styles.row}>
-            <Image source={require('../assets/images/06个人中心/附近工人.png')} style={styles.rowImage}/>
-            <Text style={styles.rowText}>附近工人</Text>
-          </View>
+        <View style={styles.cardrow}>
+            <View style={styles.cardhead}>
+                <Text>我喜欢</Text>
+            </View>
+            <View style={styles.cardpic}>
+                <TouchableOpacity style={styles.box4}>
+                    <Image source={require('../assets/images/06个人中心/收藏.png')}/>
+                    <Text style={{fontSize:14,color:'#ccc',paddingTop:5}}>收藏</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.box4} onPress={this._cart}>
+                    <Image source={require('../assets/images/06个人中心/collect.png')}/>
+                    <Text style={{fontSize:14,color:'#ccc',paddingTop:5}}>关注</Text>
+                </TouchableOpacity>
+            </View>
         </View>
-        <Button title='退出' onPress={this._signOutAsync}/>
       </ScrollView>
     );
   }
 
-  _signOutAsync = async () => {
-    await AsyncStorage.removeItem('userToken');
-    this.props.navigation.navigate('SignIn');
-  };
-
-  _modifyPwd = async () => {
-    this.props.navigation.navigate('ModifyPwd');
+  _modUserInfo = async () => {
+    this.props.navigation.navigate('UserSetting');
   };
 
   _cart = async () => {
@@ -190,53 +166,56 @@ export default class MyScreen extends React.Component {
   _customService = async () => {
     this.props.navigation.navigate('CustomService');
   };
-
-  _position = async () => {
-    this.props.navigation.navigate('Position');
-  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#eeeeee',
   },
   bkg:{
     width: Dimensions.get('window').width,
     height: Math.floor(Dimensions.get('window').width * 353/750),
+    backgroundColor:'#fff'
   },
   top:{
-    flexDirection:'row',
-    justifyContent:'space-between',
+    justifyContent:'center',
     alignItems:'center',
-    borderBottomWidth:1,
-    borderColor:'rgba(255, 255, 255, 0.22)',
-    marginHorizontal:12,
-    marginVertical:19,
+    padding:14,
   },
   head:{
-    flexDirection:'row',
+    justifyContent:'center',
     alignItems:'center',
   },
   headImage:{
-    height:55,
-    width:55,
-    borderRadius:30,
+    height:80,
+    width:80,
+    borderRadius:40,
   },
-  headText:{
-    fontSize:20,
-    color:'#ffffff',
-  },
-  box:{
+  box4:{
     flex:0.33,
     alignItems:'center',
+    paddingVertical:10,
   },
-  text:{
-    fontSize:15,
-    color:'#ffffff',
+  box2:{
+    flex:0.5,
+    alignItems:'center',
+    paddingVertical:10,
   },
-  info:{
+  cardrow:{
+    marginTop:10,
+    backgroundColor:'#ffffff',
+    marginHorizontal:12,
+    borderRadius:10,
+    alignItems:'stretch',
+  },
+  cardhead:{
+    paddingLeft:10,
+    paddingVertical:10,
+    borderBottomWidth:1,
+    borderColor:'#eeeeee',
+  },
+  cardpic:{
     flexDirection:'row',
   },
   span:{
@@ -246,16 +225,17 @@ const styles = StyleSheet.create({
   order:{
     flexDirection:'row',
     justifyContent:'space-between',
-    marginHorizontal:12,
+    paddingHorizontal:12,
     borderBottomWidth:1,
     borderColor:'rgba(0, 0, 0, 0.22)',
     paddingVertical:12,
+    backgroundColor:'#fff'
   },
   orderLeft:{
     flexDirection:'row',
   },
   orderImage:{
-    height:14,
+    height:18,
     width:18,
   },
   orderText:{
@@ -268,8 +248,9 @@ const styles = StyleSheet.create({
     color:'#888888',
   },
   ship:{
-    marginTop:14,
+    paddingVertical:20,
     flexDirection:'row',
+    backgroundColor:'#fff',
   },
   shipBox:{
     alignItems:'center',
@@ -279,16 +260,16 @@ const styles = StyleSheet.create({
     flexDirection:'row',
   },
   shipImage:{
-    width:18,
-    height:16,
+    width:20,
+    height:20,
   },
   shipText:{
     marginTop:6,
   },
   circle:{
-    height:10,
-    width:10,
-    borderRadius:5,
+    height:20,
+    width:20,
+    borderRadius:10,
     backgroundColor:'orange',
     alignItems:'center',
     justifyContent:'center',
@@ -297,7 +278,7 @@ const styles = StyleSheet.create({
   },
   circleText:{
     color:'#ffffff',
-    fontSize:10,
+    fontSize:12,
   },
   columnGroup1:{
 
