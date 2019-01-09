@@ -23,7 +23,8 @@ import CustomServiceScreen from '../screens/CustomServiceScreen';
 import PositionScreen from '../screens/PositionScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
 import SearchScreen from '../screens/SearchScreen';
-import SecondKillScreen from '../screens/SecondKillScreen';
+import BrandScreen from '../screens/BrandScreen';
+import BrandDetailScreen from '../screens/BrandDetailScreen';
 import CatalogScreen from '../screens/CatalogScreen';
 import GoodsListScreen from '../screens/GoodsListScreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
@@ -170,7 +171,8 @@ const MainStack = createStackNavigator({
   Position:PositionScreen,
   AddAddress:AddAddressScreen,
   Search:SearchScreen,
-  SecondKill:SecondKillScreen,
+  Brand:BrandScreen,
+  BrandDetail:BrandDetailScreen,
   Catalog:CatalogScreen,
   GoodsList:GoodsListScreen,
   FindDetail:FindDetailScreen,
