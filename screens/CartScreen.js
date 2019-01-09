@@ -146,20 +146,23 @@ export default class CartScreen extends React.Component {
     let responseJson = await ApiPost(data);
     console.log(responseJson);
     let j = 0;
-    for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
-      responseJson.Data.goods_list[i]['index'] = i;
-      //responseJson.Data.goods_list[i]['selected'] = false;
-      if(responseJson.Data.goods_list[i]['is_checked'] == '1'){
-        j ++;
+    if(responseJson.Result){
+      for (var i = 0; i < responseJson.Data.goods_list.length; i++) {
+        responseJson.Data.goods_list[i]['index'] = i;
+        //responseJson.Data.goods_list[i]['selected'] = false;
+        if(responseJson.Data.goods_list[i]['is_checked'] == '1'){
+          j ++;
+        }
       }
+      responseJson.Data.total.is_checked='0';
+      if(j == responseJson.Data.goods_list.length){
+        responseJson.Data.total.is_checked='1';
+      }
+      this.setState({Data:responseJson.Data});
+      let count = responseJson.Data.total.real_goods_count;
+      this.props.navigation.setParams({otherParam: '购物车('+count+')'});
     }
-    responseJson.Data.total.is_checked='0';
-    if(j == responseJson.Data.goods_list.length){
-      responseJson.Data.total.is_checked='1';
-    }
-    this.setState({Data:responseJson.Data});
-    let count = responseJson.Data.total.real_goods_count;
-    this.props.navigation.setParams({otherParam: '购物车('+count+')'});
+    
   };
 
   //{"Action":"CartGoodsNumber","token":"2e6b88dbbf93a4d6095bdea691f6da87","cart_id":"36","number":"2"}
